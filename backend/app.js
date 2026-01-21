@@ -20,7 +20,7 @@ app.use(
   cors({
     origin: [process.env.FRONTEND_URL, process.env.DASHBOARD_URL],
     credentials: true,
-  })
+  }),
 );
 
 app.post(
@@ -33,7 +33,7 @@ app.post(
       event = Stripe.webhooks.constructEvent(
         req.body,
         sig,
-        process.env.STRIPE_WEBHOOK_SECRET
+        process.env.STRIPE_WEBHOOK_SECRET,
       );
     } catch (error) {
       return res.status(400).send(`Webhook Error ${error.message || error}`);
@@ -47,11 +47,11 @@ app.post(
         const updatedPaymentStatus = "Paid";
         const paymentTableUpdateResult = await database.query(
           "UPDATE payments SET payment_status = $1 WHERE payment_intent_id = $2 RETURNING *",
-          [updatedPaymentStatus, paymentIntent_client_secret]
+          [updatedPaymentStatus, paymentIntent_client_secret],
         );
         const orderTableUpdateResult = await database.query(
           "UPDATE orders SET paid_at = NOW() WHERE id = $1 RETURNING *",
-          [paymentTableUpdateResult.rows[0].order_id]
+          [paymentTableUpdateResult.rows[0].order_id],
         );
 
         // Reduce Stock for each Product
@@ -61,14 +61,14 @@ app.post(
           `
               SELECT product_id, quantity FROM order_items WHERE order_id = $1
           `,
-          [orderId]
+          [orderId],
         );
 
         // For each ordered items, reduce the product stock
         for (const item of orderedItems) {
           await database.query(
             "UPDATE products SET stock = stock - $1 WHERE id = $2",
-            [item.quantity, item.product_id]
+            [item.quantity, item.product_id],
           );
         }
       } catch (error) {
@@ -78,12 +78,13 @@ app.post(
       }
     }
     res.status(200).send({ received: true });
-  }
+  },
 );
 
-app.get("/",(req,res)=>{
-  req.send("Hello Coders!...")
-})
+app.get("/", (req, res) => {
+  activeStatus: true;
+  error: false;
+});
 
 app.use(cookieParser());
 app.use(express.json());
@@ -93,7 +94,7 @@ app.use(
   fileUpload({
     useTempFiles: true,
     tempFileDir: "./uploads",
-  })
+  }),
 );
 
 app.use("/api/v1/auth", authRouter);
