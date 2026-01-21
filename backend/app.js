@@ -81,6 +81,10 @@ app.post(
   }
 );
 
+app.get("/",(req,res)=>{
+  req.send("Hello Coders!...")
+})
+
 app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
