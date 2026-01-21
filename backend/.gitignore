@@ -1,0 +1,16 @@
+node_modules/
+
+dist/
+build/
+*.tgz
+
+*.log
+npm-debug.log*
+erl_crash.dump
+
+.env
+.env.local
+config/config.env
+
+.vscode/
+.idea/
