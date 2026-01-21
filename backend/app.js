@@ -82,7 +82,7 @@ app.post(
 );
 
 app.get("/", (req, res) => {
-  req.send({
+  res.send({
     activeStatus: true,
     error: false,
   });
