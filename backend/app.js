@@ -82,8 +82,10 @@ app.post(
 );
 
 app.get("/", (req, res) => {
-  activeStatus: true;
-  error: false;
+  req.send({
+    activeStatus: true,
+    error: false,
+  });
 });
 
 app.use(cookieParser());
