@@ -2,7 +2,7 @@ import pkg from "pg";
 const { Client } = pkg;
 
 const database = new Client({
-  user:"postgres",
+  user: "postgres",
   host: "localhost",
   database: "mern_ecommerce",
   password: "Jatin@2006",
