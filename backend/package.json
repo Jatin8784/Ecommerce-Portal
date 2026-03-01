@@ -17,6 +17,7 @@
   },
   "name": "backend",
   "version": "1.0.0",
+  "type": "module",
   "description": "",
   "main": "index.js",
   "devDependencies": {
@@ -28,6 +29,5 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
-  "type": "module"
+  "license": "ISC"
 }
