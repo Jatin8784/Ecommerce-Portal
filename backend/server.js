@@ -8,6 +8,6 @@ cloudinary.config({
   secure: true,
 });
 
-// app.listen(process.env.PORT, () => {
-//   console.log(`Server is working on http://localhost:${process.env.PORT}`);
-// });
+app.listen(process.env.PORT, () => {
+  console.log(`Server is working on http://localhost:${process.env.PORT}`);
+});
