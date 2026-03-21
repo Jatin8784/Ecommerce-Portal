@@ -1,12 +1,12 @@
 import pkg from "pg";
+import { config } from "dotenv";
+
+config({ path: "./config/config.env" });
+
 const { Client } = pkg;
 
 const database = new Client({
-  user: "postgres",
-  host: "localhost",
-  database: "mern_ecommerce",
-  password: "Jatin@2006",
-  port: 8000,
+  connectionString: process.env.DATABASE_URL || process.env.POSTGRES_URL,
 });
 
 try {
