@@ -1,0 +1,9 @@
+[35mapp.js[m[36m:[mimport Stripe from "[1;31mstripe[m";
+[35mapp.js[m[36m:[m    const sig = req.headers["[1;31mstripe[m-signature"];
+[35mpackage-lock.json[m[36m:[m        "[1;31mstripe[m": "^20.1.0"
+[35mpackage-lock.json[m[36m:[m    "node_modules/[1;31mstripe[m": {
+[35mpackage-lock.json[m[36m:[m      "resolved": "https://registry.npmjs.org/[1;31mstripe[m/-/[1;31mstripe[m-20.1.0.tgz",
+[35mpackage.json[m[36m:[m    "[1;31mstripe[m": "^20.1.0"
+[35mutils/generatePaymentIntent.js[m[36m:[mimport Stripe from "[1;31mstripe[m";
+[35mutils/generatePaymentIntent.js[m[36m:[mconst [1;31mstripe[m = new Stripe(process.env.STRIPE_SECRET_KEY);
+[35mutils/generatePaymentIntent.js[m[36m:[m    const paymentIntent = await [1;31mstripe[m.paymentIntents.create({
