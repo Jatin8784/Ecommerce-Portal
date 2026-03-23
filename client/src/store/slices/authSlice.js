@@ -60,14 +60,15 @@ export const forgotPassword = createAsyncThunk(
   async (email, thumbAPI) => {
     try {
       const res = await axiosInstance.post(
-        "/auth/password/forgot?frontendUrl=http://localhost:5173",
+        `/auth/password/forgot?frontendUrl=${window.location.origin}`,
         email
       );
       toast.success(res.data.message);
       return null;
     } catch (error) {
-      toast.error(error.response.data.message);
-      return thumbAPI.rejectWithValue(error.response.data.message);
+      const message = error.response?.data?.message || "Network Error: Could not connect to backend";
+      toast.error(message);
+      return thumbAPI.rejectWithValue(message);
     }
   }
 );
