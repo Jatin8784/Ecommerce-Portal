@@ -2,7 +2,7 @@ export const sendEmail = async ({ email, subject, message }) => {
   const payload = {
     sender: {
       name: "Ecommerce Store",
-      email: process.env.SMTP_MAIL, // This must be the email you verify in Brevo!
+      email: process.env.SMTP_MAIL, 
     },
     to: [{ email: email }],
     subject: subject,
