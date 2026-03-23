@@ -12,8 +12,9 @@ export const register = createAsyncThunk(
       thumbAPI.dispatch(toggleAuthPopup());
       return res.data.user;
     } catch (error) {
-      toast.error(error.response.data.message);
-      return thumbAPI.rejectWithValue(error.response.data.message);
+      const message = error.response?.data?.message || "Network Error";
+      toast.error(message);
+      return thumbAPI.rejectWithValue(message);
     }
   }
 );
@@ -37,7 +38,7 @@ export const getUser = createAsyncThunk("auth/getUser", async (_, thumbAPI) => {
     return res.data.user;
   } catch (error) {
     return thumbAPI.rejectWithValue(
-      error.response.data.message || "Failed to get User"
+      error.response?.data?.message || "Failed to get User"
     );
   }
 });
@@ -48,10 +49,9 @@ export const logout = createAsyncThunk("auth/logout", async (_, thumbAPI) => {
     thumbAPI.dispatch(toggleAuthPopup());
     return null;
   } catch (error) {
-    toast.error(error.response.data.message);
-    return thumbAPI.rejectWithValue(
-      error.response.data.message || "Failed to get User"
-    );
+    const message = error.response?.data?.message || "Failed to log out";
+    toast.error(message);
+    return thumbAPI.rejectWithValue(message);
   }
 });
 
@@ -85,7 +85,7 @@ export const resetPassword = createAsyncThunk(
       return res.data.user;
     } catch (error) {
       const message =
-        error.response.data.message ||
+        error.response?.data?.message ||
         "Something went wrong. Please try again.";
       toast.error(message);
       return thumbAPI.rejectWithValue(message);
@@ -101,7 +101,7 @@ export const updatePassword = createAsyncThunk(
       toast.success(res.data.message);
       return res.date;
     } catch (error) {
-      const message = error.response.data.message;
+      const message = error.response?.data?.message || "Network Error";
       toast.error(message);
       return thumbAPI.rejectWithValue(message);
     }
