@@ -5,8 +5,17 @@ import Stats from "./dashboard-components/Stats";
 import MonthlySalesChart from "./dashboard-components/MonthlySalesChart";
 import OrdersChart from "./dashboard-components/OrdersChart";
 import TopProductsChart from "./dashboard-components/TopProductsChart";
+import { useDispatch } from "react-redux";
+import { useEffect } from "react";
+import { getDashboardStats } from "../store/slices/adminSlice";
 
 const Dashboard = () => {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(getDashboardStats());
+  }, [dispatch]);
+
   return (
     <>
       <main className="p-[10px] pl-[10px] md:pl-[17rem]">
