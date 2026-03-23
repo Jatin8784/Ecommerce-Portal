@@ -12,6 +12,8 @@ import adminRouter from "./router/adminRoutes.js";
 import orderRouter from "./router/orderRoutes.js";
 import Stripe from "stripe";
 
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+
 const app = express();
 config({ path: "./config/config.env" });
 
@@ -25,12 +27,13 @@ app.post(
     let event;
 
     try {
-      event = Stripe.webhooks.constructEvent(
+      event = stripe.webhooks.constructEvent(
         req.body,
         sig,
         process.env.STRIPE_WEBHOOK_SECRET,
       );
     } catch (error) {
+      console.log("Webhook Error:", error.message);
       return res.status(400).send(`Webhook Error: ${error.message}`);
     }
 
