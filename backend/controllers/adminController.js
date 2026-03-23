@@ -42,7 +42,7 @@ export const deleteUser = catchAsyncErrors(async (req, res, next) => {
     [id],
   );
 
-  if (!deleteUser.rows.length === 0) {
+  if (deleteUser.rows.length === 0) {
     return next(new ErrorHandler("User not found", 404));
   }
 
@@ -93,10 +93,10 @@ export const dashboardStats = catchAsyncErrors(async (req, res, next) => {
 
   // Order status count
   const orderStatusCountQuery = await database.query(`
-        SELECT order_status, COUNT(*) FROM orders WHERE GROUP BY order_status
+        SELECT order_status, COUNT(*) FROM orders GROUP BY order_status
     `);
 
-  const orderStausCount = {
+  const orderStausCounts = {
     Processing: 0,
     Shipped: 0,
     Delivered: 0,
@@ -104,8 +104,8 @@ export const dashboardStats = catchAsyncErrors(async (req, res, next) => {
   };
 
   orderStatusCountQuery.rows.forEach((row) => {
-    if (orderStausCount.hasOwnProperty(row.order_status)) {
-      orderStausCount[row.order_status] = parseInt(row.count);
+    if (orderStausCounts.hasOwnProperty(row.order_status)) {
+      orderStausCounts[row.order_status] = parseInt(row.count);
     }
   });
 
@@ -221,7 +221,7 @@ export const dashboardStats = catchAsyncErrors(async (req, res, next) => {
     todayRevenue,
     yesterdayRevenue,
     totalUsersCount: totalUserCount,
-    orderStatusCounts: orderStausCount,
+    orderStatusCounts: orderStausCounts,
     monthlySales,
     currentMonthSales,
     topSellingProducts,
