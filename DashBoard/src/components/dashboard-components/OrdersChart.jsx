@@ -10,10 +10,12 @@ const OrdersChart = () => {
     Delivered: "#22c55e", // green
     Cancelled: "#ef4444", // red
   };
-  const orderStatusData = Object.keys(orderStatusCounts).map((status) => ({
-    status,
-    count: parseInt(orderStatusCounts[status]),
-  }));
+  const orderStatusData = Object.keys(orderStatusCounts)
+    .map((status) => ({
+      status,
+      count: parseInt(orderStatusCounts[status]) || 0,
+    }))
+    .filter((item) => item.count > 0);
 
   return (
     <>
