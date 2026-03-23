@@ -44,7 +44,7 @@ export const adminSlice = createSlice({
     deleteUserFailed(state) {
       state.loading = false;
     },
-    getStatsRequest(state, action) {
+    getStatsRequest(state) {
       state.loading = true;
     },
     getStatsSuccess(state, action) {
@@ -64,51 +64,69 @@ export const adminSlice = createSlice({
     getStatsFailed(state) {
       state.loading = false;
     },
+    updateStatusRequest(state) {
+      state.loading = true;
+    },
+    updateStatusSuccess(state) {
+      state.loading = false;
+    },
+    updateStatusFailed(state) {
+      state.loading = false;
+    },
   },
 });
 
 export const fetchAllUsers = (page) => async (dispatch) => {
   dispatch(adminSlice.actions.getAllUserRequest());
-  await axiosInstance
-    .get(`/admin/getallusers?page=${page || 1}`)
-    .then((res) => {
-      dispatch(adminSlice.actions.getAllUserSuccess(res.data));
-    })
-    .catch((err) => {
-      dispatch(adminSlice.actions.getAllUserFailed());
-    });
+  try {
+    const res = await axiosInstance.get(`/admin/getallusers?page=${page || 1}`);
+    dispatch(adminSlice.actions.getAllUserSuccess(res.data));
+  } catch (err) {
+    dispatch(adminSlice.actions.getAllUserFailed());
+  }
 };
 
 export const deleteAllUsers = (id, page) => async (dispatch, getState) => {
   dispatch(adminSlice.actions.deleteUserRequest());
-  await axiosInstance
-    .delete(`/admin/delete/${id}`)
-    .then((res) => {
-      dispatch(adminSlice.actions.deleteUserSuccess(id));
-      toast.success(res.data.message || "User Deleted Successfully");
-      const state = getState();
-      const updatedTotal = state.admin.totalUsers;
-      const updatedMaxPage = Math.ceil(updatedTotal / 10) || 1;
-
-      const validPage = Math.min(page, updatedMaxPage);
-      dispatch(fetchAllUsers(validPage));
-    })
-    .catch((err) => {
-      dispatch(adminSlice.actions.deleteUserFailed());
-      toast.error(err?.response?.data?.message || "Failed to delete user");
-    });
+  try {
+    const res = await axiosInstance.delete(`/admin/delete/${id}`);
+    dispatch(adminSlice.actions.deleteUserSuccess(id));
+    toast.success(res.data.message || "User Deleted Successfully");
+    const state = getState();
+    const updatedTotal = state.admin.totalUsers;
+    const updatedMaxPage = Math.ceil(updatedTotal / 10) || 1;
+    const validPage = Math.min(page, updatedMaxPage);
+    dispatch(fetchAllUsers(validPage));
+  } catch (err) {
+    dispatch(adminSlice.actions.deleteUserFailed());
+    toast.error(err?.response?.data?.message || "Failed to delete user");
+  }
 };
 
-export const getDashboardStats = (page) => async (dispatch) => {
+export const getDashboardStats = () => async (dispatch) => {
   dispatch(adminSlice.actions.getStatsRequest());
-  await axiosInstance
-    .get(`/admin/fetch/dashboard-stats`)
-    .then((res) => {
-      dispatch(adminSlice.actions.getStatsSuccess(res.data));
-    })
-    .catch((err) => {
-      dispatch(adminSlice.actions.getStatsFailed());
-    });
+  try {
+    const res = await axiosInstance.get(`/admin/fetch/dashboard-stats`);
+    dispatch(adminSlice.actions.getStatsSuccess(res.data));
+  } catch (err) {
+    dispatch(adminSlice.actions.getStatsFailed());
+  }
 };
+
+export const updateOrderStatusAction =
+  (orderId, status) => async (dispatch) => {
+    dispatch(adminSlice.actions.updateStatusRequest());
+    try {
+      const res = await axiosInstance.put(`/admin/order-status/${orderId}`, {
+        status,
+      });
+      dispatch(adminSlice.actions.updateStatusSuccess());
+      toast.success(res.data.message || "Status Updated Successfully");
+      dispatch(getDashboardStats());
+    } catch (err) {
+      dispatch(adminSlice.actions.updateStatusFailed());
+      toast.error(err?.response?.data?.message || "Failed to update status");
+    }
+  };
 
 export default adminSlice.reducer;
