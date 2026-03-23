@@ -250,28 +250,31 @@ export const fetchAllOrders = catchAsyncErrors(async (req, res, next) => {
 
 export const updateOrderStatus = catchAsyncErrors(async (req, res, next) => {
   const { status } = req.body;
-  if (!status) {
-    return next(new ErrorHandler("Provide a valid status for order.", 400));
-  }
-
   const { orderId } = req.params;
-  const results = await database.query(`SELECT * FROM orders WHERE id = $1`, [
-    orderId,
-  ]);
 
-  if (results.rows.length === 0) {
-    return next(new ErrorHandler("Invalid order ID.", 404));
+  const validStatuses = ["Processing", "Shipped", "Delivered", "Cancelled"];
+
+  const exactStatus = validStatuses.find(
+    (s) => s.toLowerCase() === status.toLowerCase(),
+  );
+
+  if (!exactStatus) {
+    return next(new ErrorHandler("Invalid status provided.", 400));
   }
 
-  const updatedOrder = await database.query(
+  const result = await database.query(
     `UPDATE orders SET order_status = $1 WHERE id = $2 RETURNING *`,
-    [status, orderId],
+    [exactStatus, orderId],
   );
+
+  if (result.rows.length === 0) {
+    return next(new ErrorHandler("Order not found.", 404));
+  }
 
   res.status(200).json({
     success: true,
     message: "Order status updated.",
-    updatedOrder: updatedOrder.rows[0],
+    updatedOrder: result.rows[0],
   });
 });
 
