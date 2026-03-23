@@ -2,11 +2,10 @@ import pkg from "pg";
 const { Client } = pkg;
 
 const database = new Client({
-  user: "postgres",
-  host: "localhost",
-  database: "mern_ecommerce",
-  password: "Jatin@2006",
-  port: 8000,
+  connectionString:
+    process.env.DATABASE_URL ||
+    "postgresql://postgres:Jatin@2006@localhost:8000/mern_ecommerce",
+  ssl: process.env.DATABASE_URL ? { rejectUnauthorized: false } : false,
 });
 
 try {
