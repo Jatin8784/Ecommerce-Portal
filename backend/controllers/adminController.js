@@ -93,7 +93,7 @@ export const dashboardStats = catchAsyncErrors(async (req, res, next) => {
 
   // Order status count
   const orderStatusCountQuery = await database.query(`
-        SELECT order_status, COUNT(*) FROM orders WHERE paid_at IS NOT NULL GROUP BY order_status
+        SELECT order_status, COUNT(*) FROM orders WHERE GROUP BY order_status
     `);
 
   const orderStausCount = {
@@ -104,7 +104,9 @@ export const dashboardStats = catchAsyncErrors(async (req, res, next) => {
   };
 
   orderStatusCountQuery.rows.forEach((row) => {
-    orderStausCount[row.order_status] = parseInt(row.count);
+    if (orderStausCount.hasOwnProperty(row.order_status)) {
+      orderStausCount[row.order_status] = parseInt(row.count);
+    }
   });
 
   // Today's Revenue
