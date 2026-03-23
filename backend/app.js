@@ -16,6 +16,17 @@ const app = express();
 
 config({ path: "./config/config.env" });
 
+app.use(cookieParser());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+app.use(
+  fileUpload({
+    useTempFiles: true,
+    tempFileDir: "./uploads",
+  }),
+);
+
 app.use(
   cors({
     origin: [process.env.FRONTEND_URL, process.env.DASHBOARD_URL],
@@ -87,17 +98,6 @@ app.get("/", (req, res) => {
     error: false,
   });
 });
-
-app.use(cookieParser());
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-
-app.use(
-  fileUpload({
-    useTempFiles: true,
-    tempFileDir: "./uploads",
-  }),
-);
 
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/product", productRouter);
