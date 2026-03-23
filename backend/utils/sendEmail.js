@@ -1,23 +1,26 @@
-import nodemailer from "nodemailer";
-
 export const sendEmail = async ({ email, subject, message }) => {
-  const transporter = nodemailer.createTransport({
-    host: process.env.SMTP_HOST,
-    service: process.env.SMTP_SERVICE,
-    port: process.env.SMTP_PORT,
-    secure: true, // REQUIRED for port 465 to prevent the connection from hanging forever!
-    auth: {
-      user: process.env.SMTP_MAIL,
-      pass: process.env.SMTP_PASSWORD,
+  const payload = {
+    sender: {
+      name: "Ecommerce Store",
+      email: process.env.SMTP_MAIL, // This must be the email you verify in Brevo!
     },
-  });
-
-  const mailOptions = {
-    from: process.env.SMTP_MAIL,
-    to: email,
-    subject,
-    html: message,
+    to: [{ email: email }],
+    subject: subject,
+    htmlContent: message,
   };
 
-  await transporter.sendMail(mailOptions);
+  const response = await fetch("https://api.brevo.com/v3/smtp/email", {
+    method: "POST",
+    headers: {
+      "accept": "application/json",
+      "api-key": process.env.BREVO_API_KEY,
+      "content-type": "application/json",
+    },
+    body: JSON.stringify(payload),
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.message || "Failed to send email via Brevo API.");
+  }
 };
