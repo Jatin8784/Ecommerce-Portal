@@ -22,7 +22,7 @@ export const placeNewOrder = catchAsyncErrors(async (req, res, next) => {
     !phone
   ) {
     return next(
-      new ErrorHandler("Please Provide complete shipping details.", 400)
+      new ErrorHandler("Please Provide complete shipping details.", 400),
     );
   }
 
@@ -35,7 +35,7 @@ export const placeNewOrder = catchAsyncErrors(async (req, res, next) => {
   const productIds = items.map((item) => item.product.id);
   const { rows: products } = await database.query(
     `SELECT id, price, stock, name FROM products WHERE id = ANY($1::uuid[])`,
-    [productIds]
+    [productIds],
   );
 
   let total_price = 0;
@@ -47,7 +47,7 @@ export const placeNewOrder = catchAsyncErrors(async (req, res, next) => {
 
     if (!product) {
       return next(
-        new ErrorHandler(`Product not found for ID: ${item.product.id}`, 404)
+        new ErrorHandler(`Product not found for ID: ${item.product.id}`, 404),
       );
     }
 
@@ -55,8 +55,8 @@ export const placeNewOrder = catchAsyncErrors(async (req, res, next) => {
       return next(
         new ErrorHandler(
           `Only ${product.stock} units available for ${product.name}`,
-          400
-        )
+          400,
+        ),
       );
     }
 
@@ -69,7 +69,7 @@ export const placeNewOrder = catchAsyncErrors(async (req, res, next) => {
       item.quantity,
       product.price,
       item.product.images[0].url || "",
-      product.name
+      product.name,
     );
 
     const offset = index * 6;
@@ -77,19 +77,19 @@ export const placeNewOrder = catchAsyncErrors(async (req, res, next) => {
     placeholders.push(
       `($${offset + 1}, $${offset + 2}, $${offset + 3}, $${offset + 4}, $${
         offset + 5
-      }, $${offset + 6})`
+      }, $${offset + 6})`,
     );
   });
 
   const tax_price = 0.18;
   const shipping_price = total_price >= 50 ? 0 : 2;
   total_price = Math.round(
-    total_price + total_price * tax_price + shipping_price
+    total_price + total_price * tax_price + shipping_price,
   );
 
   const orderResult = await database.query(
     `INSERT INTO orders(buyer_id, total_price, tax_price, shipping_price) VALUES($1, $2, $3, $4) RETURNING *`,
-    [req.user.id, total_price, tax_price, shipping_price]
+    [req.user.id, total_price, tax_price, shipping_price],
   );
 
   const orderId = orderResult.rows[0].id;
@@ -102,12 +102,12 @@ export const placeNewOrder = catchAsyncErrors(async (req, res, next) => {
     `INSERT INTO order_items (order_id, product_id, quantity, price, image, title)
    VALUES ${placeholders.join(", ")}
    RETURNING *`,
-    values
+    values,
   );
 
   await database.query(
     `INSERT INTO shipping_info (order_id, full_name, state, city, country, address, pincode, phone) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *`,
-    [orderId, full_name, state, city, country, address, pincode, phone]
+    [orderId, full_name, state, city, country, address, pincode, phone],
   );
 
   const paymentResponse = await generatePaymentIntent(orderId, total_price);
@@ -150,19 +150,23 @@ export const fetchSingleOrder = catchAsyncErrors(async (req, res, next) => {
         'pincode', s.pincode,
         'phone', s.phone
     ) AS shipping_info
-        FROM orders o
-        LEFT JOIN order_items oi ON o.id = oi.order_id
-        LEFT JOIN shipping_info s ON o.id = s.order_id
-        WHERE o.buyer_id = $1 AND o.paid_at = $2
-        GROUP BY o.id, s.id;
+    FROM orders o
+    LEFT JOIN order_items oi ON o.id = oi.order_id
+    LEFT JOIN shipping_info s ON o.id = s.order_id
+    WHERE o.id = $1  -- Changed from buyer_id to id and removed paid_at check
+    GROUP BY o.id, s.id;
     `,
-    [orderId]
+    [orderId],
   );
+
+  if (result.rows.length === 0) {
+    return next(new ErrorHandler("Order not found", 404));
+  }
 
   res.status(200).json({
     success: true,
     message: "Order fetched.",
-    orders: result.rows[0],
+    order: result.rows[0],
   });
 });
 
@@ -194,10 +198,10 @@ export const fetchMyOrders = catchAsyncErrors(async (req, res, next) => {
       FROM orders o
       LEFT JOIN order_items oi ON o.id = oi.order_id
       LEFT JOIN shipping_info s ON o.id = s.order_id
-      WHERE o.buyer_id = $1 AND o.paid_at IS NOT NULL
+      WHERE o.buyer_id = $1
       GROUP BY o.id, s.id
         `,
-    [req.user.id]
+    [req.user.id],
   );
 
   res.status(200).json({
@@ -260,7 +264,7 @@ export const updateOrderStatus = catchAsyncErrors(async (req, res, next) => {
 
   const updatedOrder = await database.query(
     `UPDATE orders SET order_status = $1 WHERE id = $2 RETURNING *`,
-    [status, orderId]
+    [status, orderId],
   );
 
   res.status(200).json({
@@ -274,7 +278,7 @@ export const deleteOrder = catchAsyncErrors(async (req, res, next) => {
   const { orderId } = req.params;
   const result = await database.query(
     `DELETE FROM orders WHERE id = $1 RETURNING *`,
-    [orderId]
+    [orderId],
   );
 
   if (result.rows.length === 0) {
