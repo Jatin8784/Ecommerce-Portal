@@ -2,7 +2,7 @@ export const sendEmail = async ({ email, subject, message }) => {
   const payload = {
     sender: {
       name: "Ecommerce Store",
-      email: process.env.SMTP_MAIL, 
+      email: process.env.SMTP_MAIL,
     },
     to: [{ email: email }],
     subject: subject,
@@ -12,7 +12,7 @@ export const sendEmail = async ({ email, subject, message }) => {
   const response = await fetch("https://api.brevo.com/v3/smtp/email", {
     method: "POST",
     headers: {
-      "accept": "application/json",
+      accept: "application/json",
       "api-key": process.env.BREVO_API_KEY,
       "content-type": "application/json",
     },
