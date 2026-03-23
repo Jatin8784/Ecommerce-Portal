@@ -21,6 +21,7 @@
   "description": "",
   "main": "index.js",
   "devDependencies": {
+    "concurrently": "^9.2.1",
     "nodemon": "^3.1.11"
   },
   "scripts": {
