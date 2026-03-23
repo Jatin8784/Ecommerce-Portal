@@ -344,7 +344,7 @@ export const postProductReview = catchAsyncErrors(async (req, res, next) => {
 export const deleteReview = catchAsyncErrors(async (req, res, next) => {
   const { productId } = req.params;
   const review = await database.query(
-    "SELECT * FROM reviews WHERE user_id=$1 AND product_id=$2",
+    "DELETE FROM reviews WHERE user_id=$1 AND product_id=$2 RETURNING *",
     [req.user.id, productId],
   );
   if (review.rows.length === 0) {
@@ -356,7 +356,7 @@ export const deleteReview = catchAsyncErrors(async (req, res, next) => {
     [productId],
   );
 
-  const newAvgRating = allReviews.rows[0].avg_rating;
+  const newAvgRating = allReviews.rows[0].avg_rating || 0;
 
   const upadateProduct = await database.query(
     "UPDATE products SET ratings=$1 WHERE id=$2 RETURNING *",
