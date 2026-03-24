@@ -39,8 +39,8 @@ const PaymentForm = () => {
     if (error) {
       setErrorMessage(error);
     } else if (paymentIntent && paymentIntent.status === "succeeded") {
-      toast.success("payment successful.");
-      navigate("/");
+      toast.success("Payment successful!");
+      navigate("/orders");
     }
 
     setIsProcessing(false);

@@ -70,8 +70,12 @@ const orderSlice = createSlice({
       .addCase(PlaceOrder.fulfilled, (state, action) => {
         state.placingOrder = false;
         state.finalPrice = action.payload.total_price;
-        state.paymentIntent = action.payload.paymentIntent;
-        state.orderStep = 2;
+        if (action.payload.paymentIntent) {
+          state.paymentIntent = action.payload.paymentIntent;
+          state.orderStep = 2;
+        } else {
+          state.orderStep = 3; // Use Step 3 for Success/Checkout complete
+        }
       })
       .addCase(PlaceOrder.rejected, (state, action) => {
         state.placingOrder = false;

@@ -4,7 +4,16 @@ import database from "../database/db.js";
 import { generatePaymentIntent } from "../utils/generatePaymentIntent.js";
 
 export const placeNewOrder = catchAsyncErrors(async (req, res, next) => {
-  const { full_name, state, city, country, address, pincode, phone } = req.body;
+  const {
+    full_name,
+    state,
+    city,
+    country,
+    address,
+    pincode,
+    phone,
+    payment_method = "Stripe",
+  } = req.body;
 
   let { orderedItems } = req.body;
 
@@ -88,8 +97,8 @@ export const placeNewOrder = catchAsyncErrors(async (req, res, next) => {
   );
 
   const orderResult = await database.query(
-    `INSERT INTO orders(buyer_id, total_price, tax_price, shipping_price) VALUES($1, $2, $3, $4) RETURNING *`,
-    [req.user.id, total_price, tax_price, shipping_price],
+    `INSERT INTO orders(buyer_id, total_price, tax_price, shipping_price, payment_method) VALUES($1, $2, $3, $4, $5) RETURNING *`,
+    [req.user.id, total_price, tax_price, shipping_price, payment_method],
   );
 
   const orderId = orderResult.rows[0].id;
@@ -110,6 +119,19 @@ export const placeNewOrder = catchAsyncErrors(async (req, res, next) => {
     [orderId, full_name, state, city, country, address, pincode, phone],
   );
 
+  if (payment_method === "COD") {
+    await database.query(
+      "INSERT INTO payments (order_id, payment_type, payment_status) VALUES($1, $2, $3)",
+      [orderId, "COD", "Pending"],
+    );
+
+    return res.status(200).json({
+      success: true,
+      message: "Order Placed Successfully via Cash On Delivery.",
+      total_price,
+    });
+  }
+
   const paymentResponse = await generatePaymentIntent(orderId, total_price);
 
   if (!paymentResponse.success) {
@@ -118,7 +140,7 @@ export const placeNewOrder = catchAsyncErrors(async (req, res, next) => {
 
   res.status(200).json({
     success: true,
-    message: "Order Placed Successfully. Please Peoceed to Payment.",
+    message: "Order Placed Successfully. Please Proceed to Payment.",
     paymentIntent: paymentResponse.clientSecret,
     total_price,
   });

@@ -32,15 +32,7 @@ const Payment = () => {
   const dispatch = useDispatch();
   const { cart } = useSelector((state) => state.cart);
   const { orderStep } = useSelector((state) => state.order);
-  const [shippingDetails, setShippingDetails] = useState({
-    fullName: "",
-    state: "Gujarat",
-    phone: "",
-    address: "",
-    city: "",
-    zipCode: "",
-    country: "India",
-  });
+  const [paymentMethod, setPaymentMethod] = useState("Stripe");
 
   const total = cart.reduce(
     (sum, item) => sum + item.product.price * item.quantity,
@@ -55,20 +47,30 @@ const Payment = () => {
 
   const handlePlaceOrder = (e) => {
     e.preventDefault();
-    const formdata = new FormData();
-    formdata.append("full_name", shippingDetails.fullName);
-    formdata.append("state", shippingDetails.state);
-    formdata.append("phone", shippingDetails.phone);
-    formdata.append("address", shippingDetails.address);
-    formdata.append("city", shippingDetails.city);
-    formdata.append("pincode", shippingDetails.zipCode);
-    formdata.append("country", shippingDetails.country);
-    formdata.append("orderedItems", JSON.stringify(cart));
+    const payload = {
+      full_name: shippingDetails.fullName,
+      state: shippingDetails.state,
+      phone: shippingDetails.phone,
+      address: shippingDetails.address,
+      city: shippingDetails.city,
+      pincode: shippingDetails.zipCode,
+      country: shippingDetails.country,
+      payment_method: paymentMethod,
+      orderedItems: cart,
+    };
 
-    dispatch(PlaceOrder(formdata));
+    dispatch(PlaceOrder(payload));
   };
 
-  if (cart.length === 0) {
+  useEffect(() => {
+    if (orderStep === 3) {
+      toast.success("Order Placed Successfully!");
+      dispatch(clearCart());
+      navigate("/orders");
+    }
+  }, [orderStep, navigate, dispatch]);
+
+  if (cart.length === 0 && orderStep !== 3) {
     return (
       <div className="min-h-screen pt-20 flex items-center justify-center">
         <div className="text-center glass-panel max-w-md">
@@ -126,7 +128,7 @@ const Payment = () => {
                 </div>
 
                 <div
-                  className={`w-12 h-0 ${
+                  className={`w-12 h-0.5 ${
                     orderStep >= 2 ? "bg-primary" : "bg-border"
                   }`}
                 />
@@ -144,7 +146,7 @@ const Payment = () => {
                         : "bg-secondary"
                     }`}
                   >
-                    2
+                    {orderStep > 2 ? <Check className="w-5 h-5" /> : "2"}
                   </div>
                   <span className="font-medium">Payment</span>
                 </div>
@@ -154,9 +156,9 @@ const Payment = () => {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
               {/* Form Section */}
               <div className="lg:col-span-2">
-                {orderStep == 1 ? (
+                {orderStep === 1 ? (
                   // Step 1: User Details
-                  <form onSubmit={handlePlaceOrder} className="glas-panel">
+                  <form onSubmit={handlePlaceOrder} className="glass-panel">
                     <h2 className="text-xl font-semibold text-foreground mb-6">
                       Shipping Information
                     </h2>
@@ -174,7 +176,7 @@ const Payment = () => {
                               fullName: e.target.value,
                             });
                           }}
-                          className="w-full px-4 py-3 bg-secondary border border-border rounded-lg text-foreground"
+                          className="w-full px-4 py-3 bg-secondary border border-border rounded-lg text-foreground focus:ring-2 focus:ring-primary/20 transition-all outline-none"
                           required
                         />
                       </div>
@@ -193,7 +195,7 @@ const Payment = () => {
                               state: e.target.value,
                             });
                           }}
-                          className="w-full px-4 py-3 bg-secondary border border-border rounded-lg text-foreground"
+                          className="w-full px-4 py-3 bg-secondary border border-border rounded-lg text-foreground focus:ring-2 focus:ring-primary/20 transition-all outline-none appearance-none"
                         >
                           <option value="Gujarat">Gujarat</option>
                           <option value="Punjab">Punjab</option>
@@ -219,7 +221,7 @@ const Payment = () => {
                               phone: e.target.value,
                             });
                           }}
-                          className="w-full px-4 py-3 bg-secondary border border-border rounded-lg text-foreground"
+                          className="w-full px-4 py-3 bg-secondary border border-border rounded-lg text-foreground focus:ring-2 focus:ring-primary/20 transition-all outline-none"
                           required
                         />
                       </div>
@@ -239,13 +241,13 @@ const Payment = () => {
                               address: e.target.value,
                             });
                           }}
-                          className="w-full px-4 py-3 bg-secondary border border-border rounded-lg text-foreground"
+                          className="w-full px-4 py-3 bg-secondary border border-border rounded-lg text-foreground focus:ring-2 focus:ring-primary/20 transition-all outline-none"
                           required
                         />
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
                       <div>
                         <label className="block text-sm font-medium text-foreground mb-2">
                           City *
@@ -259,7 +261,7 @@ const Payment = () => {
                               city: e.target.value,
                             });
                           }}
-                          className="w-full px-4 py-3 bg-secondary border border-border rounded-lg text-foreground"
+                          className="w-full px-4 py-3 bg-secondary border border-border rounded-lg text-foreground focus:ring-2 focus:ring-primary/20 transition-all outline-none"
                           required
                         />
                       </div>
@@ -276,7 +278,7 @@ const Payment = () => {
                               country: e.target.value,
                             });
                           }}
-                          className="w-full px-4 py-3 bg-secondary border border-border rounded-lg text-foreground"
+                          className="w-full px-4 py-3 bg-secondary border border-border rounded-lg text-foreground focus:ring-2 focus:ring-primary/20 transition-all outline-none appearance-none"
                         >
                           <option value="India">India</option>
                         </select>
@@ -295,83 +297,157 @@ const Payment = () => {
                               zipCode: e.target.value,
                             });
                           }}
-                          className="w-full px-4 py-3 bg-secondary border border-border rounded-lg text-foreground"
+                          className="w-full px-4 py-3 bg-secondary border border-border rounded-lg text-foreground focus:ring-2 focus:ring-primary/20 transition-all outline-none"
                           required
                         />
                       </div>
                     </div>
 
+                    {/* Payment Method Selection */}
+                    <div className="mb-8">
+                      <h3 className="text-lg font-medium text-foreground mb-4">
+                        Payment Method
+                      </h3>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div
+                          onClick={() => setPaymentMethod("Stripe")}
+                          className={`cursor-pointer p-4 rounded-xl border-2 transition-all flex items-center justify-between ${
+                            paymentMethod === "Stripe"
+                              ? "border-primary bg-primary/10"
+                              : "border-border hover:border-primary/50"
+                          }`}
+                        >
+                          <div className="flex items-center space-x-3">
+                            <div
+                              className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${
+                                paymentMethod === "Stripe"
+                                  ? "border-primary"
+                                  : "border-muted-foreground"
+                              }`}
+                            >
+                              {paymentMethod === "Stripe" && (
+                                <div className="w-2 h-2 rounded-full bg-primary" />
+                              )}
+                            </div>
+                            <span className="font-medium">Stripe (Card)</span>
+                          </div>
+                          <img
+                            src="https://upload.wikimedia.org/wikipedia/commons/b/ba/Stripe_Logo%2C_revised_2016.svg"
+                            alt="Stripe"
+                            className="h-6"
+                          />
+                        </div>
+
+                        <div
+                          onClick={() => setPaymentMethod("COD")}
+                          className={`cursor-pointer p-4 rounded-xl border-2 transition-all flex items-center justify-between ${
+                            paymentMethod === "COD"
+                              ? "border-primary bg-primary/10"
+                              : "border-border hover:border-primary/50"
+                          }`}
+                        >
+                          <div className="flex items-center space-x-3">
+                            <div
+                              className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${
+                                paymentMethod === "COD"
+                                  ? "border-primary"
+                                  : "border-muted-foreground"
+                              }`}
+                            >
+                              {paymentMethod === "COD" && (
+                                <div className="w-2 h-2 rounded-full bg-primary" />
+                              )}
+                            </div>
+                            <span className="font-medium">
+                              Cash On Delivery
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
                     <button
                       type="submit"
-                      className="w-full py-3 gradient-primary text-primary-foreground rounded-lg hover:glow-on-hover animate-smooth font-semibold"
+                      className="w-full py-4 gradient-primary text-primary-foreground rounded-lg hover:glow-on-hover animate-smooth font-bold text-lg"
                     >
-                      Continue to Payment
+                      {paymentMethod === "Stripe"
+                        ? "Continue to Payment"
+                        : "Place Order"}
                     </button>
                   </form>
                 ) : (
                   <>
-                    <Elements stripe={stripePromise}>
-                      <PaymentForm />
-                    </Elements>
+                    {orderStep === 2 ? (
+                      <Elements stripe={stripePromise}>
+                        <PaymentForm />
+                      </Elements>
+                    ) : (
+                      <div className="glass-panel text-center py-12">
+                        <div className="w-20 h-20 gradient-primary rounded-full flex items-center justify-center mx-auto mb-6 animate-bounce">
+                          <Check className="w-10 h-10 text-primary-foreground" />
+                        </div>
+                        <h2 className="text-2xl font-bold mb-4">
+                          Order Processing...
+                        </h2>
+                        <p className="text-muted-foreground">
+                          Please wait while we complete your request.
+                        </p>
+                      </div>
+                    )}
                   </>
                 )}
               </div>
 
               {/* Order Summary */}
               <div className="lg:col-span-1">
-                <div className="glass-panel static top-24">
-                  <h2 className="text-xl font-semibold text-foreground">
+                <div className="glass-panel sticky top-24">
+                  <h2 className="text-xl font-semibold text-foreground mb-6">
                     Order Summary
                   </h2>
-                  <div className="space-y-4">
-                    {cart.map((item) => {
-                      return (
-                        <div
-                          key={item.product.id}
-                          className="flex items-center space-x-3"
-                        >
-                          <img
-                            src={item.product.images[0].url}
-                            alt={item.product.name}
-                            className="w-12 h-12 rounded object-cover"
-                          />
-                          <div className="flex-1 min-w-0">
-                            <p className="text-sm font-medium text-foreground truncate">
-                              {item.product.name}
-                            </p>
-                            <p className="text-xs text-muted-foreground">
-                              Qty: {item.quantity}
-                            </p>
-                          </div>
-                          <p className="text-sm font-semibold">
-                            ${Number(item.product.price) * item.quantity}
+                  <div className="space-y-4 max-h-[40vh] overflow-y-auto pr-2 custom-scrollbar">
+                    {cart.map((item) => (
+                      <div
+                        key={item.product.id}
+                        className="flex items-center space-x-3"
+                      >
+                        <img
+                          src={item.product.images[0].url}
+                          alt={item.product.name}
+                          className="w-16 h-16 rounded-lg object-cover"
+                        />
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium text-foreground truncate">
+                            {item.product.name}
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            Qty: {item.quantity}
                           </p>
                         </div>
-                      );
-                    })}
+                        <p className="text-sm font-semibold">
+                          ${(Number(item.product.price) * item.quantity).toFixed(2)}
+                        </p>
+                      </div>
+                    ))}
                   </div>
 
-                  <div className="space-y-2 border-t border-[hsla(var(--glass-border))] pt-4">
+                  <div className="mt-6 space-y-3 pt-6 border-t border-border">
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Subtotal</span>
                       <span>${total.toFixed(2)}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Shipping</span>
-                      <span className="text-green-500">
-                        {totalWithTax >= 50 ? "Free" : "$2"}
+                      <span className={totalWithTax >= 50 ? "text-green-500" : ""}>
+                        {totalWithTax >= 50 ? "Free" : "$2.00"}
                       </span>
                     </div>
-
                     <div className="flex justify-between">
-                      <span className="text-muted-foreground">Tax</span>
+                      <span className="text-muted-foreground">Tax (18%)</span>
                       <span>{(total * 0.18).toFixed(2)}</span>
                     </div>
-                    <div className="flex justify-between font-semibold text-lg pt-2 border-t border-[hsla(var(--glass-border))] ">
+                    <div className="flex justify-between font-bold text-xl pt-4 border-t border-border text-primary">
                       <span>Total</span>
-                      <span className="text-primary">
-                        ${totalWithTax.toFixed(2)}
-                      </span>
+                      <span>${totalWithTax.toFixed(2)}</span>
                     </div>
                   </div>
                 </div>

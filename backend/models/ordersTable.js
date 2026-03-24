@@ -12,6 +12,9 @@ export default async function createOrdersTable() {
         order_status VARCHAR(50) DEFAULT 'Processing' CHECK (
           order_status IN ('Processing', 'Shipped', 'Delivered', 'Cancelled')
         ),
+        payment_method VARCHAR(50) DEFAULT 'Stripe' CHECK (
+          payment_method IN ('Stripe', 'COD')
+        ),
         paid_at TIMESTAMP CHECK (paid_at IS NULL OR paid_at <= CURRENT_TIMESTAMP),
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (buyer_id) REFERENCES users(id) ON DELETE CASCADE
