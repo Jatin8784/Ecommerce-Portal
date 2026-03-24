@@ -3,6 +3,21 @@ import { axiosInstance } from "../../lib/axios";
 import { toast } from "react-toastify";
 import { toggleAuthPopup } from "./popupSlice";
 
+export const sendOtp = createAsyncThunk(
+  "auth/sendOtp",
+  async (data, thunkAPI) => {
+    try {
+      const res = await axiosInstance.post("/auth/register/send-otp", data);
+      toast.success(res.data.message);
+      return res.data;
+    } catch (error) {
+      const message = error.response?.data?.message || "Network Error";
+      toast.error(message);
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
 export const register = createAsyncThunk(
   "auth/register",
   async (data, thumbAPI) => {
@@ -128,6 +143,7 @@ const authSlice = createSlice({
   initialState: {
     authUser: null,
     isSigningUp: false,
+    isOtpSending: false,
     isLoggingIn: false,
     isUpdatingProfile: false,
     isUpdatingPassword: false,
@@ -136,6 +152,15 @@ const authSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      .addCase(sendOtp.pending, (state) => {
+        state.isOtpSending = true;
+      })
+      .addCase(sendOtp.fulfilled, (state) => {
+        state.isOtpSending = false;
+      })
+      .addCase(sendOtp.rejected, (state) => {
+        state.isOtpSending = false;
+      })
       .addCase(register.pending, (state) => {
         state.isSigningUp = true;
       })

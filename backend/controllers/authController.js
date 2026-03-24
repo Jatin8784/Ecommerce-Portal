@@ -5,11 +5,12 @@ import bcrypt from "bcrypt";
 import { sendToken } from "../utils/jwtToken.js";
 import { generateResetPasswordToken } from "../utils/generateResetPasswordToken.js";
 import { generateEmailTemplate } from "../utils/generateForgotPasswordEmailTemplate.js";
+import { generateOtpTemplate } from "../utils/generateOtpTemplate.js";
 import { sendEmail } from "../utils/sendEmail.js";
 import crypto from "crypto";
 import { v2 as cloudinary } from "cloudinary";
 
-export const register = catchAsyncErrors(async (req, res, next) => {
+export const sendOtpForRegistration = catchAsyncErrors(async (req, res, next) => {
   const { name, email, password } = req.body;
   if (!name || !email || !password) {
     return next(new ErrorHandler("Please enter all fields", 400));
@@ -21,20 +22,81 @@ export const register = catchAsyncErrors(async (req, res, next) => {
     );
   }
 
-  const isAleadyRegistered = await database.query(
+  const isAlreadyRegistered = await database.query(
     "SELECT * FROM users WHERE email = $1",
     [email]
   );
-  if (isAleadyRegistered.rows.length > 0) {
+  if (isAlreadyRegistered.rows.length > 0) {
     return next(
       new ErrorHandler("User already registered with this email", 400)
     );
   }
+
+  const otp = Math.floor(100000 + Math.random() * 900000).toString();
+  const expiresAt = new Date(Date.now() + 10 * 60 * 1000);
+
+  await database.query(
+    "INSERT INTO otps (email, otp, expires_at) VALUES ($1, $2, $3)",
+    [email, otp, expiresAt]
+  );
+
+  const message = generateOtpTemplate(otp);
+
+  try {
+    await sendEmail({
+      email,
+      subject: "Verify Your Email Address",
+      message,
+    });
+    res.status(200).json({
+      success: true,
+      message: "OTP sent to your email address",
+    });
+  } catch (error) {
+    console.error("Email Error:", error);
+    return next(new ErrorHandler("Email could not be sent.", 500));
+  }
+});
+
+export const register = catchAsyncErrors(async (req, res, next) => {
+  const { name, email, password, otp } = req.body;
+  if (!name || !email || !password || !otp) {
+    return next(new ErrorHandler("Please enter all fields including OTP", 400));
+  }
+
+  if (password.length < 8 || password.length > 16) {
+    return next(
+      new ErrorHandler("Password must be between 8 and 16 characters", 400)
+    );
+  }
+
+  const otpRecord = await database.query(
+    "SELECT * FROM otps WHERE email = $1 AND otp = $2 AND expires_at > NOW() ORDER BY created_at DESC LIMIT 1",
+    [email, otp]
+  );
+
+  if (otpRecord.rows.length === 0) {
+    return next(new ErrorHandler("Invalid or expired OTP", 400));
+  }
+
+  const isAlreadyRegistered = await database.query(
+    "SELECT * FROM users WHERE email = $1",
+    [email]
+  );
+  if (isAlreadyRegistered.rows.length > 0) {
+    return next(
+      new ErrorHandler("User already registered with this email", 400)
+    );
+  }
+
   const hashedPassword = await bcrypt.hash(password, 10);
   const newUser = await database.query(
     "INSERT INTO users (name, email, password) VALUES ($1, $2, $3) RETURNING *",
     [name, email, hashedPassword]
   );
+  
+  await database.query("DELETE FROM otps WHERE email = $1", [email]);
+
   sendToken(newUser.rows[0], 201, "Registered Successfully", res);
 });
 

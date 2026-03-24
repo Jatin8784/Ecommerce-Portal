@@ -7,24 +7,32 @@ import {
   forgotPassword,
   login,
   register,
-  resetPassword, // ⬅️ make sure this exists in authSlice
+  sendOtp,
+  resetPassword,
 } from "../../store/slices/authSlice.js";
 
 const LoginModal = () => {
   const dispatch = useDispatch();
   const location = useLocation();
 
-  const { authUser, isSigningUp, isLoggingIn, isRequestingForToken } =
-    useSelector((state) => state.auth);
+  const {
+    authUser,
+    isSigningUp,
+    isLoggingIn,
+    isRequestingForToken,
+    isOtpSending,
+  } = useSelector((state) => state.auth);
 
   const { isAuthPopupOpen } = useSelector((state) => state.popup);
 
   const [mode, setMode] = useState("signin"); // signin | signup | forgot | reset
+  const [isOtpSent, setIsOtpSent] = useState(false);
   const [formdata, setFormData] = useState({
     name: "",
     email: "",
     password: "",
     confirmPassword: "",
+    otp: "",
   });
 
   useEffect(() => {
@@ -33,7 +41,9 @@ const LoginModal = () => {
       email: "",
       password: "",
       confirmPassword: "",
+      otp: "",
     });
+    setIsOtpSent(false);
   }, [mode]);
 
   // Detect reset-password route
@@ -74,7 +84,14 @@ const LoginModal = () => {
 
     if (mode === "signup") {
       data.name = formdata.name;
-      dispatch(register(data));
+      if (!isOtpSent) {
+        dispatch(sendOtp(data)).then((res) => {
+          if (!res.error) setIsOtpSent(true);
+        });
+      } else {
+        data.otp = formdata.otp;
+        dispatch(register(data));
+      }
     } else {
       dispatch(login(data));
     }
@@ -82,7 +99,8 @@ const LoginModal = () => {
 
   if (!isAuthPopupOpen || authUser) return null;
 
-  const loading = isSigningUp || isLoggingIn || isRequestingForToken;
+  const loading =
+    isSigningUp || isLoggingIn || isRequestingForToken || isOtpSending;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
@@ -109,8 +127,23 @@ const LoginModal = () => {
 
         {/* FORM */}
         <form onSubmit={handleSubmit} className="space-y-4">
+          {/* OTP */}
+          {mode === "signup" && isOtpSent && (
+            <input
+              type="text"
+              placeholder="Enter 6-digit OTP"
+              value={formdata.otp}
+              onChange={(e) =>
+                setFormData({ ...formdata, otp: e.target.value })
+              }
+              required
+              maxLength={6}
+              className="w-full p-3 rounded-lg bg-secondary text-foreground placeholder-muted-foreground border border-border focus:outline-none"
+            />
+          )}
+
           {/* Name */}
-          {mode === "signup" && (
+          {mode === "signup" && !isOtpSent && (
             <input
               type="text"
               placeholder="Full Name"
@@ -124,7 +157,7 @@ const LoginModal = () => {
           )}
 
           {/* Email */}
-          {mode !== "reset" && (
+          {mode !== "reset" && !isOtpSent && (
             <input
               type="email"
               placeholder="Email Address"
@@ -138,7 +171,7 @@ const LoginModal = () => {
           )}
 
           {/* Password */}
-          {mode !== "forgot" && (
+          {mode !== "forgot" && !isOtpSent && (
             <input
               type="password"
               placeholder="Password"
@@ -192,7 +225,9 @@ const LoginModal = () => {
               : mode === "reset"
                 ? "Reset Password"
                 : mode === "signup"
-                  ? "Create Account"
+                  ? isOtpSent
+                    ? "Verify & Create Account"
+                    : "Send OTP"
                   : mode === "forgot"
                     ? "Send Reset Email"
                     : "Sign In"}

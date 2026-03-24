@@ -5,6 +5,7 @@ import createProductReviewsTable from "../models/productReviewsTable.js";
 import createPaymentsTable from "../models/paymentsTable.js";
 import createOrdersTable from "../models/ordersTable.js";
 import createOrderItemTable from "../models/orderItemsTable.js";
+import createOtpTable from "../models/otpTable.js";
 
 export default async function createTables() {
   try {
@@ -15,6 +16,7 @@ export default async function createTables() {
     await createOrderItemTable();
     await createShippingInfoTable();
     await createPaymentsTable();
+    await createOtpTable();
     console.log("All Tables Created Successfully");
   } catch (error) {
     console.error("Error creating tables:", error);
