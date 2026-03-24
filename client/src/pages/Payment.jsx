@@ -7,6 +7,8 @@ import { Elements } from "@stripe/react-stripe-js";
 import PaymentForm from "../components/PaymentForm";
 import { loadStripe } from "@stripe/stripe-js";
 import { PlaceOrder } from "../store/slices/orderSlice.js";
+import { toast } from "react-toastify";
+import { clearCart } from "../store/slices/cartSlice.js";
 
 const Payment = () => {
   const { authUser } = useSelector((state) => state.auth);
@@ -33,6 +35,15 @@ const Payment = () => {
   const { cart } = useSelector((state) => state.cart);
   const { orderStep } = useSelector((state) => state.order);
   const [paymentMethod, setPaymentMethod] = useState("Stripe");
+  const [shippingDetails, setShippingDetails] = useState({
+    fullName: "",
+    state: "Gujarat",
+    phone: "",
+    address: "",
+    city: "",
+    zipCode: "",
+    country: "India",
+  });
 
   const total = cart.reduce(
     (sum, item) => sum + item.product.price * item.quantity,
