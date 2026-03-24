@@ -26,7 +26,9 @@
   },
   "scripts": {
     "start": "node server.js",
-    "dev": "nodemon server.js"
+    "dev": "nodemon server.js",
+    "stripe": "stripe listen --forward-to https://ecommerce-pcf6.onrender.com/api/v1/payment/webhook",
+    "dev:all": "concurrently -k \"npm run dev\" \"npm run stripe\""
   },
   "keywords": [],
   "author": "",
