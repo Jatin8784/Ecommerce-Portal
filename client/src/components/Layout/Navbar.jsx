@@ -25,20 +25,22 @@ const Navbar = () => {
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex items-center justify-between h-16">
             {/* Left HamBurger Menu  */}
-            <button
-              onClick={() => dispatch(toggleSidebar())}
-              className="p-2 rounded-lg hover:bg-secondary transition-colors"
-            >
-              <Menu className="w-6 h-6 text-foreground" />
-            </button>
+            <div className="flex-1 flex justify-start">
+              <button
+                onClick={() => dispatch(toggleSidebar())}
+                className="p-2 rounded-lg hover:bg-secondary transition-colors"
+              >
+                <Menu className="w-6 h-6 text-foreground" />
+              </button>
+            </div>
 
             {/* Center Logo */}
-            <div className="flex-1 flex justify-center">
+            <div className="flex flex-shrink-0 justify-center">
               <h1 className="text-2xl font-bold text-primary">E-Kart</h1>
             </div>
 
             {/* Right Side Icons */}
-            <div className="flex items-center space-x-2">
+            <div className="flex-1 flex items-center justify-end space-x-2">
               {/* Theme Toggle */}
               <button
                 onClick={toggleTheme}
