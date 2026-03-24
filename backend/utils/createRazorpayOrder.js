@@ -18,7 +18,7 @@ export async function createRazorpayOrder(orderId, totalPrice) {
     const options = {
       amount: totalPrice * 100, // Amount in paise
       currency: "INR",
-      receipt: `receipt_${orderId}`,
+      receipt: `${orderId}`,
     };
 
     const razorpayOrder = await razorpay.orders.create(options);
