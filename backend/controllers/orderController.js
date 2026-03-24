@@ -136,7 +136,7 @@ export const placeNewOrder = catchAsyncErrors(async (req, res, next) => {
   const paymentResponse = await createRazorpayOrder(orderId, total_price);
 
   if (!paymentResponse.success) {
-    return next(new ErrorHandler("Payment setup failed, Try again: ", 500));
+    return next(new ErrorHandler("Payment setup failed: " + paymentResponse.message, 500));
   }
 
   res.status(200).json({

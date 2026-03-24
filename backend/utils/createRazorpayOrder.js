@@ -26,6 +26,6 @@ export async function createRazorpayOrder(orderId, totalPrice) {
     return { success: true, razorpayOrder };
   } catch (error) {
     console.error("Razorpay Order Error:", error.message || error);
-    return { success: false, message: "Failed to create Razorpay order." };
+    return { success: false, message: error.message || "Failed to create Razorpay order." };
   }
 }
