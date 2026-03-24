@@ -20,14 +20,13 @@ const Payment = () => {
     const initStripe = async () => {
       try {
         const stripe = await loadStripe(
-          "pk_test_51SiU5sEQnwHwcpnydmGBIpUNibkt4IHYoJJCKVYv1KlhsVwgnKa0UqGVOpVNytqtigo34wNvBFAQWpx0WePiE6Dj00aYHvYmN5"
+          import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY
         );
         setStripePromise(stripe);
       } catch (err) {
         console.error("Stripe load failed:", err);
       }
     };
-
     initStripe();
   }, []);
 
