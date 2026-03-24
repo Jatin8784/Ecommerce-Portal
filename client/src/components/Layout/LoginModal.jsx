@@ -141,7 +141,7 @@ const LoginModal = () => {
           {mode !== "forgot" && (
             <input
               type="password"
-              placeholder="New Password"
+              placeholder="Password"
               value={formdata.password}
               onChange={(e) =>
                 setFormData({ ...formdata, password: e.target.value })
