@@ -13,7 +13,7 @@ const Orders = () => {
     "Processing",
     "Shipped",
     "Delivered",
-    "Cencelled",
+    "Cancelled",
   ];
 
   const dispatch = useDispatch();
