@@ -68,11 +68,11 @@ const ProfilePanel = () => {
       {/* Overlay */}
       <div
         className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40"
-        onClick={() => dispatch(toggleSidebar())}
+        onClick={() => dispatch(toggleAuthPopup())}
       ></div>
 
       {/* Profile Panel */}
-      <div className="fixed right-0 top-0 h-full w-96 z-50 glass-panel animate-slide-in-right overflow-y-auto">
+      <div className="fixed right-0 top-0 h-full w-96 z-50 glass-panel bg-background/95 animate-slide-in-right overflow-y-auto">
         <div className="flex items-center justify-between p-6 border-b border-[hsla[var(--glass-border))]">
           <h2 className="text-xl font-semibold text-primary">Profile</h2>
           <button

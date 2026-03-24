@@ -39,7 +39,7 @@ const Sidebar = () => {
       ></div>
 
       {/* SideBar */}
-      <div className="fixed left-0 top-0 h-full w-80 z-50 glass-panel animate-slide-in-left">
+      <div className="fixed left-0 top-0 h-full w-80 z-50 glass-panel bg-background/95 animate-slide-in-left">
         <div className="flex items-center justify-between !p-6 border-b border-[hsla(var(--glass-border))]">
           <h2 className="text-xl font-semibold text-primary">Menu</h2>
           <button
