@@ -61,7 +61,7 @@ const LoginModal = () => {
           token,
           password: formdata.password,
           confirmPassword: formdata.confirmPassword,
-        })
+        }),
       );
       return;
     }
@@ -96,10 +96,10 @@ const LoginModal = () => {
             {mode === "reset"
               ? "Reset Password"
               : mode === "signup"
-              ? "Create Account"
-              : mode === "forgot"
-              ? "Forgot Password"
-              : "Welcome Back"}
+                ? "Create Account"
+                : mode === "forgot"
+                  ? "Forgot Password"
+                  : "Welcome Back"}
           </h2>
 
           <button onClick={() => dispatch(toggleAuthPopup())}>
@@ -141,7 +141,7 @@ const LoginModal = () => {
           {mode !== "forgot" && (
             <input
               type="password"
-              placeholder="Password"
+              placeholder="New Password"
               value={formdata.password}
               onChange={(e) =>
                 setFormData({ ...formdata, password: e.target.value })
@@ -190,12 +190,12 @@ const LoginModal = () => {
             {loading
               ? "Please wait..."
               : mode === "reset"
-              ? "Reset Password"
-              : mode === "signup"
-              ? "Create Account"
-              : mode === "forgot"
-              ? "Send Reset Email"
-              : "Sign In"}
+                ? "Reset Password"
+                : mode === "signup"
+                  ? "Create Account"
+                  : mode === "forgot"
+                    ? "Send Reset Email"
+                    : "Sign In"}
           </button>
         </form>
 
