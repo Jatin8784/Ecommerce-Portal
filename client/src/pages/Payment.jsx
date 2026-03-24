@@ -1,12 +1,12 @@
 /* eslint-disable react-hooks/rules-of-hooks */
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { ArrowLeft, Check } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { Elements } from "@stripe/react-stripe-js";
 import PaymentForm from "../components/PaymentForm";
 import { loadStripe } from "@stripe/stripe-js";
-import { PlaceOrder } from "../store/slices/orderSlice.js";
+import { PlaceOrder, VerifyPayment, resetOrderState } from "../store/slices/orderSlice.js";
 import { toast } from "react-toastify";
 import { clearCart } from "../store/slices/cartSlice.js";
 
@@ -15,25 +15,17 @@ const Payment = () => {
   const navigate = useNavigate();
   if (!authUser) return navigate("/products");
 
-  const [stripePromise, setStripePromise] = useState(null);
-  useEffect(() => {
-    const initStripe = async () => {
-      try {
-        const stripe = await loadStripe(
-          import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY
-        );
-        setStripePromise(stripe);
-      } catch (err) {
-        console.error("Stripe load failed:", err);
-      }
-    };
-    initStripe();
-  }, []);
-
   const dispatch = useDispatch();
   const { cart } = useSelector((state) => state.cart);
-  const { orderStep } = useSelector((state) => state.order);
-  const [paymentMethod, setPaymentMethod] = useState("Stripe");
+  const { 
+    orderStep, 
+    razorpayOrderId, 
+    razorpayAmount, 
+    razorpayCurrency, 
+    currentOrderId 
+  } = useSelector((state) => state.order);
+  
+  const [paymentMethod, setPaymentMethod] = useState("Online"); // Renamed from Stripe
   const [shippingDetails, setShippingDetails] = useState({
     fullName: "",
     state: "Gujarat",
@@ -65,22 +57,70 @@ const Payment = () => {
       city: shippingDetails.city,
       pincode: shippingDetails.zipCode,
       country: shippingDetails.country,
-      payment_method: paymentMethod,
+      payment_method: paymentMethod === "Online" ? "Online" : "COD",
       orderedItems: cart,
     };
 
     dispatch(PlaceOrder(payload));
   };
 
+  const handleRazorpayPayment = useCallback(() => {
+    if (!razorpayOrderId) return;
+
+    const options = {
+      key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+      amount: razorpayAmount,
+      currency: razorpayCurrency,
+      name: "E-Kart",
+      description: "Order Payment",
+      order_id: razorpayOrderId,
+      handler: async (response) => {
+        const verifyData = {
+          razorpay_order_id: response.razorpay_order_id,
+          razorpay_payment_id: response.razorpay_payment_id,
+          razorpay_signature: response.razorpay_signature,
+          orderId: currentOrderId,
+        };
+        const result = await dispatch(VerifyPayment(verifyData));
+        if (result.payload?.success) {
+          dispatch(clearCart());
+        }
+      },
+      prefill: {
+        name: shippingDetails.fullName,
+        contact: shippingDetails.phone,
+        email: authUser.email,
+      },
+      theme: {
+        color: "#6366f1",
+      },
+    };
+
+    const rzp = new window.Razorpay(options);
+    rzp.open();
+  }, [
+    razorpayOrderId, 
+    razorpayAmount, 
+    razorpayCurrency, 
+    currentOrderId, 
+    shippingDetails, 
+    authUser.email, 
+    dispatch
+  ]);
+
   useEffect(() => {
+    if (orderStep === 2 && paymentMethod === "Online") {
+      handleRazorpayPayment();
+    }
     if (orderStep === 3) {
       toast.success("Order Placed Successfully!");
       dispatch(clearCart());
-      navigate("/orders");
+      // reset state after some time or on unmount
     }
-  }, [orderStep, navigate, dispatch]);
+  }, [orderStep, paymentMethod, handleRazorpayPayment, dispatch]);
 
   if (cart.length === 0 && orderStep !== 3) {
+    // ... same as before
     return (
       <div className="min-h-screen pt-20 flex items-center justify-center">
         <div className="text-center glass-panel max-w-md">
@@ -320,9 +360,9 @@ const Payment = () => {
                       </h3>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div
-                          onClick={() => setPaymentMethod("Stripe")}
+                          onClick={() => setPaymentMethod("Online")}
                           className={`cursor-pointer p-4 rounded-xl border-2 transition-all flex items-center justify-between ${
-                            paymentMethod === "Stripe"
+                            paymentMethod === "Online"
                               ? "border-primary bg-primary/10"
                               : "border-border hover:border-primary/50"
                           }`}
@@ -330,20 +370,20 @@ const Payment = () => {
                           <div className="flex items-center space-x-3">
                             <div
                               className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${
-                                paymentMethod === "Stripe"
+                                paymentMethod === "Online"
                                   ? "border-primary"
                                   : "border-muted-foreground"
                               }`}
                             >
-                              {paymentMethod === "Stripe" && (
+                              {paymentMethod === "Online" && (
                                 <div className="w-2 h-2 rounded-full bg-primary" />
                               )}
                             </div>
-                            <span className="font-medium">Stripe (Card)</span>
+                            <span className="font-medium">Online Payment</span>
                           </div>
                           <img
-                            src="https://upload.wikimedia.org/wikipedia/commons/b/ba/Stripe_Logo%2C_revised_2016.svg"
-                            alt="Stripe"
+                            src="https://upload.wikimedia.org/wikipedia/commons/8/89/Razorpay_logo.svg"
+                            alt="Razorpay"
                             className="h-6"
                           />
                         </div>
@@ -378,33 +418,46 @@ const Payment = () => {
 
                     <button
                       type="submit"
-                      className="w-full py-4 gradient-primary text-primary-foreground rounded-lg hover:glow-on-hover animate-smooth font-bold text-lg"
+                      disabled={placingOrder}
+                      className="w-full py-4 gradient-primary text-primary-foreground rounded-lg hover:glow-on-hover animate-smooth font-bold text-lg disabled:opacity-50"
                     >
-                      {paymentMethod === "Stripe"
-                        ? "Continue to Payment"
-                        : "Place Order"}
+                      {placingOrder ? "Placing Order..." : (paymentMethod === "Online" ? "Continue to Payment" : "Place Order")}
                     </button>
                   </form>
                 ) : (
-                  <>
-                    {orderStep === 2 ? (
-                      <Elements stripe={stripePromise}>
-                        <PaymentForm />
-                      </Elements>
-                    ) : (
-                      <div className="glass-panel text-center py-12">
+                  <div className="glass-panel text-center py-12">
+                    {orderStep === 3 ? (
+                      <>
                         <div className="w-20 h-20 gradient-primary rounded-full flex items-center justify-center mx-auto mb-6 animate-bounce">
                           <Check className="w-10 h-10 text-primary-foreground" />
                         </div>
                         <h2 className="text-2xl font-bold mb-4">
-                          Order Processing...
+                          Order Placed Successfully!
+                        </h2>
+                        <p className="text-muted-foreground mb-8">
+                          Thank you for your purchase. You can track your order in the orders section.
+                        </p>
+                        <Link
+                          to={"/orders"}
+                          className="inline-flex items-center space-x-2 px-8 py-3 rounded-lg text-primary-foreground gradient-primary animate-smooth hover:glow-on-hover font-semibold"
+                        >
+                          View My Orders
+                        </Link>
+                      </>
+                    ) : (
+                      <>
+                        <div className="w-20 h-20 bg-secondary rounded-full flex items-center justify-center mx-auto mb-6 animate-pulse">
+                          <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+                        </div>
+                        <h2 className="text-2xl font-bold mb-4">
+                          Processing Payment...
                         </h2>
                         <p className="text-muted-foreground">
-                          Please wait while we complete your request.
+                          Please complete the payment in the Razorpay popup.
                         </p>
-                      </div>
+                      </>
                     )}
-                  </>
+                  </div>
                 )}
               </div>
 

@@ -1,7 +1,7 @@
 import ErrorHandler from "../middleware/errorMiddlewares.js";
 import { catchAsyncErrors } from "../middleware/catchAsyncError.js";
 import database from "../database/db.js";
-import { generatePaymentIntent } from "../utils/generatePaymentIntent.js";
+import { createRazorpayOrder } from "../utils/createRazorpayOrder.js";
 
 export const placeNewOrder = catchAsyncErrors(async (req, res, next) => {
   const {
@@ -128,20 +128,24 @@ export const placeNewOrder = catchAsyncErrors(async (req, res, next) => {
     return res.status(200).json({
       success: true,
       message: "Order Placed Successfully via Cash On Delivery.",
+      orderId,
       total_price,
     });
   }
 
-  const paymentResponse = await generatePaymentIntent(orderId, total_price);
+  const paymentResponse = await createRazorpayOrder(orderId, total_price);
 
   if (!paymentResponse.success) {
-    return next(new ErrorHandler("Payment failed, Try again: ", 500));
+    return next(new ErrorHandler("Payment setup failed, Try again: ", 500));
   }
 
   res.status(200).json({
     success: true,
-    message: "Order Placed Successfully. Please Proceed to Payment.",
-    paymentIntent: paymentResponse.clientSecret,
+    message: "Order Placed Successfully. Proceed to Payment.",
+    orderId,
+    razorpayOrderId: paymentResponse.razorpayOrder.id,
+    amount: paymentResponse.razorpayOrder.amount,
+    currency: paymentResponse.razorpayOrder.currency,
     total_price,
   });
 });

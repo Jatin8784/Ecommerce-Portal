@@ -1,4 +1,5 @@
 import express from "express";
+import crypto from "crypto";
 import { config } from "dotenv";
 import cors from "cors";
 import cookieParser from "cookie-parser";
@@ -19,68 +20,6 @@ config({ path: "./config/config.env" });
 
 app.use(cookieParser());
 
-app.post(
-  "/api/v1/payment/webhook",
-  express.raw({ type: "application/json" }),
-  async (req, res) => {
-    const sig = req.headers["stripe-signature"];
-    let event;
-
-    try {
-      event = stripe.webhooks.constructEvent(
-        req.body,
-        sig,
-        process.env.STRIPE_WEBHOOK_SECRET,
-      );
-    } catch (error) {
-      console.log("Webhook Error:", error.message);
-      return res.status(400).send(`Webhook Error: ${error.message}`);
-    }
-
-    if (event.type === "payment_intent.succeeded") {
-      const paymentIntentId = event.data.object.id;
-
-      try {
-        await database.query("BEGIN");
-
-        const paymentUpdate = await database.query(
-          "UPDATE payments SET payment_status = $1 WHERE payment_intent_id = $2 RETURNING order_id",
-          ["Paid", paymentIntentId],
-        );
-
-        if (paymentUpdate.rows.length === 0) {
-          throw new Error("Payment record not found");
-        }
-
-        const orderId = paymentUpdate.rows[0].order_id;
-
-        await database.query(
-          "UPDATE orders SET paid_at = NOW() WHERE id = $1",
-          [orderId],
-        );
-
-        const { rows: items } = await database.query(
-          "SELECT product_id, quantity FROM order_items WHERE order_id = $1",
-          [orderId],
-        );
-
-        for (const item of items) {
-          await database.query(
-            "UPDATE products SET stock = stock - $1 WHERE id = $2",
-            [item.quantity, item.product_id],
-          );
-        }
-
-        await database.query("COMMIT");
-      } catch (error) {
-        await database.query("ROLLBACK");
-        return res.status(500).send("Database Update Failed");
-      }
-    }
-    res.status(200).send({ received: true });
-  },
-);
-
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -100,6 +39,56 @@ app.use(
 
 app.get("/", (req, res) => {
   res.send({ activeStatus: true, error: false });
+});
+
+app.post("/api/v1/payment/verify", async (req, res) => {
+  const {
+    razorpay_order_id,
+    razorpay_payment_id,
+    razorpay_signature,
+    orderId,
+  } = req.body;
+
+  const sign = razorpay_order_id + "|" + razorpay_payment_id;
+  const expectedSign = crypto
+    .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
+    .update(sign.toString())
+    .digest("hex");
+
+  if (razorpay_signature === expectedSign) {
+    try {
+      await database.query("BEGIN");
+
+      await database.query(
+        "UPDATE payments SET payment_status = $1, payment_intent_id = $2 WHERE order_id = $3",
+        ["Paid", razorpay_payment_id, orderId],
+      );
+
+      await database.query("UPDATE orders SET paid_at = NOW() WHERE id = $1", [
+        orderId,
+      ]);
+
+      const { rows: items } = await database.query(
+        "SELECT product_id, quantity FROM order_items WHERE order_id = $1",
+        [orderId],
+      );
+
+      for (const item of items) {
+        await database.query(
+          "UPDATE products SET stock = stock - $1 WHERE id = $2",
+          [item.quantity, item.product_id],
+        );
+      }
+
+      await database.query("COMMIT");
+      return res.status(200).json({ success: true, message: "Payment verified successfully" });
+    } catch (error) {
+      await database.query("ROLLBACK");
+      return res.status(500).json({ success: false, message: "Verification failed on server" });
+    }
+  } else {
+    return res.status(400).json({ success: false, message: "Invalid signature" });
+  }
 });
 
 app.use("/api/v1/auth", authRouter);

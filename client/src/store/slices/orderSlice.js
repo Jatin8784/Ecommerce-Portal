@@ -37,6 +37,20 @@ export const PlaceOrder = createAsyncThunk(
   }
 );
 
+export const VerifyPayment = createAsyncThunk(
+  "/payment/verify",
+  async (data, thunkAPI) => {
+    try {
+      const res = await axiosInstance.post("/payment/verify", data);
+      toast.success(res.data.message);
+      return res.data;
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Verification failed");
+      return thunkAPI.rejectWithValue(error.response?.data?.message);
+    }
+  }
+);
+
 const orderSlice = createSlice({
   name: "order",
   initialState: {
@@ -45,12 +59,20 @@ const orderSlice = createSlice({
     placingOrder: false,
     finalPrice: null,
     orderStep: 1,
-    paymentIntent: "",
+    razorpayOrderId: null,
+    razorpayAmount: null,
+    razorpayCurrency: "INR",
+    currentOrderId: null,
   },
   reducers: {
     toggleOrderStep(state) {
       state.orderStep = 1;
     },
+    resetOrderState(state) {
+      state.orderStep = 1;
+      state.razorpayOrderId = null;
+      state.currentOrderId = null;
+    }
   },
   extraReducers: (builder) => {
     builder
@@ -70,19 +92,25 @@ const orderSlice = createSlice({
       .addCase(PlaceOrder.fulfilled, (state, action) => {
         state.placingOrder = false;
         state.finalPrice = action.payload.total_price;
-        if (action.payload.paymentIntent) {
-          state.paymentIntent = action.payload.paymentIntent;
+        state.currentOrderId = action.payload.orderId; // Make sure backend returns orderId
+        if (action.payload.razorpayOrderId) {
+          state.razorpayOrderId = action.payload.razorpayOrderId;
+          state.razorpayAmount = action.payload.amount;
+          state.razorpayCurrency = action.payload.currency;
           state.orderStep = 2;
         } else {
-          state.orderStep = 3; // Use Step 3 for Success/Checkout complete
+          state.orderStep = 3;
         }
       })
       .addCase(PlaceOrder.rejected, (state, action) => {
         state.placingOrder = false;
         state.error = action.payload || "An unexpected error occurred";
+      })
+      .addCase(VerifyPayment.fulfilled, (state) => {
+        state.orderStep = 3;
       });
   },
 });
 
 export default orderSlice.reducer;
-export const { toggleOrderStep } = orderSlice.actions;
+export const { toggleOrderStep, resetOrderState } = orderSlice.actions;
