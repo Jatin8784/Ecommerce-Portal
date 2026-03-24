@@ -16,7 +16,7 @@ const ProfilePanel = () => {
   const dispatch = useDispatch();
   const { isAuthPopupOpen } = useSelector((state) => state.popup);
   const { authUser, isUpdatingProfile, isUpdatingPassword } = useSelector(
-    (state) => state.auth
+    (state) => state.auth,
   );
 
   const [name, setName] = useState(authUser?.name || "");
@@ -55,7 +55,7 @@ const ProfilePanel = () => {
     // formData.append("newPassword", newPassword);
     // formData.append("confirmPassword", confirmPassword);
     dispatch(
-      updatePassword({ currentPassword, newPassword, confirmNewPassword })
+      updatePassword({ currentPassword, newPassword, confirmNewPassword }),
     );
   };
 
@@ -85,7 +85,7 @@ const ProfilePanel = () => {
 
         <div className="p-6">
           {/* Avatar + Basic Info */}
-          <div className="text-center mb-6">
+          <div className="text-center mb-6 flex justify-center">
             <img
               src={authUser?.avatar?.url || "/avatar-holder.avif"}
               alt={authUser?.name}
