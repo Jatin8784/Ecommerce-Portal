@@ -22,7 +22,8 @@ const Payment = () => {
     razorpayOrderId, 
     razorpayAmount, 
     razorpayCurrency, 
-    currentOrderId 
+    currentOrderId,
+    placingOrder 
   } = useSelector((state) => state.order);
   
   const [paymentMethod, setPaymentMethod] = useState("Online"); // Renamed from Stripe
