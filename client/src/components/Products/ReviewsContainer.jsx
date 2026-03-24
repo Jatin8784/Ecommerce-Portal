@@ -67,60 +67,76 @@ const ReviewsContainer = ({ product, productReviews }) => {
         <div className="space-y-6">
           {productReviews.map((review) => {
             return (
-              <div key={review.review_id} className="glass-card p-6">
-                <div className="flex items-center space-x-4">
-                  <img
-                    src={review.reviewer?.avatar?.url || "/avatar-holder.avif"}
-                    alt={review?.reviewer?.name}
-                    className="w-12 h-12 rounded-full text-foreground"
-                  />
-                  <div className="flex-1">
-                    <div className="flex items-center space-x-4 mb-2">
-                      <h4 className="font-semibold text-foreground">
+              <div key={review.review_id} className="glass-card p-4 sm:p-6 animate-fade-in-up">
+                <div className="flex flex-col sm:flex-row sm:items-start space-y-4 sm:space-y-0 sm:space-x-4">
+                  <div className="flex items-center space-x-4 sm:block">
+                    <img
+                      src={review.reviewer?.avatar?.url || "/avatar-holder.avif"}
+                      alt={review?.reviewer?.name}
+                      className="w-12 h-12 sm:w-14 sm:h-14 rounded-full object-cover border-2 border-primary/20 p-1"
+                    />
+                    <div className="sm:hidden">
+                      <h4 className="font-semibold text-foreground text-base">
                         {review?.reviewer?.name}
                       </h4>
                       <div className="flex">
-                        {[...Array(5)].map((_, i) => {
-                          return (
-                            <Star
-                              key={i}
-                              className={`w-4 h-4 ${
-                                i < Math.floor(review.rating)
-                                  ? "text-yellow-400 fill-yellow-400"
-                                  : "text-gray-300"
-                              }`}
-                            />
-                          );
-                        })}
+                        {[...Array(5)].map((_, i) => (
+                          <Star
+                            key={i}
+                            className={`w-3 h-3 ${
+                              i < Math.floor(review.rating)
+                                ? "text-yellow-400 fill-yellow-400"
+                                : "text-gray-300"
+                            }`}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="flex-1 min-w-0">
+                    <div className="hidden sm:flex items-center justify-between mb-2">
+                      <h4 className="font-semibold text-foreground text-lg">
+                        {review?.reviewer?.name}
+                      </h4>
+                      <div className="flex">
+                        {[...Array(5)].map((_, i) => (
+                          <Star
+                            key={i}
+                            className={`w-4 h-4 ${
+                              i < Math.floor(review.rating)
+                                ? "text-yellow-400 fill-yellow-400"
+                                : "text-gray-300"
+                            }`}
+                          />
+                        ))}
                       </div>
                     </div>
 
-                    <p className="text-muted-foreground mb-2">
+                    <p className="text-muted-foreground text-sm sm:text-base leading-relaxed break-words">
                       {review.comment}
                     </p>
+                    
                     {authUser?.id === review.reviewer?.id && (
-                      <button
-                        onClick={() =>
-                          dispatch(
-                            deleteReview({
-                              productId: product.id,
-                              reviewId: review.review_id,
-                            })
-                          )
-                        }
-                        className="my-6 w-fit items-center space-x-3 p-3 rounded-lg glass-card hover:glass-on-hover text-destructive hover:text-destructive-foreground group animate-smooth"
-                      >
-                        {isReviewDeleting ? (
-                          <>
-                            <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin">
-                              {" "}
-                              <span>Deleting Review...</span>
-                            </div>
-                          </>
-                        ) : (
-                          <span>Delete Review</span>
-                        )}
-                      </button>
+                      <div className="mt-4 flex justify-end">
+                        <button
+                          onClick={() =>
+                            dispatch(
+                              deleteReview({
+                                productId: product.id,
+                                reviewId: review.review_id,
+                              })
+                            )
+                          }
+                          disabled={isReviewDeleting}
+                          className="flex items-center space-x-2 px-3 py-1.5 rounded-md text-sm font-medium transition-all duration-200 border border-destructive/30 text-destructive hover:bg-destructive hover:text-white disabled:opacity-50"
+                        >
+                          {isReviewDeleting ? (
+                            <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                          ) : null}
+                          <span>{isReviewDeleting ? "Deleting..." : "Delete Review"}</span>
+                        </button>
+                      </div>
                     )}
                   </div>
                 </div>
