@@ -64,8 +64,23 @@ const PaymentForm = () => {
           <label className="block text-sm font-medium text-foreground mb-2">
             Card Details *
           </label>
-          <div className="px-4 py-3 bg-secondary border border-border rounded-lg focus:outline-none text-foreground">
-            <CardElement options={{ style: { base: { fontSize: "16px" } } }} />
+          <div className="px-4 py-3 bg-secondary border border-border rounded-lg focus-within:ring-2 focus-within:ring-primary/20 transition-all">
+            <CardElement
+              options={{
+                style: {
+                  base: {
+                    fontSize: "16px",
+                    color: "#ffffff",
+                    "::placeholder": {
+                      color: "#aab7c4",
+                    },
+                  },
+                  invalid: {
+                    color: "#ef4444",
+                  },
+                },
+              }}
+            />
           </div>
         </div>
 
