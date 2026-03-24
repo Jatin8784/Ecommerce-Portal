@@ -12,7 +12,7 @@ export default async function createOrdersTable() {
         order_status VARCHAR(50) DEFAULT 'Processing' CHECK (
           order_status IN ('Processing', 'Shipped', 'Delivered', 'Cancelled')
         ),
-        payment_method VARCHAR(50) DEFAULT 'Stripe' CHECK (
+        payment_method VARCHAR(50) DEFAULT 'Online' CHECK (
           payment_method IN ('Stripe', 'COD', 'Online')
         ),
         paid_at TIMESTAMP CHECK (paid_at IS NULL OR paid_at <= CURRENT_TIMESTAMP),
@@ -24,7 +24,7 @@ export default async function createOrdersTable() {
     
     // Auto-migration: Add payment_method if it doesn't exist
     await database.query(`
-      ALTER TABLE orders ADD COLUMN IF NOT EXISTS payment_method VARCHAR(50) DEFAULT 'Stripe' CHECK (payment_method IN ('Stripe', 'COD', 'Online'));
+      ALTER TABLE orders ADD COLUMN IF NOT EXISTS payment_method VARCHAR(50) DEFAULT 'Online' CHECK (payment_method IN ('Stripe', 'COD', 'Online'));
     `);
 
     console.log("✅ Orders table updated successfully.");

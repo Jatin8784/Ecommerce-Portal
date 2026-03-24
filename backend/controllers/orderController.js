@@ -12,7 +12,7 @@ export const placeNewOrder = catchAsyncErrors(async (req, res, next) => {
     address,
     pincode,
     phone,
-    payment_method = "Stripe",
+    payment_method = "Online",
   } = req.body;
 
   let { orderedItems } = req.body;
