@@ -3,12 +3,12 @@ import database from "../database/db.js";
 import dotenv from "dotenv";
 dotenv.config({ path: "./config/config.env" });
 
-const razorpay = new Razorpay({
-  key_id: process.env.RAZORPAY_KEY_ID,
-  key_secret: process.env.RAZORPAY_KEY_SECRET,
-});
-
 export async function createRazorpayOrder(orderId, totalPrice) {
+  const razorpay = new Razorpay({
+    key_id: process.env.RAZORPAY_KEY_ID,
+    key_secret: process.env.RAZORPAY_KEY_SECRET,
+  });
+
   try {
     const options = {
       amount: totalPrice * 100, // Amount in paise

@@ -1,6 +1,7 @@
+import { config } from "dotenv";
+config({ path: "./config/config.env" });
 import express from "express";
 import crypto from "crypto";
-import { config } from "dotenv";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import fileUpload from "express-fileupload";
@@ -16,7 +17,6 @@ import Stripe from "stripe";
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 const app = express();
-config({ path: "./config/config.env" });
 
 app.use(cookieParser());
 
