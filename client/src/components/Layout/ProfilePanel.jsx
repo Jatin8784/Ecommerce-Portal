@@ -83,7 +83,7 @@ const ProfilePanel = () => {
           </button>
         </div>
 
-        <div className="p-6 ">
+        <div className="p-6 text-center">
           {/* Avatar + Basic Info */}
           <div className="text-center mb-6 ">
             <img
