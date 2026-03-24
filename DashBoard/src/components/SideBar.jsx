@@ -55,7 +55,7 @@ const SideBar = () => {
   return (
     <>
       <aside
-        className={`${isNavbarOpened} ?'left-[10px]':'-left-full' fixed w-64 h-[97.5%] rounded-xl bg-white z-10 mt-[10px] transition-all duration-300 shadow-lg p-4 space-y-4 flex flex-col justify-between md:left-[10px]`}
+        className={`${isNavbarOpened ? "left-[10px]" : "-left-full"} fixed w-64 h-[97.5%] rounded-xl bg-white z-10 mt-[10px] transition-all duration-300 shadow-lg p-4 space-y-4 flex flex-col justify-between md:left-[10px]`}
       >
         <nav className="space-y-2">
           <div className="flex flex-col gap-2 py-2">
@@ -90,7 +90,8 @@ const SideBar = () => {
           onClick={handleLogout}
           className="text-white rounded-md cursor-pointer px-3 py-2 gap-2 bg-red-gradient flex items-center "
         >
-          <LogOut/>Logout
+          <LogOut />
+          Logout
         </button>
       </aside>
     </>
