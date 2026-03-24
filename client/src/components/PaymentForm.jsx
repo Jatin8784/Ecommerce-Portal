@@ -33,7 +33,7 @@ const PaymentForm = () => {
         payment_method: {
           card: cardElement,
         },
-      },
+      }
     );
 
     if (error) {
@@ -65,18 +65,7 @@ const PaymentForm = () => {
             Card Details *
           </label>
           <div className="px-3 sm:px-4 py-3 bg-secondary border border-border rounded-lg focus:outline-none text-foreground">
-            <CardElement
-              options={{
-                hidePostalCode: true,
-                style: {
-                  base: {
-                    fontSize: "16px",
-                    color: "#ffffff",
-                    "::placeholder": { color: "#888888" },
-                  },
-                },
-              }}
-            />
+            <CardElement options={{ hidePostalCode: true, style: { base: { fontSize: "16px", color: "#ffffff", "::placeholder": { color: "#888888" } } } }} />
           </div>
         </div>
 
