@@ -18,7 +18,7 @@ const ProductCard = ({ product }) => {
       <Link
         key={product.id}
         to={`/product/${product.id}`}
-        className="glass-card hover:glass-on-hover animate-smooth group p-4 flex-col"
+        className="glass-card hover:glass-on-hover animate-smooth group p-4 flex flex-col h-full"
       >
         {/* Product Image */}
         <div className="relative h-48 bg-white rounded-lg flex items-center justify-center">
@@ -53,58 +53,60 @@ const ProductCard = ({ product }) => {
         </div>
 
         {/* Product Info */}
-        <div>
+        <div className="flex flex-col flex-grow mt-4">
           {/* Product Title */}
-          <h3 className="text-lg font-semibold text-foreground mb-2 group-hover:text-primary transition-colors">
+          <h3 className="text-base font-semibold text-foreground mb-2 line-clamp-2 group-hover:text-primary transition-colors">
             {product.name}
           </h3>
 
-          {/* Product Ratings */}
-          <div className="flex items-center space-x-2 mb-2">
-            <div className="flex items-center">
-              {[...Array(5)].map((_, i) => {
-                return (
-                  <Star
-                    key={i}
-                    className={`w-4 h-4 ${
-                      i < Math.floor(product.ratings)
-                        ? "text-yellow-400 fill-yellow-400"
-                        : "text-gray-300"
-                    }`}
-                  />
-                );
-              })}
+          <div className="mt-auto">
+            {/* Product Ratings */}
+            <div className="flex items-center space-x-2 mb-2">
+              <div className="flex items-center">
+                {[...Array(5)].map((_, i) => {
+                  return (
+                    <Star
+                      key={i}
+                      className={`w-4 h-4 ${
+                        i < Math.floor(product.ratings)
+                          ? "text-yellow-400 fill-yellow-400"
+                          : "text-gray-300"
+                      }`}
+                    />
+                  );
+                })}
+              </div>
+
+              <span className="text-sm text-muted-foreground">
+                ({product.reviews_count})
+              </span>
             </div>
 
-            <span className="text-sm text-muted-foreground">
-              ({product.reviews_count})
-            </span>
-          </div>
+            {/* Product Price */}
+            <div className="flex items-center space-x-2 mb-2">
+              <span className="text-xl font-bold text-primary">
+                ${product.price}
+              </span>
+            </div>
 
-          {/* Product Price */}
-          <div className="flex items-center space-x-2">
-            <span className="text-xl font-bold text-primary">
-              ${product.price}
-            </span>
-          </div>
-
-          {/* Product Availabily */}
-          <div>
-            <span
-              className={`text-xs px-2 py-1 rounded ${
-                product.stock > 5
-                  ? "bg-green-500/20 text-green-400"
+            {/* Product Availabily */}
+            <div>
+              <span
+                className={`text-xs px-2 py-1 rounded ${
+                  product.stock > 5
+                    ? "bg-green-500/20 text-green-400"
+                    : product.stock > 0
+                      ? "bg-yellow-500/20 text-yellow-400"
+                      : "bg-red-500/20 text-red-400"
+                }`}
+              >
+                {product.stock > 5
+                  ? "In Stock"
                   : product.stock > 0
-                    ? "bg-yellow-500/20 text-yellow-400"
-                    : "bg-red-500/20 text-red-400"
-              }`}
-            >
-              {product.stock > 5
-                ? "In Stock"
-                : product.stock > 0
-                  ? "Limited Stock"
-                  : "Out of Stock"}
-            </span>
+                    ? "Limited Stock"
+                    : "Out of Stock"}
+              </span>
+            </div>
           </div>
         </div>
       </Link>
