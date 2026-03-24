@@ -83,9 +83,9 @@ const ProfilePanel = () => {
           </button>
         </div>
 
-        <div className="p-6">
+        <div className="p-6 flex justify-center">
           {/* Avatar + Basic Info */}
-          <div className="text-center mb-6 flex justify-center">
+          <div className="text-center mb-6 ">
             <img
               src={authUser?.avatar?.url || "/avatar-holder.avif"}
               alt={authUser?.name}
