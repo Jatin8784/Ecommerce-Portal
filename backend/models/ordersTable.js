@@ -21,7 +21,13 @@ export default async function createOrdersTable() {
       );
     `;
     await database.query(query);
-    console.log("✅ Orders table created or already exists.");
+    
+    // Auto-migration: Add payment_method if it doesn't exist
+    await database.query(`
+      ALTER TABLE orders ADD COLUMN IF NOT EXISTS payment_method VARCHAR(50) DEFAULT 'Stripe' CHECK (payment_method IN ('Stripe', 'COD'));
+    `);
+
+    console.log("✅ Orders table updated successfully.");
   } catch (error) {
     console.error("❌ Failed to create Orders table:", error);
     process.exit(1);
