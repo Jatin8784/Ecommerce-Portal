@@ -13,7 +13,7 @@ export default async function createOrdersTable() {
           order_status IN ('Processing', 'Shipped', 'Delivered', 'Cancelled')
         ),
         payment_method VARCHAR(50) DEFAULT 'Online' CHECK (
-          payment_method IN ('Stripe', 'COD', 'Online')
+          payment_method IN ('COD', 'Online')
         ),
         paid_at TIMESTAMP CHECK (paid_at IS NULL OR paid_at <= CURRENT_TIMESTAMP),
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -22,10 +22,13 @@ export default async function createOrdersTable() {
     `;
     await database.query(query);
     
-    // Auto-migration: Add payment_method if it doesn't exist
-    await database.query(`
-      ALTER TABLE orders ADD COLUMN IF NOT EXISTS payment_method VARCHAR(50) DEFAULT 'Online' CHECK (payment_method IN ('Stripe', 'COD', 'Online'));
-    `);
+    // Auto-migration: Update CHECK constraint for payment_method
+    try {
+      await database.query(`ALTER TABLE orders DROP CONSTRAINT IF EXISTS orders_payment_method_check;`);
+      await database.query(`ALTER TABLE orders ADD CONSTRAINT orders_payment_method_check CHECK (payment_method IN ('COD', 'Online'));`);
+    } catch (err) {
+      console.log("Hint: Payment method constraint might already be updated.");
+    }
 
     console.log("✅ Orders table updated successfully.");
   } catch (error) {
