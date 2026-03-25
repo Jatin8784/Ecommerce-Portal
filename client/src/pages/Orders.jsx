@@ -3,10 +3,11 @@ import { Filter, Package, Truck, CheckCircle, XCircle } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { fetchMyOrders } from "../store/slices/orderSlice";
+import OrderCardSkeleton from "../components/Orders/OrderCardSkeleton";
 
 const Orders = () => {
   const [statusFilter, setStatusFilter] = useState("All");
-  const { myOrders } = useSelector((state) => state.order);
+  const { myOrders, fetchingOrders } = useSelector((state) => state.order);
   const { authUser } = useSelector((state) => state.auth);
 
   const dispatch = useDispatch();
@@ -100,7 +101,13 @@ const Orders = () => {
         </div>
 
         {/* Orders */}
-        {filterOrders.length === 0 ? (
+        {fetchingOrders ? (
+          <div className="space-y-6">
+            {[1, 2, 3].map((i) => (
+              <OrderCardSkeleton key={i} />
+            ))}
+          </div>
+        ) : filterOrders.length === 0 ? (
           <div className="text-center glass-panel max-w-md mx-auto">
             <Package className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
             <h2 className="text-xl font-semibold text-foreground mb-2">
