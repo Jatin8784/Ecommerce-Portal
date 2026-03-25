@@ -71,20 +71,22 @@ const App = () => {
             <CartSidebar />
             <ProfilePanel />
             <LoginModal />
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/password/reset/:token" element={<Index />} />
-              <Route path="/products" element={<Products />} />
-              <Route path="/product/:id" element={<ProductDetail />} />
-              <Route path="/cart" element={<Cart />} />
-              <Route path="/orders" element={<Orders />} />
-              <Route path="/order/:id" element={<OrderDetail />} />
-              <Route path="/payment" element={<Payment />} />
-              <Route path="/about" element={<About />} />
-              <Route path="/faq" element={<FAQ />} />
-              <Route path="/contact" element={<Contact />} />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
+            <AnimatePresence mode="wait">
+              <Routes location={location} key={location.pathname}>
+                <Route path="/" element={<PageWrapper><Index /></PageWrapper>} />
+                <Route path="/password/reset/:token" element={<PageWrapper><Index /></PageWrapper>} />
+                <Route path="/products" element={<PageWrapper><Products /></PageWrapper>} />
+                <Route path="/product/:id" element={<PageWrapper><ProductDetail /></PageWrapper>} />
+                <Route path="/cart" element={<PageWrapper><Cart /></PageWrapper>} />
+                <Route path="/orders" element={<PageWrapper><Orders /></PageWrapper>} />
+                <Route path="/order/:id" element={<PageWrapper><OrderDetail /></PageWrapper>} />
+                <Route path="/payment" element={<PageWrapper><Payment /></PageWrapper>} />
+                <Route path="/about" element={<PageWrapper><About /></PageWrapper>} />
+                <Route path="/faq" element={<PageWrapper><FAQ /></PageWrapper>} />
+                <Route path="/contact" element={<PageWrapper><Contact /></PageWrapper>} />
+                <Route path="*" element={<PageWrapper><NotFound /></PageWrapper>} />
+              </Routes>
+            </AnimatePresence>
             <Footer />
           </div>
           <ToastContainer />

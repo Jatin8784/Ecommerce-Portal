@@ -68,9 +68,22 @@ function App() {
           path="/"
           element={
             isAuthenticated && user?.role === "Admin" ? (
-              <div className="flex min-h-screen">
+              <div className="flex min-h-screen bg-gray-50">
                 <SideBar />
-                {renderDashboardContent()}
+                <main className="flex-1 overflow-auto">
+                  <AnimatePresence mode="wait">
+                    <motion.div
+                      key={openedComponent}
+                      initial={{ opacity: 0, x: 20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: -20 }}
+                      transition={{ duration: 0.3 }}
+                      className="p-4 sm:p-8"
+                    >
+                      {renderDashboardContent()}
+                    </motion.div>
+                  </AnimatePresence>
+                </main>
               </div>
             ) : (
               <Navigate to="/login" replace />

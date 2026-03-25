@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Link } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
 
 const HeroSlider = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -10,8 +11,7 @@ const HeroSlider = () => {
       id: 1,
       title: "Premium Electronics",
       subtitle: "Discover the latest tech innovations",
-      description:
-        "Up to 50% off on premium headphones, smartwatches, and more",
+      description: "Up to 50% off on premium headphones, smartwatches, and more",
       image: "./electronics.jpg",
       cta: "Shop Electronics",
       url: "/products?category=Electronics",
@@ -54,57 +54,98 @@ const HeroSlider = () => {
   const slide = slides[currentSlide];
 
   return (
-    <div className="relative h-[70vh] overflow-hidden rounded-2xl">
-      {/* Single Active Slide */}
-      <div className="relative h-full">
-        <div className="absolute inset-0 bg-cover bg-center transition-all duration-1000"
-          style={{ backgroundImage: `url(${slide.image})` }}
-        />
-        <div className="absolute inset-0 glass" />
-        <div className="relative h-full flex items-center justify-center text-center px-6">
-          <div className="max-w-3xl animate-fade-in-up">
-            <h3 className="text-base sm:text-lg font-medium text-primary mb-2">
-              {slide.subtitle}
-            </h3>
-            <h1 className="text-3xl sm:text-5xl md:text-7xl font-bold text-foreground mb-4">
-              {slide.title}
-            </h1>
-            <p className="text-lg sm:text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-              {slide.description}
-            </p>
-            <Link
-              to={slide.url}
-              className="px-8 py-4 gradient-primary text-primary-foreground rounded-lg hover:glow-on-hover animate-smooth font-semibold text-lg"
-            >
-              {slide.cta}
-            </Link>
-          </div>
-        </div>
-      </div>
+    <div className="relative h-[70vh] overflow-hidden rounded-2xl group">
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={currentSlide}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.8 }}
+          className="relative h-full"
+        >
+          {/* Background Image with subtle scale */}
+          <motion.div
+            initial={{ scale: 1.1 }}
+            animate={{ scale: 1 }}
+            transition={{ duration: 1.2, ease: "easeOut" }}
+            className="absolute inset-0 bg-cover bg-center"
+            style={{ backgroundImage: `url(${slide.image})` }}
+          />
+          <div className="absolute inset-0 glass opacity-60" />
 
-      {/* Arrows */}
-      <button
+          {/* Text Content */}
+          <div className="relative h-full flex items-center justify-center text-center px-6">
+            <div className="max-w-3xl">
+              <motion.h3
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2, duration: 0.5 }}
+                className="text-base sm:text-lg font-medium text-primary mb-2 tracking-wider"
+              >
+                {slide.subtitle.toUpperCase()}
+              </motion.h3>
+              <motion.h1
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4, duration: 0.6 }}
+                className="text-3xl sm:text-5xl md:text-7xl font-bold text-foreground mb-4 leading-tight"
+              >
+                {slide.title}
+              </motion.h1>
+              <motion.p
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.6, duration: 0.6 }}
+                className="text-lg sm:text-xl text-muted-foreground mb-8 max-w-2xl mx-auto"
+              >
+                {slide.description}
+              </motion.p>
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.8, duration: 0.5 }}
+              >
+                <Link
+                  to={slide.url}
+                  className="px-8 py-4 gradient-primary text-primary-foreground rounded-lg hover:glow-on-hover transition-all duration-300 font-semibold text-lg shadow-lg hover:shadow-primary/50"
+                >
+                  {slide.cta}
+                </Link>
+              </motion.div>
+            </div>
+          </div>
+        </motion.div>
+      </AnimatePresence>
+
+      {/* Navigation Controls */}
+      <motion.button
+        whileHover={{ scale: 1.1 }}
+        whileTap={{ scale: 0.9 }}
         onClick={prevSlide}
-        className="hidden sm:block absolute left-6 top-1/2 transform -translate-y-1/2 p-3 glass-card hover:glow-on-hover animate-smooth"
+        className="hidden sm:block absolute left-6 top-1/2 transform -translate-y-1/2 p-3 glass-card hover:glow-on-hover transition-all duration-300 z-10"
       >
         <ChevronLeft className="w-6 h-6 text-primary" />
-      </button>
-      <button
+      </motion.button>
+      <motion.button
+        whileHover={{ scale: 1.1 }}
+        whileTap={{ scale: 0.9 }}
         onClick={nextSlide}
-        className="hidden sm:block absolute right-6 top-1/2 transform -translate-y-1/2 p-3 glass-card hover:glow-on-hover animate-smooth"
+        className="hidden sm:block absolute right-6 top-1/2 transform -translate-y-1/2 p-3 glass-card hover:glow-on-hover transition-all duration-300 z-10"
       >
         <ChevronRight className="w-6 h-6 text-primary" />
-      </button>
+      </motion.button>
 
-      {/* Dots */}
-      <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex space-x-3">
+      {/* Dots Indicator */}
+      <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex space-x-3 z-10">
         {slides.map((_, index) => (
-          <button
+          <motion.button
             key={index}
+            whileHover={{ scale: 1.2 }}
             onClick={() => setCurrentSlide(index)}
             className={`w-3 h-3 rounded-full transition-all duration-300 ${
               index === currentSlide
-                ? "bg-primary glow-primary"
+                ? "bg-primary glow-primary w-6"
                 : "bg-white/30 hover:bg-white/50"
             }`}
           />
