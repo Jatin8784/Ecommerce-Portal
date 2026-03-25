@@ -154,18 +154,18 @@ export const placeNewOrder = catchAsyncErrors(async (req, res, next) => {
 const autoAdvanceStatus = async (order) => {
   const now = new Date();
   const createdAt = new Date(order.created_at);
-  const diffInMinutes = (now - createdAt) / (1000 * 60);
+  const diffInHours = (now - createdAt) / (1000 * 60 * 60);
 
   let newStatus = order.order_status;
   
-  // Simulation Logic: 
-  // 0-2 mins: Processing
-  // 2-5 mins: Shipped
-  // 5+ mins: Delivered
+  // Real-World Style Tracking Logic:
+  // < 24 hours: Processing
+  // 24 to 72 hours: Shipped
+  // > 72 hours: Delivered
   if (order.order_status !== "Cancelled" && order.order_status !== "Delivered") {
-    if (diffInMinutes >= 5) {
+    if (diffInHours >= 72) {
       newStatus = "Delivered";
-    } else if (diffInMinutes >= 2) {
+    } else if (diffInHours >= 24) {
       newStatus = "Shipped";
     }
   }
