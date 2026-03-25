@@ -1,4 +1,6 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { AnimatePresence } from "framer-motion";
+import PageWrapper from "./components/Layout/PageWrapper";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { ToastContainer } from "react-toastify";
 
@@ -35,7 +37,7 @@ const App = () => {
 
   useEffect(() => {
     dispatch(getUser());
-  }, [getUser]);
+  }, [dispatch]);
 
   useEffect(() => {
     dispatch(
@@ -48,7 +50,7 @@ const App = () => {
         page: 1,
       })
     );
-  }, []);
+  }, [dispatch]);
 
   const { products } = useSelector((state) => state.product);
 
@@ -72,7 +74,7 @@ const App = () => {
             <ProfilePanel />
             <LoginModal />
             <AnimatePresence mode="wait">
-              <Routes location={location} key={location.pathname}>
+              <Routes>
                 <Route path="/" element={<PageWrapper><Index /></PageWrapper>} />
                 <Route path="/password/reset/:token" element={<PageWrapper><Index /></PageWrapper>} />
                 <Route path="/products" element={<PageWrapper><Products /></PageWrapper>} />

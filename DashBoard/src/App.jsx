@@ -4,6 +4,7 @@ import {
   Route,
   Navigate,
 } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
 import SideBar from "./components/SideBar";
 import Login from "./pages/Login";
 import ForgotPassword from "./pages/ForgotPassword";
