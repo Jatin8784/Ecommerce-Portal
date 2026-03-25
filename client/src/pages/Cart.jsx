@@ -137,7 +137,7 @@ const Cart = () => {
                         </button>
                       </div>
 
-                      <div className="text-right">
+                      <div className="text-left md:text-right">
                         <p className="text-lg font-bold text-foreground">
                           ${(item.product.price * item.quantity).toFixed(2)}
                         </p>

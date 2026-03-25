@@ -63,13 +63,13 @@ const HeroSlider = () => {
         <div className="absolute inset-0 glass" />
         <div className="relative h-full flex items-center justify-center text-center px-6">
           <div className="max-w-3xl animate-fade-in-up">
-            <h3 className="text-lg font-medium text-primary mb-2">
+            <h3 className="text-base sm:text-lg font-medium text-primary mb-2">
               {slide.subtitle}
             </h3>
-            <h1 className="text-5xl md:text-7xl font-bold text-foreground mb-4">
+            <h1 className="text-3xl sm:text-5xl md:text-7xl font-bold text-foreground mb-4">
               {slide.title}
             </h1>
-            <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
+            <p className="text-lg sm:text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
               {slide.description}
             </p>
             <Link

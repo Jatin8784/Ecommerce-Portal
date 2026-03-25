@@ -220,8 +220,8 @@
               {/* Main Content */}
               <div className="flex-1">
                 {/* Search Bar */}
-                <div className="mb-8 flex max-[440px]:flex-col items-center gap-2">
-                  <div className="relative w-[-webkit-fill-available]">
+                <div className="mb-8 flex flex-col sm:flex-row items-center gap-4">
+                  <div className="relative w-full">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                     <input
                       type="text"

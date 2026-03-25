@@ -85,10 +85,10 @@ const ProductDetail = () => {
                   <img
                     src={product.images[selectedImage]?.url}
                     alt={product.name}
-                    className="w-full h-964 object-contain rounded-lg"
+                    className="w-full h-80 sm:h-96 object-contain rounded-lg"
                   />
                 ) : (
-                  <div className="glass-card min-h-[418px] p-4 mb-4 animate-pulse" />
+                  <div className="glass-card min-h-[320px] sm:min-h-[418px] p-4 mb-4 animate-pulse" />
                 )}
               </div>
               <div className="flex space-x-2">
@@ -130,7 +130,7 @@ const ProductDetail = () => {
                     </span>
                   )}
                 </div>
-                <h3 className="text-3xl font-bold text-foreground mb-2">
+                <h3 className="text-2xl sm:text-3xl font-bold text-foreground mb-2">
                   {product.name}
                 </h3>
                 <div className="flex items-center space-x-4 mb-4">
@@ -237,8 +237,8 @@ const ProductDetail = () => {
             </div>
           </div>
 
-          <div className="glass-panel">
-            <div className="flex border-b border-[hsla(var(--glass-border))]">
+          <div className="glass-panel overflow-hidden">
+            <div className="flex border-b border-[hsla(var(--glass-border))] overflow-x-auto scrollbar-hide">
               {["description", "reviews"].map((tab) => {
                 return (
                   <button

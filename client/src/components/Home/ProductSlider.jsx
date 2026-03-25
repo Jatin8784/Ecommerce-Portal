@@ -29,7 +29,7 @@ const ProductSlider = ({ title, products }) => {
     <>
       <section className="py-16">
         <div className="flex items-center justify-between mb-8">
-          <h2 className="text-3xl font-bold text-foreground">{title}</h2>
+          <h2 className="text-2xl sm:text-3xl font-bold text-foreground">{title}</h2>
           <div className="flex space-x-2">
             <button
               onClick={() => scroll("left")}
@@ -55,7 +55,7 @@ const ProductSlider = ({ title, products }) => {
               <Link
                 key={product.id}
                 to={`/product/${product.id}`}
-                className="flex shrink-0 w-80 glass-card hover:glass-on-hover animate-smooth group p-4 flex-col"
+                className="flex shrink-0 w-[280px] sm:w-80 glass-card hover:glass-on-hover animate-smooth group p-4 flex-col"
               >
                 {/* Product Image */}
                 <div className="relative h-48 bg-white rounded-lg flex items-center justify-center">

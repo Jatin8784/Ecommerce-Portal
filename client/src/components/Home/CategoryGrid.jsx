@@ -4,7 +4,7 @@ const CategoryGrid = () => {
   return (
     <section className="py-16">
       <div className="text-center mb-12">
-        <h2 className="text-4xl font-bold text-foreground mb-4">
+        <h2 className="text-2xl sm:text-4xl font-bold text-foreground mb-4">
           Shop by Category
         </h2>
         <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
