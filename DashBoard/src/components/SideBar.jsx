@@ -75,6 +75,9 @@ const SideBar = () => {
                 onClick={() => {
                   setActiveLink(index);
                   dispatch(toggleComponent(item.title));
+                  if (window.innerWidth < 768) {
+                    dispatch(toggleNavbar());
+                  }
                 }}
                 key={index}
                 className={`${

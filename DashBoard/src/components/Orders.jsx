@@ -160,14 +160,14 @@ const Orders = () => {
                                 key={`${order.id}-${item.product_id}`}
                                 className="flex items-center gap-4 mb-2 border-b pb-2"
                               >
-                                {item.image && (
-                                  <img
-                                    src={item.image}
-                                    alt={item.title}
-                                    className="w-16 h-16 object-cover cursor-pointer"
-                                    onClick={() => setPreviewImage(item.image)}
-                                  />
-                                )}
+                                  {item.image && (
+                                    <img
+                                      src={item.image}
+                                      alt={item.title}
+                                      className="w-16 h-16 sm:w-20 sm:h-20 object-cover cursor-pointer flex-shrink-0 rounded-lg"
+                                      onClick={() => setPreviewImage(item.image)}
+                                    />
+                                  )}
                                 <div>
                                   <p className="font-semibold">{item.title}</p>
                                   <p>

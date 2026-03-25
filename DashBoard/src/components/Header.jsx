@@ -25,7 +25,7 @@ const Header = () => {
           <img
             src={user?.avatar?.url || avatar}
             alt={user?.name || avatar}
-            className="w-14 h-14 rounded-full object-cover"
+            className="w-10 h-10 sm:w-14 sm:h-14 rounded-full object-cover border-2 border-primary/20"
           />
         </div>
       </header>
