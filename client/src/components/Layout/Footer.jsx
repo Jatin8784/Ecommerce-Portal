@@ -125,7 +125,7 @@ const Footer = () => {
           </div>
 
           {/* Follow Us QR */}
-          <div className="flex flex-col items-center lg:items-start">
+          <div className="flex flex-col items-center lg:items-start justify-center">
             <h3 className="text-lg font-semibold text-foreground mb-4">
               Follow Us
             </h3>
