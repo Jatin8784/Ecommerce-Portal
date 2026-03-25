@@ -17,19 +17,21 @@ const CategoryGrid = () => {
           <Link
             key={category.id}
             to={`/products?category=${category.name}`}
-            className="group glass-card p-6 text-center hover:glow-on-hover animate-smooth"
+            className="group glass-card overflow-hidden hover:glow-on-hover animate-smooth flex flex-col items-center"
           >
-            <div className="relative overflow-hidden rounded-lg mb-4">
+            <div className="relative w-full aspect-square overflow-hidden mb-0">
               <img
                 src={category.image}
                 alt={category.name}
-                className="w-full h-32 object-cover group-hover:scale-110 transition-transform duration-300"
+                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-60 group-hover:opacity-40 transition-opacity" />
             </div>
-            <h3 className="text-lg font-semibold text-foreground group-hover:text-primary transition-colors">
-              {category.name}
-            </h3>
+            <div className="p-4 w-full text-center">
+              <h3 className="text-sm sm:text-lg font-semibold text-foreground group-hover:text-primary transition-colors truncate px-2">
+                {category.name}
+              </h3>
+            </div>
           </Link>
         ))}
       </div>
