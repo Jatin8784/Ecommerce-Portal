@@ -6,8 +6,6 @@ import {
   CheckCircle,
   XCircle,
 } from "lucide-react";
-import { jsPDF } from "jspdf";
-import autoTable from "jspdf-autotable";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { fetchMyOrders } from "../store/slices/orderSlice";
