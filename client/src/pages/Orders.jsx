@@ -19,7 +19,7 @@ const Orders = () => {
   if (!authUser) return navigate("/products");
 
   const filterOrders = myOrders.filter(
-    (order) => statusFilter === "All" || order.order_status === statusFilter
+    (order) => statusFilter === "All" || order.order_status === statusFilter,
   );
 
   const getStatusIcon = (status) => {
@@ -65,9 +65,7 @@ const Orders = () => {
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-foreground mb-2">
-            My Orders
-          </h1>
+          <h1 className="text-3xl font-bold text-foreground mb-2">My Orders</h1>
           <p className="text-muted-foreground">
             Track and manage your order history.
           </p>
@@ -132,7 +130,7 @@ const Orders = () => {
                       {getStatusIcon(order.order_status)}
                       <span
                         className={`px-3 py-1 rounded text-sm font-medium capitalize ${getStatusColor(
-                          order.order_status
+                          order.order_status,
                         )}`}
                       >
                         {order.order_status}
@@ -194,7 +192,10 @@ const Orders = () => {
 
                   {order.order_status === "Delivered" && (
                     <>
-                      <button className="px-4 py-2 glass-card hover:glow-on-hover text-sm">
+                      <button
+                        className="px-4 py-2 glass-card hover:glow-on-hover text-sm"
+                        onClick={() => navigate(`/order/${order.id}`)}
+                      >
                         Write Review
                       </button>
                       <button className="px-4 py-2 glass-card hover:glow-on-hover text-sm">
