@@ -55,8 +55,8 @@ const CartSidebar = () => {
         <div className="flex-1 overflow-y-auto p-6 scrollbar-hide">
           {cart && cart.length === 0 ? (
             <div className="text-center py-12 flex flex-col items-center justify-center h-full">
-              <div className="w-20 h-20 bg-secondary/30 rounded-full flex items-center justify-center mb-4">
-                <ShoppingCart className="w-10 h-10 text-muted-foreground/50 md:w-11 md:h-11" />
+              <div className="w-20 h-20 bg-secondary/30 rounded-full flex items-center justify-center mb-4 md:w-24 md:h-24">
+                <ShoppingCart className="w-10 h-10 text-muted-foreground/50" />
               </div>
               <p className="text-muted-foreground text-lg">
                 Your cart is empty.
