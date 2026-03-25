@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { Filter, Package, Truck, CheckCircle, XCircle } from "lucide-react";
+import { Filter, Package, Truck, CheckCircle, XCircle, FileText } from "lucide-react";
+import { jsPDF } from "jspdf";
+import autoTable from "jspdf-autotable";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { fetchMyOrders } from "../store/slices/orderSlice";
@@ -83,6 +85,63 @@ const Orders = () => {
         state: { activeTab: "reviews" } 
       });
     }
+  };
+
+  const handleDownloadInvoice = (order) => {
+    const doc = new jsPDF();
+    
+    // Add Header
+    doc.setFontSize(22);
+    doc.setTextColor(41, 128, 185);
+    doc.text("E-KART INVOICE", 105, 20, { align: "center" });
+    
+    // Add Horizontal Line
+    doc.setLineWidth(0.5);
+    doc.line(20, 25, 190, 25);
+    
+    // Order Info
+    doc.setFontSize(12);
+    doc.setTextColor(40, 40, 40);
+    doc.text(`Order ID: ${order.id}`, 20, 35);
+    doc.text(`Date: ${new Date(order.created_at).toLocaleDateString()}`, 20, 42);
+    doc.text(`Status: ${order.order_status}`, 20, 49);
+    
+    // Customer Info
+    doc.text("Billed To:", 140, 35);
+    doc.setFontSize(10);
+    doc.text(authUser.name || "Customer", 140, 42);
+    doc.text(authUser.email || "", 140, 49);
+    
+    // Items Table
+    const tableData = order.order_items.map((item) => [
+      item.title,
+      item.quantity,
+      `$${item.price}`,
+      `$${(item.quantity * item.price).toFixed(2)}`,
+    ]);
+
+    autoTable(doc, {
+      startY: 60,
+      head: [["Product", "Quantity", "Price", "Subtotal"]],
+      body: tableData,
+      theme: "striped",
+      headStyles: { fillColor: [41, 128, 185] },
+    });
+
+    // Totals
+    const finalY = (doc).lastAutoTable.cursor.y + 10;
+    doc.setFontSize(14);
+    doc.setFont("helvetica", "bold");
+    doc.text(`Grand Total: $${order.total_price}`, 190, finalY, { align: "right" });
+    
+    // Footer
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "italic");
+    doc.setTextColor(100, 100, 100);
+    doc.text("Thank you for shopping with E-Kart!", 105, finalY + 20, { align: "center" });
+
+    doc.save(`Invoice_${order.id}.pdf`);
+    toast.success("Invoice downloaded successfully!");
   };
 
   return (
@@ -231,6 +290,13 @@ const Orders = () => {
                         className="px-4 py-2 glass-card hover:glow-on-hover text-sm"
                       >
                         Write Review
+                      </button>
+                      <button 
+                        onClick={() => handleDownloadInvoice(order)}
+                        className="px-4 py-2 glass-card hover:glow-on-hover text-sm flex items-center space-x-2"
+                      >
+                        <FileText className="w-4 h-4" />
+                        <span>Download Invoice</span>
                       </button>
                       <button 
                         onClick={() => handleReorder(order)}
