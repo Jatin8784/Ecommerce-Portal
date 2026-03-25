@@ -48,7 +48,7 @@ const Stats = () => {
           return (
             <div
               key={index}
-              className={`bg-white p-4 rounded-xl shadow-md ${index !== 0 && "flex gap-2 flex-col"}`}
+              className={`bg-white dark:bg-[#1a1c23] p-4 rounded-xl shadow-sm border border-gray-100 dark:border-gray-800 ${index !== 0 && "flex gap-2 flex-col"}`}
             >
               <div className="text-sm text-gray-500">{stat.title}</div>
               <div

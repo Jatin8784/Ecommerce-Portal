@@ -68,7 +68,7 @@ function App() {
           path="/"
           element={
             isAuthenticated && user?.role === "Admin" ? (
-              <div className="flex min-h-screen">
+              <div className="flex min-h-screen bg-[#f3f3f6] dark:bg-[#0f1115] text-gray-900 dark:text-gray-100 transition-colors duration-300">
                 <SideBar />
                 {renderDashboardContent()}
               </div>

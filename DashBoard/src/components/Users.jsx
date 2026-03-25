@@ -41,11 +41,11 @@ const Users = () => {
         {/* Header */}
         <div className="flex-1 md:p-6">
           <Header />
-          <h1 className="text-2xl font-bold">All Users</h1>
-          <p className="text-sm text-gray-600 mb-6">
+          <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100 italic tracking-tight">All Users</h1>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">
             Manage Your website's all users.
           </p>
-          <div className="p-4 sm:p-8 bg-gray-50 min-h-screen">
+          <div className="p-4 sm:p-8 bg-gray-50 dark:bg-[#0f1115] min-h-screen">
             <div
               className={`overflow-x-auto rounded-lg ${
                 loading
@@ -56,8 +56,8 @@ const Users = () => {
               }`}
             >
               {loading ? (
-                <table className="min-w-[800px] w-full bg-white border border-gray-200">
-                  <thead className="bg-blue-100 text-gray-700">
+                <table className="min-w-[800px] w-full bg-white dark:bg-[#1a1c23] border border-gray-200 dark:border-gray-800">
+                  <thead className="bg-blue-100/50 dark:bg-blue-900/30 text-gray-700 dark:text-gray-300">
                     <tr>
                       <th className="py-3 px-4 text-left w-20">Avatar</th>
                       <th className="py-3 px-4 text-left">Name</th>
@@ -73,8 +73,8 @@ const Users = () => {
                   </tbody>
                 </table>
               ) : users && users.length > 0 ? (
-                <table className="min-w-[800px] w-full bg-white border border-gray-200">
-                  <thead className="bg-blue-100 text-gray-700">
+                <table className="min-w-[800px] w-full bg-white dark:bg-[#1a1c23] border border-gray-200 dark:border-gray-800">
+                  <thead className="bg-blue-100/50 dark:bg-blue-900/30 text-gray-700 dark:text-gray-300">
                     <tr>
                       <th className="py-3 px-4 text-left w-20">Avatar</th>
                       <th className="py-3 px-4 text-left">Name</th>
@@ -86,21 +86,21 @@ const Users = () => {
                   <tbody>
                     {users.map((user, index) => {
                       return (
-                        <tr key={index} className="border-t hover:bg-gray-50 transition-colors">
+                        <tr key={index} className="border-t dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
                           <td className="py-3 px-4">
                             <img
                               src={user?.avatar?.url || avatar}
                               alt="avatar"
-                              className="w-10 h-10 rounded-full object-cover flex-shrink-0 border border-gray-100"
+                              className="w-10 h-10 rounded-full object-cover flex-shrink-0 border border-gray-100 dark:border-gray-800"
                             />
                           </td>
-                          <td className="px-3 py-4 font-medium text-gray-900">{user.name}</td>
+                          <td className="px-3 py-4 font-medium text-gray-900 dark:text-gray-100">{user.name}</td>
                           <td className="px-3 py-4 max-w-[200px] sm:max-w-none">
-                            <p className="truncate text-gray-600" title={user.email}>
+                            <p className="truncate text-gray-600 dark:text-gray-400" title={user.email}>
                               {user.email}
                             </p>
                           </td>
-                          <td className="px-3 py-4 text-gray-500 text-sm">
+                          <td className="px-3 py-4 text-gray-500 dark:text-gray-500 text-sm">
                             {new Date(user.created_at).toLocaleDateString(undefined, {
                               year: 'numeric',
                               month: 'short',
@@ -131,14 +131,16 @@ const Users = () => {
                 <button
                   onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
                   disabled={page === 1}
-                  className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded disabled:opacity-50"
+                  className="px-6 py-2 bg-white dark:bg-[#1a1c23] border border-gray-300 dark:border-gray-800 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-all font-medium shadow-sm dark:text-gray-200 disabled:opacity-50"
                 >
                   Previous
                 </button>
-                <span className="px-4 py-2 text-gray-700">Page {page}</span>
+                <div className="flex items-center px-4 bg-white dark:bg-[#1a1c23] border border-gray-300 dark:border-gray-800 rounded-lg font-bold text-primary shadow-sm">
+                  Page {page}
+                </div>
                 <button
                   onClick={() => setPage((prev) => prev + 1)}
-                  className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded disabled:opacity-50"
+                  className="px-6 py-2 bg-white dark:bg-[#1a1c23] border border-gray-300 dark:border-gray-800 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-all font-medium shadow-sm dark:text-gray-200 disabled:opacity-50"
                   disabled={maxPage === page}
                 >
                   Next

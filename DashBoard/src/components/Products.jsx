@@ -53,10 +53,10 @@ const Products = () => {
         {/* <h1 className="text-red-600 text-3xl">PRODUCTS PAGE</h1> */}
         <div className="flex-1 md:p-6">
           <Header />
-          <h1 className="text-2xl font-bold">All Products</h1>
-          <p className="text-sm text-gray-600 mb-6">Manage Your products.</p>
+          <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100 italic tracking-tight">All Products</h1>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">Manage Your products.</p>
 
-          <div className="p-4 sm:p-8 bg-gray-50 min-h-screen">
+          <div className="p-4 sm:p-8 bg-gray-50 dark:bg-[#0f1115] min-h-screen transition-colors">
             <div
               className={`overflow-x-auto rounded-lg ${
                 fetchingProducts
@@ -67,8 +67,8 @@ const Products = () => {
               }`}
             >
               {fetchingProducts ? (
-                <table className="min-w-[800px] w-full bg-white border border-gray-200">
-                  <thead className="bg-blue-100 text-gray-700">
+                <table className="min-w-[800px] w-full bg-white dark:bg-[#1a1c23] border border-gray-200 dark:border-gray-800">
+                  <thead className="bg-blue-100/50 dark:bg-blue-900/30 text-gray-700 dark:text-gray-300">
                     <tr>
                       <th className="py-3 px-4 text-left w-20">Image</th>
                       <th className="py-3 px-4 text-left">Title</th>
@@ -86,8 +86,8 @@ const Products = () => {
                   </tbody>
                 </table>
               ) : products && products?.length > 0 ? (
-                <table className="min-w-[800px] w-full bg-white border border-gray-200">
-                  <thead className="bg-blue-100 text-gray-700">
+                <table className="min-w-[800px] w-full bg-white dark:bg-[#1a1c23] border border-gray-200 dark:border-gray-800">
+                  <thead className="bg-blue-100/50 dark:bg-blue-900/40 text-gray-700 dark:text-gray-300">
                     <tr>
                       <th className="py-3 px-4 text-left w-20">Image</th>
                       <th className="py-3 px-4 text-left">Title</th>
@@ -103,7 +103,7 @@ const Products = () => {
                       return (
                         <tr
                           key={index}
-                          className="border-t hover:bg-gray-50 transition-colors"
+                          className="border-t dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
                           onClick={() => {
                             setSelectedProduct(product);
                             dispatch(toggleViewProductModal());
@@ -117,16 +117,16 @@ const Products = () => {
                             />
                           </td>
                           <td className="px-3 py-4 max-w-[200px] sm:max-w-[400px]">
-                            <p className="truncate font-medium text-gray-900" title={product.name}>
+                            <p className="truncate font-medium text-gray-900 dark:text-gray-200" title={product.name}>
                               {product.name}
                             </p>
                           </td>
-                          <td className="px-3 py-4 text-gray-600">{product.category}</td>
+                          <td className="px-3 py-4 text-gray-600 dark:text-gray-400">{product.category}</td>
                           <td className="px-3 py-4 font-semibold text-primary">
                             ${product.price}
                           </td>
                           <td className="px-3 py-4">
-                            <span className={`px-2 py-1 rounded-full text-xs font-semibold ${product.stock > 0 ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                            <span className={`px-2 py-1 rounded-full text-xs font-semibold ${product.stock > 0 ? 'bg-green-100/10 text-green-500' : 'bg-red-100/10 text-red-500'}`}>
                               {product.stock}
                             </span>
                           </td>
@@ -180,14 +180,16 @@ const Products = () => {
                 <button
                   onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
                   disabled={page === 1}
-                  className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded disabled:opacity-50"
+                  className="px-6 py-2 bg-white dark:bg-[#1a1c23] border border-gray-300 dark:border-gray-800 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-all font-medium shadow-sm dark:text-gray-200 disabled:opacity-50"
                 >
                   Previous
                 </button>
-                <span className="px-4 py-2 text-gray-700">Page {page}</span>
+                <div className="flex items-center px-4 bg-white dark:bg-[#1a1c23] border border-gray-300 dark:border-gray-800 rounded-lg font-bold text-primary shadow-sm">
+                  Page {page}
+                </div>
                 <button
                   onClick={() => setPage((prev) => prev + 1)}
-                  className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded disabled:opacity-50"
+                  className="px-6 py-2 bg-white dark:bg-[#1a1c23] border border-gray-300 dark:border-gray-800 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-all font-medium shadow-sm dark:text-gray-200 disabled:opacity-50"
                   disabled={maxPage === page}
                 >
                   Next

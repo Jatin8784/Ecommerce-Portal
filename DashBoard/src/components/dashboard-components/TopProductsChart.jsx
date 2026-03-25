@@ -8,9 +8,11 @@ import {
   ResponsiveContainer,
   Cell,
 } from "recharts";
+import { useTheme } from "../../context/ThemeContext";
 
 const TopProductsChart = () => {
   const { topSellingProducts } = useSelector((state) => state.admin);
+  const { theme } = useTheme();
 
   const CustomYAxisTick = ({ x, y, payload }) => {
     return (
@@ -33,7 +35,7 @@ const TopProductsChart = () => {
     if (active && payload && payload.length > 0) {
       const product = payload[0].payload;
       return (
-        <div className="bg-white p-2 rounded shadow border text-sm">
+        <div className="bg-white dark:bg-[#1a1c23] p-2 rounded shadow border border-gray-100 dark:border-gray-700 text-sm text-gray-800 dark:text-gray-200">
           <p className="font-semibold">Title: {product.name}</p>
           <p>Sold: {product.total_sold}</p>
         </div>
@@ -44,8 +46,8 @@ const TopProductsChart = () => {
 
   return (
     <>
-      <div className="bg-white p-4 rounded-xl shadow-md">
-        <h3 className="font-semibold mb-2">Top Selling Products</h3>
+      <div className="bg-white dark:bg-[#1a1c23] p-4 rounded-xl shadow-sm border border-gray-100 dark:border-gray-800 transition-colors">
+        <h3 className="font-semibold mb-2 text-gray-800 dark:text-gray-100">Top Selling Products</h3>
         <div className="relative">
           <ResponsiveContainer width="100%" height={250}>
             <BarChart
@@ -54,7 +56,7 @@ const TopProductsChart = () => {
               margin={{ top: 0, right: 0, left: 0, bottom: 0 }}
               barSize={50}
             >
-              <XAxis type="number" />
+              <XAxis type="number" tick={{ fontSize: 12, fill: theme === 'dark' ? '#94a3b8' : '#64748b' }} />
               <YAxis
                 dataKey="image"
                 type="category"

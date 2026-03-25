@@ -6,7 +6,7 @@ const TopSellingProducts = () => {
 
   return (
     <>
-      <div className="bg-white rounded-xl p-6 shadow-md overflow-x-auto xl:col-span-2 max-h-[440px] scrollbar-hide">
+      <div className="bg-white dark:bg-[#1a1c23] rounded-xl p-6 shadow-sm border border-gray-100 dark:border-gray-800 overflow-x-auto xl:col-span-2 max-h-[440px] scrollbar-hide">
         <h2 className="text-lg font-semibold mb-2">Top Products</h2>
         <p className="text-sm text-gray-400 mb-4">Products having most sales</p>
 

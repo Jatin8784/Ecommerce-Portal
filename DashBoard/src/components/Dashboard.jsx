@@ -21,8 +21,8 @@ const Dashboard = () => {
       <main className="p-[10px] pl-[10px] md:pl-[17rem]">
         <div className="flex-1 md:p-6">
           <Header />
-          <h1 className="text-2xl font-bold">Dashboard</h1>
-          <p>Check the sales and value.</p>
+          <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100 italic tracking-tight">Dashboard</h1>
+          <p className="text-gray-500 dark:text-gray-400 text-sm">Check the sales and value overview.</p>
 
           <Stats />
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mt-6">

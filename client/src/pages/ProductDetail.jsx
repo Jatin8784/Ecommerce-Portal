@@ -15,6 +15,7 @@ import ReviewsContainer from "../components/Products/ReviewsContainer";
 import { addToCart } from "../store/slices/cartSlice.js";
 import { fetchProductDetails } from "../store/slices/productSlice.js";
 import { toast } from "react-toastify";
+import ProductDetailSkeleton from "../components/Products/ProductDetailSkeleton";
 
 const ProductDetail = () => {
   const { id } = useParams();
@@ -67,11 +68,7 @@ const ProductDetail = () => {
   }
 
   if (loading) {
-    return (
-      <div className="flex items-center justify-center h-screen">
-        <Loader className="size-10 animate-spin" />
-      </div>
-    );
+    return <ProductDetailSkeleton />;
   }
 
   return (

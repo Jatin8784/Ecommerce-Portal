@@ -64,37 +64,37 @@ const Profile = () => {
         {/* Header */}
         <div className="flex-1 md:p-6 md:pb-0">
           <Header />
-          <h1 className="text-2xl font-bold">Profile</h1>
-          <p className="text-sm text-gray-600 mb-6">Manage Your Profile.</p>
+          <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100 italic tracking-tight">Profile</h1>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">Manage Your Profile.</p>
         </div>
 
         {/* Content */}
         <div className="max-w-4xl md:px-4 py-8">
           {/* Profile Card */}
-          <div className="bg-white shadow-md rounded-2xl p-6 flex flex-col md:flex-row items-center gap-6 mb-10">
+          <div className="bg-white dark:bg-[#1a1c23] shadow-md rounded-2xl p-6 flex flex-col md:flex-row items-center gap-6 mb-10 border border-gray-100 dark:border-gray-800">
             <img
               src={(user && user?.avatar?.url) || avatar}
               alt={user?.name || avatar}
-              className="w-32 h-32 rounded-full object-cover border"
+              className="w-32 h-32 rounded-full object-cover border-4 border-primary/20 shadow-xl"
               loading="lazy"
             />
-            <div>
-              <p className="text-xl font-medium">Name: {user.name}</p>
-              <p className="text-md text-gray-600">Email: {user.email}</p>
-              <p className="text-sm text-blue-500">Role: {user.role}</p>
+            <div className="text-center md:text-left">
+              <p className="text-xl font-bold text-gray-800 dark:text-gray-100">Name: <span className="font-normal font-mono">{user.name}</span></p>
+              <p className="text-md text-gray-600 dark:text-gray-400">Email: {user.email}</p>
+              <p className="text-sm font-semibold text-primary mt-1 uppercase tracking-wider">Role: {user.role}</p>
             </div>
           </div>
 
           {/* Update Profile Section */}
-          <div className="bg-gray-100 p-6 rounded-2xl shadow-md mb-10">
-            <h3 className="text-xl font-semibold mb-4">Update Profile</h3>
+          <div className="bg-gray-100 dark:bg-black/20 p-6 rounded-2xl shadow-sm mb-10 border border-transparent dark:border-gray-800">
+            <h3 className="text-xl font-semibold mb-4 text-gray-800 dark:text-gray-200">Update Profile</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <input
                 type="text"
                 name="name"
                 value={editData.name}
                 onChange={handleProfileChange}
-                className="p-2 border rounded-md"
+                className="p-3 border dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 dark:text-gray-100 focus:ring-2 focus:ring-primary/20 outline-none transition-all shadow-sm"
                 placeholder="Your Name"
               />
               <input
@@ -102,14 +102,14 @@ const Profile = () => {
                 name="email"
                 value={editData.email}
                 onChange={handleProfileChange}
-                className="p-2 border rounded-md"
+                className="p-3 border dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 dark:text-gray-100 focus:ring-2 focus:ring-primary/20 outline-none transition-all shadow-sm"
                 placeholder="Your Email"
               />
               <input
                 type="file"
                 name="avatar"
                 onChange={handleAvatarChange}
-                className="p-2 border rounded-md col-span-1 md:col-span-2"
+                className="p-2 border dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 dark:text-gray-200 col-span-1 md:col-span-2 text-sm"
               />
             </div>
             <button
@@ -130,15 +130,15 @@ const Profile = () => {
           </div>
 
           {/* Update Password Section */}
-          <div className="bg-gray-100 p-6 rounded-2xl shadow-md">
-            <h3 className="text-xl font-semibold mb-4">Update Password</h3>
+          <div className="bg-gray-100 dark:bg-black/20 p-6 rounded-2xl shadow-sm border border-transparent dark:border-gray-800">
+            <h3 className="text-xl font-semibold mb-4 text-gray-800 dark:text-gray-200">Update Password</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <input
                 type="password"
                 name="currentPassword"
                 value={passwordData.currentPassword}
                 onChange={handlePasswordChange}
-                className="p-2 border rounded-md"
+                className="p-3 border dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 dark:text-gray-100 focus:ring-2 focus:ring-primary/20 outline-none transition-all shadow-sm"
                 placeholder="Current Password"
               />
               <input
@@ -146,7 +146,7 @@ const Profile = () => {
                 name="newPassword"
                 value={passwordData.newPassword}
                 onChange={handlePasswordChange}
-                className="p-2 border rounded-md"
+                className="p-3 border dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 dark:text-gray-100 focus:ring-2 focus:ring-primary/20 outline-none transition-all shadow-sm"
                 placeholder="New Password"
               />
               <input
@@ -154,7 +154,7 @@ const Profile = () => {
                 name="confirmNewPassword"
                 value={passwordData.confirmNewPassword}
                 onChange={handlePasswordChange}
-                className="p-2 border rounded-md"
+                className="p-3 border dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 dark:text-gray-100 focus:ring-2 focus:ring-primary/20 outline-none transition-all shadow-sm md:col-span-2"
                 placeholder="Confirm New Password"
               />
             </div>

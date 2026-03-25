@@ -60,7 +60,7 @@ const MiniSummary = () => {
 
   return (
     <>
-      <div className="bg-white rounded-xl p-6 shadow-md">
+      <div className="bg-white dark:bg-[#1a1c23] rounded-xl p-6 shadow-sm border border-gray-100 dark:border-gray-800">
         <h2 className="text-lg font-semibold mb-2">Summary</h2>
         <p className="text-sm text-gray-500 mb-4">
           Summary of key metrics for the current month

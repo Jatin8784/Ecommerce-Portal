@@ -55,18 +55,18 @@ const SideBar = () => {
   return (
     <>
       <aside
-        className={`${isNavbarOpened ? "left-[10px]" : "-left-full"} fixed w-64 h-[97.5%] rounded-xl bg-white z-10 mt-[10px] transition-all duration-300 shadow-lg p-4 space-y-4 flex flex-col justify-between md:left-[10px]`}
+        className={`${isNavbarOpened ? "left-[10px]" : "-left-full"} fixed w-64 h-[97.5%] rounded-xl bg-white dark:bg-[#1a1c23] z-10 mt-[10px] transition-all duration-300 shadow-xl p-4 space-y-4 flex flex-col justify-between md:left-[10px] border border-gray-100 dark:border-gray-800`}
       >
         <nav className="space-y-2">
           <div className="flex flex-col gap-2 py-2">
-            <h2 className="flex icons-center justify-between text-xl font-bold">
+            <h2 className="flex items-center justify-between text-xl font-bold text-gray-800 dark:text-gray-100 uppercase tracking-tight px-2">
               <span>Admin Panel</span>
               <MoveLeft
-                className="block md:hidden"
+                className="block md:hidden cursor-pointer text-gray-500 hover:text-primary transition-colors"
                 onClick={() => dispatch(toggleNavbar())}
               />
             </h2>
-            <hr />
+            <hr className="border-gray-100 dark:border-gray-800" />
           </div>
 
           {links.map((item, index) => {
@@ -82,11 +82,15 @@ const SideBar = () => {
                 key={index}
                 style={{ animationDelay: `${index * 100}ms` }}
                 className={`${
-                  activeLink === index && "bg-dark-gradient text-white shadow-md scale-105"
-                } hover:bg-gray-100 w-full transition-all duration-300 rounded-lg cursor-pointer px-3 py-2.5 flex icons-center gap-3 animate-fade-in-up`}
+                  activeLink === index 
+                    ? "bg-dark-gradient text-white shadow-lg scale-[1.02] ring-1 ring-white/10" 
+                    : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800"
+                } w-full transition-all duration-300 rounded-lg cursor-pointer px-3 py-2.5 flex items-center gap-3 animate-fade-in-up`}
               >
-                <span className="shrink-0">{item.icon}</span>
-                <span className="font-medium">{item.title}</span>
+                <span className={`shrink-0 ${activeLink === index ? "text-white" : "text-primary dark:text-gray-500"}`}>
+                  {item.icon}
+                </span>
+                <span className="font-semibold">{item.title}</span>
               </button>
             );
           })}

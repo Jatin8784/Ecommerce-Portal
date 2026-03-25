@@ -11,8 +11,21 @@
   box-sizing: border-box;
 }
 
+:root {
+  --bg-dashboard: #f3f3f6;
+  --text-primary: #111827;
+}
+
+.dark {
+  --bg-dashboard: #0f1115;
+  --text-primary: #f9fafb;
+}
+
 #root {
-  background: #f3f3f6;
+  background: var(--bg-dashboard);
+  color: var(--text-primary);
+  min-height: 100vh;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
