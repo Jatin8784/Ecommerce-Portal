@@ -12,6 +12,7 @@ import {
   toggleViewProductModal,
 } from "../store/slices/extraSlice";
 import { deleteProduct, fetchAllProducts } from "../store/slices/productsSlice";
+import DashboardPagination from "./common/DashboardPagination";
 
 const Products = () => {
   const [selectedProduct, setSelectedProduct] = useState(null);
@@ -175,27 +176,11 @@ const Products = () => {
             </div>
 
             {/* Pagination */}
-            {!fetchingProducts && products?.length > 0 && (
-              <div className="flex justify-center mt-6 gap-4">
-                <button
-                  onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
-                  disabled={page === 1}
-                  className="px-6 py-2 bg-white dark:bg-[#1a1c23] border border-gray-300 dark:border-gray-800 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-all font-medium shadow-sm dark:text-gray-200 disabled:opacity-50"
-                >
-                  Previous
-                </button>
-                <div className="flex items-center px-4 bg-white dark:bg-[#1a1c23] border border-gray-300 dark:border-gray-800 rounded-lg font-bold text-primary shadow-sm">
-                  Page {page}
-                </div>
-                <button
-                  onClick={() => setPage((prev) => prev + 1)}
-                  className="px-6 py-2 bg-white dark:bg-[#1a1c23] border border-gray-300 dark:border-gray-800 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-all font-medium shadow-sm dark:text-gray-200 disabled:opacity-50"
-                  disabled={maxPage === page}
-                >
-                  Next
-                </button>
-              </div>
-            )}
+            <DashboardPagination 
+              page={page} 
+              maxPage={maxPage} 
+              setPage={setPage} 
+            />
           </div>
         </div>
 
