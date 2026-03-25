@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { ThemeProvider } from "./contexts/ThemeContext";
 import { ToastContainer } from "react-toastify";
 
 import Navbar from "./components/Layout/Navbar";
@@ -44,33 +45,35 @@ const App = () => {
   }
 
   return (
-    <BrowserRouter>
-      <div className="min-h-screen">
-        <Navbar />
-        <Sidebar />
-        <SearchOverlay />
-        <CartSidebar />
-        <ProfilePanel />
-        <LoginModal />
-        <div className="pt-16">
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/products" element={<Products />} />
-            <Route path="/product/:id" element={<ProductDetail />} />
-            <Route path="/cart" element={<Cart />} />
-            <Route path="/orders" element={<Orders />} />
-            <Route path="/order/:id" element={<OrderDetail />} />
-            <Route path="/payment" element={<Payment />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/faq" element={<FAQ />} />
-            <Route path="/contact" element={<Contact />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
+    <ThemeProvider>
+      <BrowserRouter>
+        <div className="min-h-screen">
+          <Navbar />
+          <Sidebar />
+          <SearchOverlay />
+          <CartSidebar />
+          <ProfilePanel />
+          <LoginModal />
+          <div className="pt-16">
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/products" element={<Products />} />
+              <Route path="/product/:id" element={<ProductDetail />} />
+              <Route path="/cart" element={<Cart />} />
+              <Route path="/orders" element={<Orders />} />
+              <Route path="/order/:id" element={<OrderDetail />} />
+              <Route path="/payment" element={<Payment />} />
+              <Route path="/about" element={<About />} />
+              <Route path="/faq" element={<FAQ />} />
+              <Route path="/contact" element={<Contact />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </div>
+          <Footer />
         </div>
-        <Footer />
-      </div>
-      <ToastContainer />
-    </BrowserRouter>
+        <ToastContainer />
+      </BrowserRouter>
+    </ThemeProvider>
   );
 };
 
