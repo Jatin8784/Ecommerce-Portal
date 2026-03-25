@@ -18,7 +18,7 @@ export const fetchOrderDetails = createAsyncThunk(
   "/order/single",
   async (orderId, thunkAPI) => {
     try {
-      const res = await axiosInstance.get(`/order/single/${orderId}`);
+      const res = await axiosInstance.get(`/order/${orderId}`);
       return res.data.order;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data.message);
