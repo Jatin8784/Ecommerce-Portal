@@ -7,7 +7,7 @@ import NewsletterSection from "../components/Home/NewsletterSection";
 import { useSelector } from "react-redux";
 
 const Index = () => {
-  const { topRatedProducts, newProducts } = useSelector(
+  const { topRatedProducts, newProducts, loading } = useSelector(
     (state) => state.product
   );
   return (
@@ -15,13 +15,18 @@ const Index = () => {
       <HeroSlider />
       <div className="container mx-auto px-4 pt-20">
         <CategoryGrid />
-        {newProducts.length > 0 && (
-          <ProductSlider title="New Arrivals" products={newProducts} />
+        {(loading || newProducts.length > 0) && (
+          <ProductSlider
+            title="New Arrivals"
+            products={newProducts}
+            loading={loading}
+          />
         )}
-        {topRatedProducts.length > 0 && (
+        {(loading || topRatedProducts.length > 0) && (
           <ProductSlider
             title="Top Rated Products"
             products={topRatedProducts}
+            loading={loading}
           />
         )}
         <FeatureSection />

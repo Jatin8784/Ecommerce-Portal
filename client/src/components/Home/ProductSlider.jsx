@@ -3,8 +3,9 @@ import { ChevronLeft, ChevronRight, Star, ShoppingCart } from "lucide-react";
 import { Link } from "react-router-dom";
 import { addToCart } from "../../store/slices/cartSlice";
 import { useDispatch } from "react-redux";
+import { ProductSliderSkeleton } from "../Products/ProductCardSkeleton";
 
-const ProductSlider = ({ title, products }) => {
+const ProductSlider = ({ title, products, loading }) => {
   const scrollRef = useRef(null);
 
   const scroll = (direction) => {
@@ -50,8 +51,10 @@ const ProductSlider = ({ title, products }) => {
           ref={scrollRef}
           className="flex space-x-4 overflow-x-auto scrollbar-hide pb-4"
         >
-          {products.map((product) => {
-            return (
+          {loading ? (
+            <ProductSliderSkeleton />
+          ) : (
+            products.map((product) => (
               <Link
                 key={product.id}
                 to={`/product/${product.id}`}
@@ -145,8 +148,8 @@ const ProductSlider = ({ title, products }) => {
                   </div>
                 </div>
               </Link>
-            );
-          })}
+            ))
+          )}
         </div>
       </section>
     </>
