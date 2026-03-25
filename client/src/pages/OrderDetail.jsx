@@ -24,10 +24,7 @@ const OrderDetail = () => {
   );
 
   useEffect(() => {
-    // Initial fetch
     dispatch(fetchOrderDetails(id));
-
-    // Real-time polling (every 15 seconds)
     const interval = setInterval(() => {
       dispatch(fetchOrderDetails(id));
     }, 15000);
