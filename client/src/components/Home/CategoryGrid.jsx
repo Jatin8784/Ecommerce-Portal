@@ -1,40 +1,33 @@
-import React from "react";
 import { Link } from "react-router-dom";
-
+import { categories } from "../../data/products";
 const CategoryGrid = () => {
-  const categories = [
-    { id: 1, name: "Electronics", image: "./electronics.jpg" },
-    { id: 2, name: "Fashion", image: "./fashion.jpg" },
-    { id: 3, name: "Home & Garden", image: "./furniture.jpg" },
-    { id: 4, name: "Gifts", image: "./gift.jpg" },
-  ];
-
   return (
-    <section className="py-12 px-4">
-      <div className="mb-8">
-        <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
+    <section className="py-16">
+      <div className="text-center mb-12">
+        <h2 className="text-2xl sm:text-4xl font-bold text-foreground mb-4">
           Shop by Category
         </h2>
-        <p className="text-gray-600">
-          Find exactly what you're looking for
+        <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+          Discover our wide range of products across different categories
         </p>
       </div>
 
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
         {categories.map((category) => (
           <Link
             key={category.id}
             to={`/products?category=${category.name}`}
-            className="group block bg-white rounded-lg border border-gray-200 p-4 hover:shadow-md transition-shadow"
+            className="group glass-card p-6 text-center hover:glow-on-hover animate-smooth"
           >
-            <div className="relative aspect-square overflow-hidden rounded-md mb-3">
+            <div className="relative overflow-hidden rounded-lg mb-4">
               <img
                 src={category.image}
                 alt={category.name}
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                className="w-full h-32 object-cover group-hover:scale-110 transition-transform duration-300"
               />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
             </div>
-            <h3 className="text-center font-medium text-gray-900 group-hover:text-blue-600 truncate">
+            <h3 className="text-lg font-semibold text-foreground group-hover:text-primary transition-colors">
               {category.name}
             </h3>
           </Link>

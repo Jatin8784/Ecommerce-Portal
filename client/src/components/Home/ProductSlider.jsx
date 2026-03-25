@@ -1,23 +1,23 @@
-import React, { useRef } from "react";
+import { useRef } from "react";
 import { ChevronLeft, ChevronRight, Star, ShoppingCart } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { addToCart } from "../../store/slices/cartSlice";
 import { useDispatch } from "react-redux";
 
 const ProductSlider = ({ title, products }) => {
   const scrollRef = useRef(null);
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
 
   const scroll = (direction) => {
     if (scrollRef.current) {
-      const scrollAmount = 300;
+      const scrollAmount = 320;
       scrollRef.current.scrollBy({
         left: direction === "left" ? -scrollAmount : scrollAmount,
         behavior: "smooth",
       });
     }
   };
+
+  const dispatch = useDispatch();
 
   const handleAddToCart = (product, e) => {
     e.preventDefault();
@@ -26,73 +26,130 @@ const ProductSlider = ({ title, products }) => {
   };
 
   return (
-    <section className="py-12 px-4">
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl font-bold text-gray-900">{title}</h2>
-        <div className="flex space-x-2">
-          <button
-            onClick={() => scroll("left")}
-            className="p-2 border border-gray-200 rounded-full hover:bg-gray-100"
-          >
-            <ChevronLeft size={20} />
-          </button>
-          <button
-            onClick={() => scroll("right")}
-            className="p-2 border border-gray-200 rounded-full hover:bg-gray-100"
-          >
-            <ChevronRight size={20} />
-          </button>
-        </div>
-      </div>
-
-      <div
-        ref={scrollRef}
-        className="flex space-x-4 overflow-x-auto scrollbar-hide pb-4"
-      >
-        {products.map((product) => (
-          <div
-            key={product.id}
-            className="flex-shrink-0 w-64 bg-white rounded-lg border border-gray-200 p-4 hover:shadow-sm"
-            onClick={() => navigate(`/product/${product.id}`)}
-          >
-            <div className="relative h-40 mb-3 bg-gray-50 flex items-center justify-center rounded">
-              <img
-                src={product.images[0].url}
-                alt={product.name}
-                className="max-h-full max-w-full object-contain"
-              />
-              <button
-                onClick={(e) => handleAddToCart(product, e)}
-                className="absolute bottom-2 right-2 bg-blue-600 text-white p-2 rounded-full shadow hover:bg-blue-700"
-              >
-                <ShoppingCart size={16} />
-              </button>
-            </div>
-            
-            <h3 className="font-semibold text-gray-800 truncate mb-1">{product.name}</h3>
-            
-            <div className="flex items-center mb-2">
-              <div className="flex text-yellow-400">
-                {[...Array(5)].map((_, i) => (
-                  <Star
-                    key={i}
-                    size={12}
-                    fill={i < Math.floor(product.ratings) ? "currentColor" : "none"}
-                    className={i < Math.floor(product.ratings) ? "" : "text-gray-300"}
-                  />
-                ))}
-              </div>
-              <span className="text-[10px] text-gray-500 ml-1">({product.reviews_count})</span>
-            </div>
-
-            <div className="flex items-center justify-between">
-              <span className="text-lg font-bold">${product.price}</span>
-              <span className="text-[10px] text-gray-500">{product.stock > 0 ? "In Stock" : "Out of Stock"}</span>
-            </div>
+    <>
+      <section className="py-16">
+        <div className="flex items-center justify-between mb-8">
+          <h2 className="text-2xl sm:text-3xl font-bold text-foreground">{title}</h2>
+          <div className="flex space-x-2">
+            <button
+              onClick={() => scroll("left")}
+              className="p-2 glass-card hover:glow-on-hover animate-smooth"
+            >
+              <ChevronLeft className="w-6 h-6 text-primary" />
+            </button>
+            <button
+              onClick={() => scroll("right")}
+              className="p-2 glass-card hover:glow-on-hover animate-smooth"
+            >
+              <ChevronRight className="w-6 h-6 text-primary" />
+            </button>
           </div>
-        ))}
-      </div>
-    </section>
+        </div>
+
+        <div
+          ref={scrollRef}
+          className="flex space-x-4 overflow-x-auto scrollbar-hide pb-4"
+        >
+          {products.map((product) => {
+            return (
+              <Link
+                key={product.id}
+                to={`/product/${product.id}`}
+                className="flex shrink-0 w-[280px] sm:w-80 glass-card hover:glass-on-hover animate-smooth group p-4 flex-col"
+              >
+                {/* Product Image */}
+                <div className="relative h-48 bg-white rounded-lg flex items-center justify-center">
+                  <img
+                    src={product.images[0].url}
+                    alt={product.name}
+                    className="w-full h-48 object-contain group-hover:scale-110 transition-transform duration-300"
+                  />
+                  {/* Badges */}
+                  <div className="absolute top-3 left-3 flex flex-col space-y-2">
+                    {new Date() - new Date(product.created_at) <
+                      30 * 24 * 60 * 60 * 1000 && (
+                      <span className="px-2 py-1 bg-primary text-primary-foreground text-xs font-semibold rounded">
+                        NEW
+                      </span>
+                    )}
+                    {product.ratings >= 4.5 && (
+                      <span className="px-2 py-1 bg-gradient-to-r from-yellow-400 to-rose-500 bg-primary text-white text-primary-foreground text-xs font-semibold rounded">
+                        Top RATED
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Quick Add To Cart */}
+                  <button
+                    onClick={(e) => handleAddToCart(product, e)}
+                    className="absolute bottom-3 right-3 p-2 glass-card hover:glass-on-hover animate-smooth opacity-0 group-hover:opacity-100 transition-opacity"
+                    disabled={product.stock === 0}
+                  >
+                    <ShoppingCart className="w-5 h-5 text-primary" />
+                  </button>
+                </div>
+
+                {/* Product Info */}
+                <div>
+                  {/* Product Title */}
+                  <h3 className="text-lg font-semibold text-foreground mb-2 group-hover:text-primary transition-colors">
+                    {product.name}
+                  </h3>
+
+                  {/* Product Ratings */}
+                  <div className="flex items-center space-x-2 mb-2">
+                    <div className="flex items-center">
+                      {[...Array(5)].map((_, i) => {
+                        return (
+                          <Star
+                            key={i}
+                            className={`w-4 h-4 ${
+                              i < Math.floor(product.ratings)
+                                ? "text-yellow-400 fill-yellow-400"
+                                : "text-gray-300"
+                            }`}
+                          />
+                        );
+                      })}
+                    </div>
+
+                    <span className="text-sm text-muted-foreground">
+                      ({product.reviews_count})
+                    </span>
+                  </div>
+
+                  {/* Product Price */}
+                  <div className="flex items-center space-x-2">
+                    <span className="text-xl font-bold text-primary">
+                      ${product.price}
+                    </span>
+                  </div>
+
+                  {/* Product Availabily */}
+                  <div>
+                    <span
+                      className={`text-xs px-2 py-1 rounded ${
+                        product.stock > 5
+                          ? "bg-green-500/20 text-green-400"
+                          : product.stock > 0
+                            ? "bg-yellow-500/20 text-yellow-400"
+                            : "bg-red-500/20 text-red-400"
+                      }`}
+                    >
+                      {product.stock > 5
+                        ? "In Stock"
+                        : product.stock > 0
+                          ? "Limited Stock"
+                          : "Out of Stock"}
+                    </span>
+                  </div>
+                </div>
+              </Link>
+            );
+          })}
+        </div>
+      </section>
+    </>
   );
 };
 

@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { ToastContainer } from "react-toastify";
 
+// Layout Components
 import Navbar from "./components/Layout/Navbar";
 import Sidebar from "./components/Layout/Sidebar";
 import SearchOverlay from "./components/Layout/SearchOverlay";
@@ -10,6 +11,7 @@ import ProfilePanel from "./components/Layout/ProfilePanel";
 import LoginModal from "./components/Layout/LoginModal";
 import Footer from "./components/Layout/Footer";
 
+// Pages
 import Index from "./pages/Home";
 import Products from "./pages/Products";
 import ProductDetail from "./pages/ProductDetail";
@@ -33,30 +35,45 @@ const App = () => {
 
   useEffect(() => {
     dispatch(getUser());
-    dispatch(fetchAllProducts({ page: 1 }));
-  }, [dispatch]);
+  }, [getUser]);
 
-  if (isCheckingAuth && !authUser) {
+  useEffect(() => {
+    dispatch(
+      fetchAllProducts({
+        category: "",
+        price: 0 - 10000,
+        search: "",
+        ratings: "",
+        availability: "",
+        page: 1,
+      })
+    );
+  }, []);
+
+  const { products } = useSelector((state) => state.product);
+
+  if ((isCheckingAuth && !authUser) || !products) {
     return (
       <div className="flex items-center justify-center h-screen">
-        <Loader className="animate-spin" />
+        <Loader className="size-10 animate-spin" />
       </div>
     );
   }
 
   return (
-    <ThemeProvider>
-      <BrowserRouter>
-        <div className="min-h-screen">
-          <Navbar />
-          <Sidebar />
-          <SearchOverlay />
-          <CartSidebar />
-          <ProfilePanel />
-          <LoginModal />
-          <div className="pt-16">
+    <>
+      <ThemeProvider>
+        <BrowserRouter>
+          <div className="min-h-screen bg-background">
+            <Navbar />
+            <Sidebar />
+            <SearchOverlay />
+            <CartSidebar />
+            <ProfilePanel />
+            <LoginModal />
             <Routes>
               <Route path="/" element={<Index />} />
+              <Route path="/password/reset/:token" element={<Index />} />
               <Route path="/products" element={<Products />} />
               <Route path="/product/:id" element={<ProductDetail />} />
               <Route path="/cart" element={<Cart />} />
@@ -68,12 +85,12 @@ const App = () => {
               <Route path="/contact" element={<Contact />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
+            <Footer />
           </div>
-          <Footer />
-        </div>
-        <ToastContainer />
-      </BrowserRouter>
-    </ThemeProvider>
+          <ToastContainer />
+        </BrowserRouter>
+      </ThemeProvider>
+    </>
   );
 };
 

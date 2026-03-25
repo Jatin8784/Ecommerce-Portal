@@ -17,7 +17,7 @@ import Profile from "./components/Profile";
 import Users from "./components/Users";
 import { useEffect } from "react";
 import { getUser } from "./store/slices/authSlice.js";
-import { getDashboardStats } from "./store/slices/adminSlice.js";
+import { fetchAllUsers, getDashboardStats } from "./store/slices/adminSlice.js";
 import { fetchAllProducts } from "./store/slices/productsSlice.js";
 
 function App() {
@@ -30,14 +30,14 @@ function App() {
     if (token) {
       dispatch(getUser());
     }
-  }, [dispatch]);
+  }, []);
 
   useEffect(() => {
     if (isAuthenticated) {
       dispatch(getDashboardStats());
       dispatch(fetchAllProducts());
     }
-  }, [isAuthenticated, dispatch]);
+  }, [isAuthenticated]);
 
   const renderDashboardContent = () => {
     switch (openedComponent) {
@@ -68,11 +68,9 @@ function App() {
           path="/"
           element={
             isAuthenticated && user?.role === "Admin" ? (
-              <div className="flex min-h-screen bg-gray-50">
+              <div className="flex min-h-screen">
                 <SideBar />
-                <main className="flex-1 overflow-auto p-4 sm:p-8">
-                  {renderDashboardContent()}
-                </main>
+                {renderDashboardContent()}
               </div>
             ) : (
               <Navigate to="/login" replace />
