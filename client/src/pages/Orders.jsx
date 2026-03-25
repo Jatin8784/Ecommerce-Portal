@@ -4,6 +4,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { fetchMyOrders } from "../store/slices/orderSlice";
 import OrderCardSkeleton from "../components/Orders/OrderCardSkeleton";
+import { addToCart } from "../store/slices/cartSlice";
+import { toast } from "react-toastify";
 
 const Orders = () => {
   const [statusFilter, setStatusFilter] = useState("All");
@@ -60,6 +62,28 @@ const Orders = () => {
     "Delivered",
     "Cancelled",
   ];
+  
+  const handleReorder = (order) => {
+    order.order_items.forEach((item) => {
+      const productForCart = {
+        id: item.product_id,
+        name: item.title,
+        price: item.price,
+        images: [{ url: item.image }]
+      };
+      dispatch(addToCart({ product: productForCart, quantity: item.quantity }));
+    });
+    toast.success("Items added to cart!");
+    navigate("/cart");
+  };
+
+  const handleWriteReview = (order) => {
+    if (order.order_items && order.order_items.length > 0) {
+      navigate(`/product/${order.order_items[0].product_id}`, { 
+        state: { activeTab: "reviews" } 
+      });
+    }
+  };
 
   return (
     <div className="min-h-screen pt-20">
@@ -202,10 +226,16 @@ const Orders = () => {
 
                   {order.order_status === "Delivered" && (
                     <>
-                      <button className="px-4 py-2 glass-card hover:glow-on-hover text-sm">
+                      <button 
+                        onClick={() => handleWriteReview(order)}
+                        className="px-4 py-2 glass-card hover:glow-on-hover text-sm"
+                      >
                         Write Review
                       </button>
-                      <button className="px-4 py-2 glass-card hover:glow-on-hover text-sm">
+                      <button 
+                        onClick={() => handleReorder(order)}
+                        className="px-4 py-2 glass-card hover:glow-on-hover text-sm"
+                      >
                         Reorder
                       </button>
                     </>

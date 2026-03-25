@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 import {
   Star,
   ShoppingCart,
@@ -24,7 +24,8 @@ const ProductDetail = () => {
   const { loading, productReviews } = useSelector((state) => state.product);
   const [selectedImage, setSelectedImage] = useState(0);
   const [quantity, setQuantity] = useState(1);
-  const [activeTab, setActiveTab] = useState("description");
+  const location = useLocation();
+  const [activeTab, setActiveTab] = useState(location.state?.activeTab || "description");
   const navigate = useNavigate();
 
   const handleAddToCart = () => {
