@@ -10,6 +10,7 @@ const cartSlice = createSlice({
   reducers: {
     addToCart(state, action) {
       const { product, quantity } = action.payload;
+      console.log("addToCart called with:", product, "from stack:", new Error().stack);
       if (!product || !product.id) return;
 
       const existingItem = state.cart.find(
