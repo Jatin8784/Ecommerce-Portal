@@ -163,7 +163,9 @@ export const fetchSingleOrder = catchAsyncErrors(async (req, res, next) => {
                 'order_id', oi.order_id,
                 'product_id', oi.product_id,
                 'quantity', oi.quantity,
-                'price', oi.price
+                'price', oi.price,
+                'image', oi.image,
+                'title', oi.title
             )
         ) FILTER (WHERE oi.id IS NOT NULL), '[]'
     ) AS order_items,
