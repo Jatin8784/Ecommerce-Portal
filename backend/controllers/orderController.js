@@ -241,6 +241,13 @@ export const fetchMyOrders = catchAsyncErrors(async (req, res, next) => {
 });
 
 export const fetchAllOrders = catchAsyncErrors(async (req, res, next) => {
+  const page = parseInt(req.query.page) || 1;
+  const limit = 10;
+  const offset = (page - 1) * limit;
+
+  const countResult = await database.query("SELECT COUNT(*) FROM orders");
+  const totalOrders = parseInt(countResult.rows[0].count);
+
   const result = await database.query(`
     SELECT o.*,
     COALESCE(json_agg(
@@ -268,11 +275,15 @@ export const fetchAllOrders = catchAsyncErrors(async (req, res, next) => {
      LEFT JOIN shipping_info s ON o.id = s.order_id
      GROUP BY o.id, s.id
      ORDER BY o.created_at DESC
-    `);
+     LIMIT $1 OFFSET $2
+    `,
+    [limit, offset],
+  );
 
   res.status(200).json({
     success: true,
     orders: result.rows,
+    totalOrders,
   });
 });
 
