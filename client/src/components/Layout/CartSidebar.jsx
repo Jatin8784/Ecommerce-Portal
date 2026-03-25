@@ -71,49 +71,61 @@ const CartSidebar = () => {
             <div className="space-y-4">
               {/* Cart Items */}
               {cart.map((item) => (
-                <div key={item.product.id} className="glass-card p-4 hover:glow-on-hover animate-smooth transition-all">
-                  <div className="flex items-center space-x-4">
-                    <img
-                      src={item.product.images[0].url}
-                      alt={item.product.name}
-                      className="w-20 h-20 object-cover rounded-lg shadow-sm border border-border/50"
-                    />
-                    <div className="flex-1 min-w-0">
-                      <h3 className="font-semibold text-foreground truncate text-sm sm:text-base">
-                        {item.product.name}
-                      </h3>
-                      <p className="text-primary font-bold text-lg">
-                        ${item.product.price}
-                      </p>
-                      
-                      {/* Quantity Controls */}
-                      <div className="flex items-center justify-between mt-3">
-                        <div className="flex items-center bg-secondary/30 rounded-lg p-1 border border-border/50">
+                <div key={item.product.id} className="glass-card group p-3 hover:glow-on-hover animate-smooth transition-all border border-border/40">
+                  <div className="flex gap-4">
+                    {/* Product Image */}
+                    <div className="relative w-24 h-24 flex-shrink-0 bg-white rounded-xl overflow-hidden border border-border/20 shadow-sm">
+                      <img
+                        src={item.product.images[0].url}
+                        alt={item.product.name}
+                        className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-500"
+                      />
+                    </div>
+
+                    {/* Product Info */}
+                    <div className="flex-1 flex flex-col justify-between min-w-0 py-1">
+                      <div>
+                        <div className="flex justify-between items-start gap-2">
+                          <h3 className="font-bold text-foreground truncate text-sm sm:text-base leading-tight">
+                            {item.product.name}
+                          </h3>
                           <button
-                            className="p-1 px-2 rounded hover:bg-background/50 transition-colors disabled:opacity-30"
+                            className="p-1.5 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-lg transition-all"
+                            onClick={() => dispatch(removeFromCart(item.product.id))}
+                            title="Remove item"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                        <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mt-0.5">
+                          {item.product.category}
+                        </p>
+                      </div>
+
+                      <div className="flex items-center justify-between mt-auto">
+                        <p className="text-primary font-black text-lg">
+                          ${item.product.price}
+                        </p>
+                        
+                        {/* Quantity Controls */}
+                        <div className="flex items-center bg-secondary/40 backdrop-blur-md rounded-xl p-1 border border-border/50 shadow-inner">
+                          <button
+                            className="p-1.5 rounded-lg hover:bg-background/80 hover:shadow-sm transition-all disabled:opacity-20 disabled:cursor-not-allowed text-foreground"
                             onClick={() => updateQuantity(item.product.id, item.quantity - 1)}
                             disabled={item.quantity === 1}
                           >
-                            <Minus className="w-3.5 h-3.5" />
+                            <Minus size={14} />
                           </button>
-                          <span className="w-8 text-center font-bold text-sm">
+                          <span className="w-9 text-center font-bold text-sm text-foreground">
                             {item.quantity}
                           </span>
                           <button
-                            className="p-1 px-2 rounded hover:bg-background/50 transition-colors"
+                            className="p-1.5 rounded-lg hover:bg-background/80 hover:shadow-sm transition-all text-foreground"
                             onClick={() => updateQuantity(item.product.id, item.quantity + 1)}
                           >
-                            <Plus className="w-3.5 h-3.5" />
+                            <Plus size={14} />
                           </button>
                         </div>
-
-                        <button
-                          className="p-2 text-destructive hover:bg-destructive/10 rounded-lg transition-colors"
-                          onClick={() => dispatch(removeFromCart(item.product.id))}
-                          title="Remove item"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
                       </div>
                     </div>
                   </div>
@@ -124,28 +136,43 @@ const CartSidebar = () => {
         </div>
 
         {cart && cart.length > 0 && (
-          <div className="p-6 bg-background/50 backdrop-blur-md border-t border-[hsla(var(--glass-border))] mt-auto space-y-4">
-            <div className="flex justify-between items-center px-2">
-              <span className="text-lg text-muted-foreground uppercase tracking-wider font-medium">Subtotal</span>
-              <span className="text-2xl font-bold text-primary">
-                ${total.toFixed(2)}
-              </span>
+          <div className="p-6 bg-background/80 backdrop-blur-xl border-t border-[hsla(var(--glass-border))] mt-auto space-y-5 shadow-[0_-10px_30px_rgba(0,0,0,0.1)]">
+            <div className="space-y-3 px-2">
+              <div className="flex justify-between items-center">
+                <span className="text-sm font-bold text-muted-foreground uppercase tracking-tighter">Subtotal</span>
+                <span className="text-xl font-bold text-foreground">
+                  ${total.toFixed(2)}
+                </span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-sm font-bold text-muted-foreground uppercase tracking-tighter">Shipping</span>
+                <span className="text-sm font-bold text-green-500">Calculated at checkout</span>
+              </div>
+              <div className="pt-3 border-t border-border/40 flex justify-between items-center">
+                <span className="text-base font-black text-foreground uppercase">Estimated Total</span>
+                <span className="text-2xl font-black text-primary drop-shadow-sm">
+                  ${total.toFixed(2)}
+                </span>
+              </div>
             </div>
 
-            <Link
-              to={"/cart"}
-              onClick={() => dispatch(toggleCart())}
-              className="w-full py-4 block text-center bg-primary text-primary-foreground rounded-xl hover:glow-on-hover animate-smooth font-bold text-lg transition-all shadow-xl shadow-primary/25"
-            >
-              Checkout Now
-            </Link>
-            
-            <button 
-              onClick={() => dispatch(toggleCart())}
-              className="w-full text-center text-sm text-muted-foreground hover:text-foreground transition-colors py-2"
-            >
-              Continue Shopping
-            </button>
+            <div className="space-y-3">
+              <Link
+                to={"/cart"}
+                onClick={() => dispatch(toggleCart())}
+                className="w-full py-4 block text-center bg-primary text-primary-foreground rounded-2xl hover:glow-on-hover animate-smooth font-black text-lg uppercase tracking-wider transition-all shadow-xl shadow-primary/30 relative overflow-hidden group"
+              >
+                <div className="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-300 pointer-events-none" />
+                <span className="relative">Checkout Now</span>
+              </Link>
+              
+              <button 
+                onClick={() => dispatch(toggleCart())}
+                className="w-full text-center text-xs font-bold text-muted-foreground hover:text-primary transition-all py-2 uppercase tracking-widest"
+              >
+                ← Continue Shopping
+              </button>
+            </div>
           </div>
         )}
       </div>
