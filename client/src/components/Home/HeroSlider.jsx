@@ -85,15 +85,15 @@ const HeroSlider = () => {
       {/* Arrows */}
       <button
         onClick={prevSlide}
-        className="hidden sm:block absolute left-6 top-1/2 transform -translate-y-1/2 p-3 glass-card hover:glow-on-hover animate-smooth"
+        className="absolute left-2 sm:left-6 top-1/2 transform -translate-y-1/2 p-2 sm:p-3 glass-card hover:glow-on-hover animate-smooth z-10"
       >
-        <ChevronLeft className="w-6 h-6 text-primary" />
+        <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
       </button>
       <button
         onClick={nextSlide}
-        className="hidden sm:block absolute right-6 top-1/2 transform -translate-y-1/2 p-3 glass-card hover:glow-on-hover animate-smooth"
+        className="absolute right-2 sm:right-6 top-1/2 transform -translate-y-1/2 p-2 sm:p-3 glass-card hover:glow-on-hover animate-smooth z-10"
       >
-        <ChevronRight className="w-6 h-6 text-primary" />
+        <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
       </button>
 
       {/* Dots */}
