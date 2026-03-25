@@ -1,47 +1,30 @@
 import React, { useState } from "react";
 import {
-  Bell,
   LayoutDashboard,
   ListOrdered,
   Package,
   Users,
-  Menu,
   User,
   LogOut,
   MoveLeft,
 } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
-import { Navigate, useNavigate } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import { logout } from "../store/slices/authSlice";
 import { toggleComponent, toggleNavbar } from "../store/slices/extraSlice";
 
 const SideBar = () => {
   const [activeLink, setActiveLink] = useState(0);
   const links = [
-    {
-      icon: <LayoutDashboard />,
-      title: "Dashboard",
-    },
-    {
-      icon: <ListOrdered />,
-      title: "Orders",
-    },
-    {
-      icon: <Package />,
-      title: "Products",
-    },
-    {
-      icon: <Users />,
-      title: "Users",
-    },
-    {
-      icon: <User />,
-      title: "Profile",
-    },
+    { icon: <LayoutDashboard size={20} />, title: "Dashboard" },
+    { icon: <ListOrdered size={20} />, title: "Orders" },
+    { icon: <Package size={20} />, title: "Products" },
+    { icon: <Users size={20} />, title: "Users" },
+    { icon: <User size={20} />, title: "Profile" },
   ];
 
   const { isNavbarOpened } = useSelector((state) => state.extra);
-  const { isAuthenticated, user } = useSelector((state) => state.auth);
+  const { isAuthenticated } = useSelector((state) => state.auth);
 
   const dispatch = useDispatch();
   const handleLogout = () => {
@@ -53,58 +36,51 @@ const SideBar = () => {
   }
 
   return (
-    <>
-      <aside
-        className={`${isNavbarOpened ? "left-[10px]" : "-left-full"} fixed w-64 h-[97.5%] rounded-xl bg-white z-10 mt-[10px] transition-all duration-300 shadow-lg p-4 space-y-4 flex flex-col justify-between md:left-[10px]`}
-      >
-        <nav className="space-y-2">
-          <div className="flex flex-col gap-2 py-2">
-            <h2 className="flex items-center justify-between text-xl font-bold">
-              <span>Admin Panel</span>
-              <MoveLeft
-                className="block md:hidden"
-                onClick={() => dispatch(toggleNavbar())}
-              />
-            </h2>
-            <hr />
-          </div>
+    <aside
+      className={`${isNavbarOpened ? "left-0" : "-left-full"} fixed w-64 h-screen bg-white border-r border-gray-200 z-50 transition-all duration-300 flex flex-col justify-between md:left-0`}
+    >
+      <div className="p-4">
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-xl font-bold text-gray-900">Admin</h2>
+          <button className="md:hidden p-1" onClick={() => dispatch(toggleNavbar())}>
+            <MoveLeft size={20} />
+          </button>
+        </div>
 
-          <div className="flex flex-col gap-2 mt-4">
-            {links.map((item, index) => {
-              return (
-                <button
-                  key={index}
-                  onClick={() => {
-                    setActiveLink(index);
-                    dispatch(toggleComponent(item.title));
-                    if (window.innerWidth < 768) {
-                      dispatch(toggleNavbar());
-                    }
-                  }}
-                  className={`${
-                    activeLink === index
-                      ? "bg-dark-gradient text-white"
-                      : "hover:bg-gray-100 text-gray-600"
-                  } w-full transition-all duration-200 rounded-lg cursor-pointer px-4 py-3 flex items-center gap-3 font-medium`}
-                >
-                  <span className={activeLink === index ? "text-white" : "text-gray-400"}>
-                    {item.icon}
-                  </span>
-                  <span className="text-sm">{item.title}</span>
-                </button>
-              );
-            })}
-          </div>
+        <nav className="space-y-1">
+          {links.map((item, index) => (
+            <button
+              key={index}
+              onClick={() => {
+                setActiveLink(index);
+                dispatch(toggleComponent(item.title));
+                if (window.innerWidth < 768) dispatch(toggleNavbar());
+              }}
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-md text-sm font-medium transition-colors ${
+                activeLink === index
+                  ? "bg-gray-100 text-blue-600"
+                  : "text-gray-600 hover:bg-gray-50"
+              }`}
+            >
+              <span className={activeLink === index ? "text-blue-600" : "text-gray-400"}>
+                {item.icon}
+              </span>
+              {item.title}
+            </button>
+          ))}
         </nav>
+      </div>
+
+      <div className="p-4 border-t border-gray-200">
         <button
           onClick={handleLogout}
-          className="text-white rounded-md cursor-pointer px-3 py-2 gap-2 bg-red-gradient flex items-center shadow-lg hover:opacity-90 transition-opacity"
+          className="w-full flex items-center gap-3 px-4 py-3 text-sm font-medium text-red-600 hover:bg-red-50 rounded-md transition-colors"
         >
-          <LogOut />
-          Logout
+          <LogOut size={20} />
+          Sign Out
         </button>
-      </aside>
-    </>
+      </div>
+    </aside>
   );
 };
 

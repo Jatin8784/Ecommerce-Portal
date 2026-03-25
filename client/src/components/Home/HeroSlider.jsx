@@ -38,7 +38,7 @@ const HeroSlider = () => {
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % slides.length);
-    }, 8000);
+    }, 5000);
     return () => clearInterval(timer);
   }, [slides.length]);
 
@@ -53,57 +53,53 @@ const HeroSlider = () => {
   const slide = slides[currentSlide];
 
   return (
-    <div className="relative h-[70vh] overflow-hidden rounded-2xl group">
-      {/* Background Image */}
+    <div className="relative h-[60vh] overflow-hidden rounded-lg">
       <div
-        className="absolute inset-0 bg-cover bg-center transition-opacity duration-500"
+        className="absolute inset-0 bg-cover bg-center"
         style={{ backgroundImage: `url(${slide.image})` }}
       />
-      <div className="absolute inset-0 bg-black/40 glass" />
+      <div className="absolute inset-0 bg-black/50" />
 
-      {/* Text Content */}
-      <div className="relative h-full flex items-center justify-center text-center px-6">
-        <div className="max-w-3xl">
-          <h3 className="text-base sm:text-lg font-medium text-primary mb-2 tracking-wider uppercase">
+      <div className="relative h-full flex items-center justify-center text-center px-4">
+        <div className="max-w-3xl text-white">
+          <p className="text-sm font-medium mb-2 uppercase tracking-widest">
             {slide.subtitle}
-          </h3>
-          <h1 className="text-3xl sm:text-5xl md:text-7xl font-bold text-white mb-4 leading-tight">
+          </p>
+          <h1 className="text-4xl sm:text-6xl font-bold mb-4">
             {slide.title}
           </h1>
-          <p className="text-lg sm:text-xl text-gray-200 mb-8 max-w-2xl mx-auto">
+          <p className="text-lg mb-8 opacity-90">
             {slide.description}
           </p>
           <Link
             to={slide.url}
-            className="inline-block px-8 py-4 gradient-primary text-primary-foreground rounded-lg transition-transform duration-300 font-semibold text-lg hover:scale-105 active:scale-95 shadow-lg"
+            className="inline-block bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-md font-semibold transition-colors"
           >
             {slide.cta}
           </Link>
         </div>
       </div>
 
-      {/* Navigation Controls */}
       <button
         onClick={prevSlide}
-        className="hidden sm:block absolute left-6 top-1/2 transform -translate-y-1/2 p-3 glass-card hover:bg-white/20 transition-all z-10"
+        className="absolute left-4 top-1/2 -translate-y-1/2 p-2 bg-white/20 hover:bg-white/30 rounded-full text-white"
       >
-        <ChevronLeft className="w-6 h-6 text-white" />
+        <ChevronLeft size={24} />
       </button>
       <button
         onClick={nextSlide}
-        className="hidden sm:block absolute right-6 top-1/2 transform -translate-y-1/2 p-3 glass-card hover:bg-white/20 transition-all z-10"
+        className="absolute right-4 top-1/2 -translate-y-1/2 p-2 bg-white/20 hover:bg-white/30 rounded-full text-white"
       >
-        <ChevronRight className="w-6 h-6 text-white" />
+        <ChevronRight size={24} />
       </button>
 
-      {/* Dots Indicator */}
-      <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex space-x-3 z-10">
+      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex space-x-2">
         {slides.map((_, index) => (
           <button
             key={index}
             onClick={() => setCurrentSlide(index)}
-            className={`w-3 h-3 rounded-full transition-all duration-300 ${
-              index === currentSlide ? "bg-primary w-6" : "bg-white/30 hover:bg-white/50"
+            className={`w-2 h-2 rounded-full ${
+              index === currentSlide ? "bg-white" : "bg-white/30"
             }`}
           />
         ))}

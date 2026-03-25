@@ -17,30 +17,30 @@ const Dashboard = () => {
   }, [dispatch]);
 
   return (
-    <main className="p-4 sm:p-6">
-      <div className="flex-1">
-        <Header />
-        <div className="mb-6">
-          <h1 className="text-3xl font-bold text-gray-900">Dashboard Overview</h1>
-          <p className="text-gray-500 mt-1">Check your sales and store performance.</p>
-        </div>
+    <div className="flex-1 md:pl-6">
+      <Header />
+      <div className="mb-6">
+        <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
+        <p className="text-gray-500">Check the sales and value.</p>
+      </div>
 
-        <Stats />
+      <Stats />
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mt-6">
-          <MonthlySalesChart />
-          <OrdersChart />
-          <TopProductsChart />
-        </div>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
+        <MonthlySalesChart />
+        <OrdersChart />
+        <TopProductsChart />
+      </div>
 
-        <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 py-4">
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 py-6">
+        <div className="xl:col-span-2">
           <TopSellingProducts />
-          <div className="xl:col-span-1">
-            <MiniSummary />
-          </div>
+        </div>
+        <div className="xl:col-span-1">
+          <MiniSummary />
         </div>
       </div>
-    </main>
+    </div>
   );
 };
 

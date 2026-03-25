@@ -1,14 +1,15 @@
+import React from "react";
 import { Link } from "react-router-dom";
 import { categories } from "../../data/products";
 
 const CategoryGrid = () => {
   return (
-    <section className="py-16 px-4">
-      <div className="mb-12">
-        <h2 className="text-2xl sm:text-4xl font-bold text-foreground mb-2">
+    <section className="py-12 px-4">
+      <div className="mb-8">
+        <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
           Shop by Category
         </h2>
-        <p className="text-muted-foreground">
+        <p className="text-gray-600">
           Find exactly what you're looking for
         </p>
       </div>
@@ -18,17 +19,16 @@ const CategoryGrid = () => {
           <Link
             key={category.id}
             to={`/products?category=${category.name}`}
-            className="group glass-card p-4 sm:p-6 text-center transition-all duration-300 block h-full hover:shadow-lg"
+            className="group block bg-white rounded-lg border border-gray-200 p-4 transition-all hover:shadow-md h-full"
           >
-            <div className="relative aspect-square sm:aspect-video overflow-hidden rounded-lg mb-4">
+            <div className="relative aspect-square overflow-hidden rounded-md mb-3">
               <img
                 src={category.image}
                 alt={category.name}
-                className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                className="w-full h-full object-cover transition-transform group-hover:scale-105"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent" />
             </div>
-            <h3 className="text-base sm:text-lg font-semibold text-foreground group-hover:text-primary transition-colors">
+            <h3 className="text-center font-medium text-gray-900 group-hover:text-blue-600">
               {category.name}
             </h3>
           </Link>
