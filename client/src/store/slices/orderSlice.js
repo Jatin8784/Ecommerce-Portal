@@ -14,6 +14,18 @@ export const fetchMyOrders = createAsyncThunk(
   }
 );
 
+export const fetchOrderDetails = createAsyncThunk(
+  "/order/single",
+  async (orderId, thunkAPI) => {
+    try {
+      const res = await axiosInstance.get(`/order/single/${orderId}`);
+      return res.data.order;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response.data.message);
+    }
+  }
+);
+
 export const PlaceOrder = createAsyncThunk(
   "/order/new",
   async (data, thunkAPI) => {
@@ -63,6 +75,8 @@ const orderSlice = createSlice({
     razorpayAmount: null,
     razorpayCurrency: "INR",
     currentOrderId: null,
+    orderDetails: null,
+    fetchingOrderDetails: false,
   },
   reducers: {
     toggleOrderStep(state) {
@@ -105,6 +119,16 @@ const orderSlice = createSlice({
       .addCase(PlaceOrder.rejected, (state, action) => {
         state.placingOrder = false;
         state.error = action.payload || "An unexpected error occurred";
+      })
+      .addCase(fetchOrderDetails.pending, (state) => {
+        state.fetchingOrderDetails = true;
+      })
+      .addCase(fetchOrderDetails.fulfilled, (state, action) => {
+        state.fetchingOrderDetails = false;
+        state.orderDetails = action.payload;
+      })
+      .addCase(fetchOrderDetails.rejected, (state) => {
+        state.fetchingOrderDetails = false;
       })
       .addCase(VerifyPayment.fulfilled, (state) => {
         state.orderStep = 3;
