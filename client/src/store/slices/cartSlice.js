@@ -10,11 +10,16 @@ const cartSlice = createSlice({
   reducers: {
     addToCart(state, action) {
       const { product, quantity } = action.payload;
-      console.log("addToCart called with:", product, "from stack:", new Error().stack);
+      console.log(
+        "addToCart called with:",
+        product,
+        "from stack:",
+        new Error().stack,
+      );
       if (!product || !product.id) return;
 
       const existingItem = state.cart.find(
-        (item) => item.product.id === product.id
+        (item) => item.product.id === product.id,
       );
 
       if (existingItem) {
@@ -28,13 +33,13 @@ const cartSlice = createSlice({
 
     removeFromCart(state, action) {
       state.cart = state.cart.filter(
-        (item) => item.product.id !== action.payload
+        (item) => item.product.id !== action.payload,
       );
     },
 
     updateCartQuantity(state, action) {
       const item = state.cart.find(
-        (item) => item.product.id === action.payload.id
+        (item) => item.product.id === action.payload.id,
       );
       if (item) {
         item.quantity = action.payload.quantity;
@@ -43,7 +48,7 @@ const cartSlice = createSlice({
 
     clearCart(state) {
       state.cart = [];
-      localStorage.removeItem("cart")
+      localStorage.removeItem("cart");
     },
   },
 });

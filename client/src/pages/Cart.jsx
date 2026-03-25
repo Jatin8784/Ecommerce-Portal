@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   removeFromCart,
   updateCartQuantity,
+  clearCart
 } from "../store/slices/cartSlice.js";
 
 const Cart = () => {
@@ -58,15 +59,26 @@ const Cart = () => {
     <>
       <div className="min-h-screen pt-20">
         <div className="container mx-auto px-4 py-8">
-          <div className="mb-8">
-            <h1 className="text-3xl text-foreground font-bold mb-4">
-              Shopping Cart
-            </h1>
-            <p className="text-muted-foreground">
-              {cartItemsCount} item{cartItemsCount !== 1 ? "s" : ""} in your
-              cart
-            </p>
-          </div>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+              <div>
+                <h1 className="text-3xl text-foreground font-bold mb-2">
+                  Shopping Cart
+                </h1>
+                <p className="text-muted-foreground">
+                  {cartItemsCount} item{cartItemsCount !== 1 ? "s" : ""} in your
+                  cart
+                </p>
+              </div>
+              {cart.length > 0 && (
+                <button
+                  onClick={() => dispatch(clearCart())}
+                  className="px-4 py-2 text-sm font-bold text-destructive hover:bg-destructive/10 rounded-lg border border-destructive/20 transition-all flex items-center space-x-2 w-fit"
+                >
+                  <Trash2 className="w-4 h-4" />
+                  <span>Clear Cart</span>
+                </button>
+              )}
+            </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div className="lg:col-span-2 space-y-4">
