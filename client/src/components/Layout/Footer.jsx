@@ -143,7 +143,7 @@ const Footer = () => {
                 <div className="mt-2 flex items-center justify-center space-x-2">
                   <Instagram className="w-4 h-4 text-primary" />
                   <span className="text-xs text-muted-foreground group-hover:text-primary transition-colors">
-                    @jatin_bhoraniya
+                    @jatin_bhoraniya_007
                   </span>
                 </div>
               </a>
