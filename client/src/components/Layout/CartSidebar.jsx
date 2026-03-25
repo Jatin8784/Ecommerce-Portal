@@ -41,89 +41,102 @@ const CartSidebar = () => {
       ></div>
 
       {/* Cart SideBar */}
-      <div className="fixed right-0 top-0 h-full w-[min(400px,90vw)] z-50 glass-panel bg-background/95 animate-slide-in-right flex flex-col shadow-2xl">
+      <div className="fixed right-0 top-0 h-full w-[min(450px,95vw)] z-50 glass-panel bg-background/95 animate-slide-in-right flex flex-col shadow-2xl transition-all duration-300">
         <div className="flex items-center justify-between p-6 border-b border-[hsla(var(--glass-border))]">
-          <h2 className="text-xl font-semibold text-primary">Shopping Cart</h2>
+          <h2 className="text-xl font-bold bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent italic">
+            Shopping Cart
+          </h2>
           <button
             onClick={() => dispatch(toggleCart())}
-            className="p-2 rounded-lg glass-card hover:glow-on-hover animate-smooth transition-all"
+            className="p-2 rounded-xl glass-card hover:bg-secondary/50 transition-all border border-border/50"
           >
             <X className="w-5 h-5 text-primary" />
           </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto p-6 scrollbar-hide">
+        <div className="flex-1 overflow-y-auto p-4 sm:p-6 scrollbar-hide">
           {cart && cart.length === 0 ? (
             <div className="text-center py-12 flex flex-col items-center justify-center h-full">
-              <div className="w-20 h-20 bg-secondary/30 rounded-full flex items-center justify-center mb-4">
-                <ShoppingCart className="w-20 h-20 text-muted-foreground/50 sm:w-12 sm:h-12" />
+              <div className="w-24 h-24 bg-secondary/30 rounded-full flex items-center justify-center mb-6 animate-pulse">
+                <ShoppingCart className="w-12 h-12 text-muted-foreground/50" />
               </div>
-              <p className="text-muted-foreground text-lg">
+              <p className="text-muted-foreground text-xl font-medium">
                 Your cart is empty.
               </p>
               <Link
                 to={"/products"}
                 onClick={() => dispatch(toggleCart())}
-                className="inline-block mt-6 px-8 py-3 bg-primary text-primary-foreground rounded-lg hover:glow-on-hover animate-smooth font-semibold transition-all shadow-lg shadow-primary/20"
+                className="inline-block mt-8 px-10 py-4 bg-primary text-primary-foreground rounded-xl hover:glow-on-hover animate-smooth font-bold transition-all shadow-lg shadow-primary/30 uppercase tracking-wider"
               >
                 Browse Products
               </Link>
             </div>
           ) : (
-            <div className="space-y-4">
+            <div className="space-y-6">
               {/* Cart Items */}
               {cart.map((item) => (
                 <div
                   key={item.product.id}
-                  className="glass-card p-4 hover:glow-on-hover animate-smooth transition-all"
+                  className="glass-card group p-4 sm:p-5 hover:glow-on-hover animate-smooth transition-all border border-border/40 relative overflow-hidden"
                 >
-                  <div className="flex items-center space-x-4">
-                    <img
-                      src={item.product.images[0].url}
-                      alt={item.product.name}
-                      className="w-20 h-20 object-cover rounded-lg shadow-sm border border-border/50"
-                    />
-                    <div className="flex-1 min-w-0">
-                      <h3 className="font-semibold text-foreground truncate text-sm sm:text-base">
-                        {item.product.name}
-                      </h3>
-                      <p className="text-primary font-bold text-lg">
-                        ${item.product.price}
-                      </p>
+                  <div className="flex gap-4 sm:gap-6">
+                    {/* Product Image */}
+                    <div className="relative w-24 h-24 sm:w-28 sm:h-28 flex-shrink-0 bg-white dark:bg-gray-900 rounded-2xl overflow-hidden border border-border/20 shadow-md">
+                      <img
+                        src={item.product.images[0].url}
+                        alt={item.product.name}
+                        className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-500"
+                      />
+                    </div>
 
-                      {/* Quantity Controls */}
-                      <div className="flex items-center justify-between mt-3">
-                        <div className="flex items-center bg-secondary/30 rounded-lg p-1 border border-border/50">
+                    {/* Product Info */}
+                    <div className="flex-1 flex flex-col justify-between min-w-0">
+                      <div className="space-y-1">
+                        <div className="flex justify-between items-start gap-2">
+                          <h3 className="font-bold text-foreground truncate text-base sm:text-lg leading-tight uppercase tracking-tight">
+                            {item.product.name}
+                          </h3>
+                        </div>
+                        <p className="text-primary font-black text-xl">
+                          ${item.product.price}
+                        </p>
+                      </div>
+
+                      <div className="flex items-center justify-between mt-4">
+                        {/* Quantity Controls */}
+                        <div className="flex items-center bg-secondary/40 backdrop-blur-md rounded-xl p-1.5 border border-border/50 shadow-inner">
                           <button
-                            className="p-1 px-2 rounded hover:bg-background/50 transition-colors disabled:opacity-30"
+                            className="p-1.5 rounded-lg hover:bg-background/80 hover:shadow-sm transition-all disabled:opacity-20 disabled:cursor-not-allowed text-foreground"
                             onClick={() =>
                               updateQuantity(item.product.id, item.quantity - 1)
                             }
                             disabled={item.quantity === 1}
                           >
-                            <Minus className="w-3.5 h-3.5" />
+                            <Minus size={16} />
                           </button>
-                          <span className="w-8 text-center font-bold text-sm">
+                          <span className="w-10 text-center font-black text-base text-foreground">
                             {item.quantity}
                           </span>
                           <button
-                            className="p-1 px-2 rounded hover:bg-background/50 transition-colors"
+                            className="p-1.5 rounded-lg hover:bg-background/80 hover:shadow-sm transition-all text-foreground"
                             onClick={() =>
                               updateQuantity(item.product.id, item.quantity + 1)
                             }
                           >
-                            <Plus className="w-3.5 h-3.5" />
-                          </button>
-                          <button
-                            className="p-2 text-destructive hover:bg-destructive/10 rounded-lg transition-colors"
-                            onClick={() =>
-                              dispatch(removeFromCart(item.product.id))
-                            }
-                            title="Remove item"
-                          >
-                            <Trash2 className="w-4 h-4" />
+                            <Plus size={16} />
                           </button>
                         </div>
+
+                        {/* Remove Button */}
+                        <button
+                          className="p-3 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-xl transition-all border border-transparent hover:border-destructive/20"
+                          onClick={() =>
+                            dispatch(removeFromCart(item.product.id))
+                          }
+                          title="Remove item"
+                        >
+                          <Trash2 className="w-5 h-5" />
+                        </button>
                       </div>
                     </div>
                   </div>
