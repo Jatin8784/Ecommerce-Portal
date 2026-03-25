@@ -1,9 +1,8 @@
 import { useRef } from "react";
 import { ChevronLeft, ChevronRight, Star, ShoppingCart } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { addToCart } from "../../store/slices/cartSlice";
 import { useDispatch } from "react-redux";
-import { motion } from "framer-motion";
 
 const ProductSlider = ({ title, products }) => {
   const scrollRef = useRef(null);
@@ -28,51 +27,43 @@ const ProductSlider = ({ title, products }) => {
 
   return (
     <section className="py-16">
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex items-center justify-between mb-8 px-4">
         <h2 className="text-2xl sm:text-3xl font-bold text-foreground">{title}</h2>
         <div className="flex space-x-2">
-          <motion.button
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
+          <button
             onClick={() => scroll("left")}
-            className="p-2 glass-card hover:glow-on-hover transition-all duration-300"
+            className="p-2 glass-card hover:bg-gray-100 transition-all"
           >
             <ChevronLeft className="w-6 h-6 text-primary" />
-          </motion.button>
-          <motion.button
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
+          </button>
+          <button
             onClick={() => scroll("right")}
-            className="p-2 glass-card hover:glow-on-hover transition-all duration-300"
+            className="p-2 glass-card hover:bg-gray-100 transition-all"
           >
             <ChevronRight className="w-6 h-6 text-primary" />
-          </motion.button>
+          </button>
         </div>
       </div>
 
       <div
         ref={scrollRef}
-        className="flex space-x-4 overflow-x-auto scrollbar-hide pb-4 px-1"
+        className="flex space-x-4 overflow-x-auto scrollbar-hide pb-4 px-4"
       >
         {products.map((product) => (
-          <motion.div
+          <div
             key={product.id}
-            whileHover={{ y: -10 }}
-            transition={{ type: "spring", stiffness: 300 }}
             className="flex shrink-0"
           >
             <div
-              className="w-[280px] sm:w-80 glass-card hover:glass-on-hover transition-all duration-300 group p-4 flex flex-col cursor-pointer"
+              className="w-[280px] sm:w-80 glass-card hover:shadow-xl transition-all duration-300 group p-4 flex flex-col cursor-pointer"
               onClick={() => navigate(`/product/${product.id}`)}
             >
               {/* Product Image */}
               <div className="relative h-48 bg-white rounded-lg flex items-center justify-center overflow-hidden">
-                <motion.img
-                  whileHover={{ scale: 1.1 }}
-                  transition={{ duration: 0.3 }}
+                <img
                   src={product.images[0].url}
                   alt={product.name}
-                  className="w-full h-48 object-contain"
+                  className="w-full h-48 object-contain transition-transform duration-300 group-hover:scale-105"
                 />
                 
                 {/* Badges */}
@@ -90,16 +81,13 @@ const ProductSlider = ({ title, products }) => {
                 </div>
 
                 {/* Quick Add To Cart */}
-                <motion.button
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
+                <button
                   className="absolute bottom-3 right-3 p-2 bg-white text-primary rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-all duration-300 z-10"
                   onClick={(e) => handleAddToCart(product, e)}
                   disabled={product.stock === 0}
                 >
                   <ShoppingCart className="w-5 h-5" />
-                </motion.button>
+                </button>
               </div>
 
               {/* Product Info */}
@@ -148,7 +136,7 @@ const ProductSlider = ({ title, products }) => {
                 </div>
               </div>
             </div>
-          </motion.div>
+          </div>
         ))}
       </div>
     </section>
