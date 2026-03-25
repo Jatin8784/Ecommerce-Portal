@@ -1,5 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { Filter, Package, Truck, CheckCircle, XCircle, FileText } from "lucide-react";
+import {
+  Filter,
+  Package,
+  Truck,
+  CheckCircle,
+  XCircle,
+} from "lucide-react";
 import { jsPDF } from "jspdf";
 import autoTable from "jspdf-autotable";
 import { useDispatch, useSelector } from "react-redux";
@@ -24,7 +30,7 @@ const Orders = () => {
   if (!authUser) return navigate("/products");
 
   const filterOrders = myOrders.filter(
-    (order) => statusFilter === "All" || order.order_status === statusFilter
+    (order) => statusFilter === "All" || order.order_status === statusFilter,
   );
 
   const getStatusIcon = (status) => {
@@ -64,14 +70,14 @@ const Orders = () => {
     "Delivered",
     "Cancelled",
   ];
-  
+
   const handleReorder = (order) => {
     order.order_items.forEach((item) => {
       const productForCart = {
         id: item.product_id,
         name: item.title,
         price: item.price,
-        images: [{ url: item.image }]
+        images: [{ url: item.image }],
       };
       dispatch(addToCart({ product: productForCart, quantity: item.quantity }));
     });
@@ -81,67 +87,10 @@ const Orders = () => {
 
   const handleWriteReview = (order) => {
     if (order.order_items && order.order_items.length > 0) {
-      navigate(`/product/${order.order_items[0].product_id}`, { 
-        state: { activeTab: "reviews" } 
+      navigate(`/product/${order.order_items[0].product_id}`, {
+        state: { activeTab: "reviews" },
       });
     }
-  };
-
-  const handleDownloadInvoice = (order) => {
-    const doc = new jsPDF();
-    
-    // Add Header
-    doc.setFontSize(22);
-    doc.setTextColor(41, 128, 185);
-    doc.text("E-KART INVOICE", 105, 20, { align: "center" });
-    
-    // Add Horizontal Line
-    doc.setLineWidth(0.5);
-    doc.line(20, 25, 190, 25);
-    
-    // Order Info
-    doc.setFontSize(12);
-    doc.setTextColor(40, 40, 40);
-    doc.text(`Order ID: ${order.id}`, 20, 35);
-    doc.text(`Date: ${new Date(order.created_at).toLocaleDateString()}`, 20, 42);
-    doc.text(`Status: ${order.order_status}`, 20, 49);
-    
-    // Customer Info
-    doc.text("Billed To:", 140, 35);
-    doc.setFontSize(10);
-    doc.text(authUser.name || "Customer", 140, 42);
-    doc.text(authUser.email || "", 140, 49);
-    
-    // Items Table
-    const tableData = order.order_items.map((item) => [
-      item.title,
-      item.quantity,
-      `$${item.price}`,
-      `$${(item.quantity * item.price).toFixed(2)}`,
-    ]);
-
-    autoTable(doc, {
-      startY: 60,
-      head: [["Product", "Quantity", "Price", "Subtotal"]],
-      body: tableData,
-      theme: "striped",
-      headStyles: { fillColor: [41, 128, 185] },
-    });
-
-    // Totals
-    const finalY = doc.lastAutoTable.finalY + 10;
-    doc.setFontSize(14);
-    doc.setFont("helvetica", "bold");
-    doc.text(`Grand Total: $${order.total_price}`, 190, finalY, { align: "right" });
-    
-    // Footer
-    doc.setFontSize(10);
-    doc.setFont("helvetica", "italic");
-    doc.setTextColor(100, 100, 100);
-    doc.text("Thank you for shopping with E-Kart!", 105, finalY + 20, { align: "center" });
-
-    doc.save(`Invoice_${order.id}.pdf`);
-    toast.success("Invoice downloaded successfully!");
   };
 
   return (
@@ -149,9 +98,7 @@ const Orders = () => {
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-foreground mb-2">
-            My Orders
-          </h1>
+          <h1 className="text-3xl font-bold text-foreground mb-2">My Orders</h1>
           <p className="text-muted-foreground">
             Track and manage your order history.
           </p>
@@ -223,7 +170,7 @@ const Orders = () => {
                       {getStatusIcon(order.order_status)}
                       <span
                         className={`px-3 py-1 rounded text-sm font-medium capitalize ${getStatusColor(
-                          order.order_status
+                          order.order_status,
                         )}`}
                       >
                         {order.order_status}
@@ -285,20 +232,13 @@ const Orders = () => {
 
                   {order.order_status === "Delivered" && (
                     <>
-                      <button 
+                      <button
                         onClick={() => handleWriteReview(order)}
                         className="flex items-center justify-center px-4 py-2.5 glass-card hover:glow-on-hover text-xs sm:text-sm font-bold transition-all h-full"
                       >
                         Write Review
                       </button>
-                      <button 
-                        onClick={() => handleDownloadInvoice(order)}
-                        className="flex items-center justify-center px-4 py-2.5 glass-card hover:glow-on-hover text-xs sm:text-sm font-bold space-x-2 transition-all h-full"
-                      >
-                        <FileText className="w-4 h-4 text-primary shrink-0" />
-                        <span className="truncate">Invoice</span>
-                      </button>
-                      <button 
+                      <button
                         onClick={() => handleReorder(order)}
                         className="flex items-center justify-center px-4 py-2.5 glass-card hover:glow-on-hover text-xs sm:text-sm font-bold transition-all h-full"
                       >
