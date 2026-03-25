@@ -129,7 +129,7 @@ const CartSidebar = () => {
 
                         {/* Remove Button */}
                         <button
-                          className="p-3 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-xl transition-all border border-transparent hover:border-destructive/20"
+                          className=" text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-xl transition-all border border-transparent hover:border-destructive/20"
                           onClick={() =>
                             dispatch(removeFromCart(item.product.id))
                           }
