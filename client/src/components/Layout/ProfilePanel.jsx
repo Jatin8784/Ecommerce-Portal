@@ -106,7 +106,9 @@ const ProfilePanel = () => {
               <h3 className="text-xl font-bold text-foreground capitalize">
                 {authUser?.name}
               </h3>
-              <p className="text-muted-foreground text-sm font-medium">{authUser?.email}</p>
+              <p className="text-muted-foreground text-sm font-medium">
+                {authUser?.email}
+              </p>
             </div>
           </div>
 
@@ -115,11 +117,15 @@ const ProfilePanel = () => {
             <div className="glass-card p-5 rounded-xl space-y-4 border border-border/50">
               <div className="flex items-center space-x-2 text-primary">
                 <span className="w-1.5 h-1.5 bg-primary rounded-full animate-pulse" />
-                <h3 className="text-sm font-bold uppercase tracking-wider">Update Details</h3>
+                <h3 className="text-sm font-bold uppercase tracking-wider">
+                  Update Details
+                </h3>
               </div>
               <div className="space-y-3">
                 <div className="space-y-1">
-                  <label className="text-[10px] font-bold text-muted-foreground uppercase ml-1">Full Name</label>
+                  <label className="text-[10px] font-bold text-muted-foreground uppercase ml-1">
+                    Full Name
+                  </label>
                   <input
                     type="text"
                     value={name}
@@ -129,7 +135,9 @@ const ProfilePanel = () => {
                   />
                 </div>
                 <div className="space-y-1">
-                  <label className="text-[10px] font-bold text-muted-foreground uppercase ml-1">Email Address</label>
+                  <label className="text-[10px] font-bold text-muted-foreground uppercase ml-1">
+                    Email Address
+                  </label>
                   <input
                     type="email"
                     value={email}
@@ -158,7 +166,9 @@ const ProfilePanel = () => {
             <div className="glass-card p-5 rounded-xl space-y-4 border border-border/50">
               <div className="flex items-center space-x-2 text-primary">
                 <span className="w-1.5 h-1.5 bg-primary rounded-full animate-pulse" />
-                <h3 className="text-sm font-bold uppercase tracking-wider">Security</h3>
+                <h3 className="text-sm font-bold uppercase tracking-wider">
+                  Security
+                </h3>
               </div>
               <div className="space-y-3">
                 <input
@@ -208,15 +218,13 @@ const ProfilePanel = () => {
         </div>
 
         {/* Footer Logout */}
-        <div className="p-6 bg-background/50 backdrop-blur-md border-t border-[hsla(var(--glass-border))] mt-auto">
-          <button
-            className="flex items-center justify-center space-x-3 w-full p-4 rounded-xl bg-destructive/10 text-destructive hover:bg-destructive hover:text-white transition-all font-bold shadow-sm group"
-            onClick={handleLogout}
-          >
-            <LogOut className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
-            <span>Sign Out From Device</span>
-          </button>
-        </div>
+        <button
+          className="flex items-center justify-center space-x-3 w-full p-4 rounded-xl bg-destructive/10 text-destructive hover:bg-destructive hover:text-white transition-all font-bold shadow-sm group"
+          onClick={handleLogout}
+        >
+          <LogOut className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
+          <span>Sign Out From Device</span>
+        </button>
       </div>
     </>
   );
