@@ -73,22 +73,23 @@ const Orders = () => {
           </p>
         </div>
 
-        {/* Status Filter */}
         <div className="glass-card p-4 mb-8">
-          <div className="flex items-center space-x-4 flex-wrap">
-            <div className="flex items-center space-x-2">
-              <Filter className="w-5 h-5 text-primary" />
-              <span className="font-medium">Filter by status:</span>
+          <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+            <div className="flex items-center space-x-2 text-primary shrink-0">
+              <Filter className="w-5 h-5" />
+              <span className="text-xs font-bold uppercase tracking-wider">
+                Filter by status:
+              </span>
             </div>
             <div className="flex flex-wrap gap-2">
               {statusArray.map((status) => (
                 <button
                   key={status}
                   onClick={() => setStatusFilter(status)}
-                  className={`px-4 py-2 rounded-lg font-medium transition-all capitalize ${
+                  className={`px-4 py-2 rounded-lg text-xs font-bold transition-all capitalize border ${
                     statusFilter === status
-                      ? "gradient-primary text-primary-foreground"
-                      : "glass-card hover:glow-on-hover text-foreground"
+                      ? "bg-primary text-primary-foreground border-primary shadow-lg shadow-primary/20"
+                      : "glass-card hover:glow-on-hover text-muted-foreground border-border/50"
                   }`}
                 >
                   {status}
