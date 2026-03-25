@@ -58,7 +58,7 @@ const HeroSlider = () => {
         className="absolute inset-0 bg-cover bg-center"
         style={{ backgroundImage: `url(${slide.image})` }}
       />
-      <div className="absolute inset-0 bg-black/50" />
+      <div className="absolute inset-0 bg-black/40" />
 
       <div className="relative h-full flex items-center justify-center text-center px-4">
         <div className="max-w-3xl text-white">
@@ -73,7 +73,7 @@ const HeroSlider = () => {
           </p>
           <Link
             to={slide.url}
-            className="inline-block bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-md font-semibold transition-colors"
+            className="inline-block bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-md font-semibold"
           >
             {slide.cta}
           </Link>
@@ -82,13 +82,13 @@ const HeroSlider = () => {
 
       <button
         onClick={prevSlide}
-        className="absolute left-4 top-1/2 -translate-y-1/2 p-2 bg-white/20 hover:bg-white/30 rounded-full text-white"
+        className="hidden sm:block absolute left-4 top-1/2 -translate-y-1/2 p-2 bg-white/20 hover:bg-white/30 rounded-full text-white"
       >
         <ChevronLeft size={24} />
       </button>
       <button
         onClick={nextSlide}
-        className="absolute right-4 top-1/2 -translate-y-1/2 p-2 bg-white/20 hover:bg-white/30 rounded-full text-white"
+        className="hidden sm:block absolute right-4 top-1/2 -translate-y-1/2 p-2 bg-white/20 hover:bg-white/30 rounded-full text-white"
       >
         <ChevronRight size={24} />
       </button>
@@ -99,7 +99,7 @@ const HeroSlider = () => {
             key={index}
             onClick={() => setCurrentSlide(index)}
             className={`w-2 h-2 rounded-full ${
-              index === currentSlide ? "bg-white" : "bg-white/30"
+              index === currentSlide ? "bg-blue-600" : "bg-white/50"
             }`}
           />
         ))}

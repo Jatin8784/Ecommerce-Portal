@@ -27,18 +27,18 @@ const ProductSlider = ({ title, products }) => {
 
   return (
     <section className="py-12 px-4">
-      <div className="flex items-center justify-between mb-8">
-        <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">{title}</h2>
+      <div className="flex items-center justify-between mb-6">
+        <h2 className="text-2xl font-bold text-gray-900">{title}</h2>
         <div className="flex space-x-2">
           <button
             onClick={() => scroll("left")}
-            className="p-2 border border-gray-200 rounded-full hover:bg-gray-50 transition-colors"
+            className="p-2 border border-gray-200 rounded-full hover:bg-gray-100"
           >
             <ChevronLeft size={20} />
           </button>
           <button
             onClick={() => scroll("right")}
-            className="p-2 border border-gray-200 rounded-full hover:bg-gray-50 transition-colors"
+            className="p-2 border border-gray-200 rounded-full hover:bg-gray-100"
           >
             <ChevronRight size={20} />
           </button>
@@ -52,46 +52,42 @@ const ProductSlider = ({ title, products }) => {
         {products.map((product) => (
           <div
             key={product.id}
-            className="flex-shrink-0 w-64 sm:w-72 bg-white rounded-lg border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow cursor-pointer p-4"
+            className="flex-shrink-0 w-64 bg-white rounded-lg border border-gray-200 p-4 hover:shadow-sm"
             onClick={() => navigate(`/product/${product.id}`)}
           >
-            <div className="relative h-48 mb-4">
+            <div className="relative h-40 mb-3 bg-gray-50 flex items-center justify-center rounded">
               <img
                 src={product.images[0].url}
                 alt={product.name}
-                className="w-full h-full object-contain"
+                className="max-h-full max-w-full object-contain"
               />
               <button
                 onClick={(e) => handleAddToCart(product, e)}
-                className="absolute bottom-2 right-2 bg-blue-600 text-white p-2 rounded-full hover:bg-blue-700 opacity-0 group-hover:opacity-100 transition-opacity"
+                className="absolute bottom-2 right-2 bg-blue-600 text-white p-2 rounded-full shadow hover:bg-blue-700"
               >
-                <ShoppingCart size={18} />
+                <ShoppingCart size={16} />
               </button>
             </div>
             
-            <h3 className="font-semibold text-gray-900 truncate mb-1">{product.name}</h3>
+            <h3 className="font-semibold text-gray-800 truncate mb-1">{product.name}</h3>
             
             <div className="flex items-center mb-2">
               <div className="flex text-yellow-400">
                 {[...Array(5)].map((_, i) => (
                   <Star
                     key={i}
-                    size={14}
+                    size={12}
                     fill={i < Math.floor(product.ratings) ? "currentColor" : "none"}
                     className={i < Math.floor(product.ratings) ? "" : "text-gray-300"}
                   />
                 ))}
               </div>
-              <span className="text-xs text-gray-500 ml-1">({product.reviews_count})</span>
+              <span className="text-[10px] text-gray-500 ml-1">({product.reviews_count})</span>
             </div>
 
             <div className="flex items-center justify-between">
-              <span className="text-lg font-bold text-gray-900">${product.price}</span>
-              <span className={`text-[10px] uppercase font-bold px-2 py-0.5 rounded ${
-                product.stock > 0 ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"
-              }`}>
-                {product.stock > 0 ? "In Stock" : "Out of Stock"}
-              </span>
+              <span className="text-lg font-bold">${product.price}</span>
+              <span className="text-[10px] text-gray-500">{product.stock > 0 ? "In Stock" : "Out of Stock"}</span>
             </div>
           </div>
         ))}
