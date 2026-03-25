@@ -34,8 +34,8 @@ const FAQ = () => {
     <div className="min-h-screen bg-background pt-20">
       <div className="max-w-3xl mx-auto px-4 py-16">
         <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-foreground mb-4">Frequently Asked Questions</h1>
-          <p className="text-xl text-muted-foreground">Find answers to common questions</p>
+          <h1 className="text-3xl sm:text-4xl font-bold text-foreground mb-4">Frequently Asked Questions</h1>
+          <p className="text-lg sm:text-xl text-muted-foreground">Find answers to common questions</p>
         </div>
 
         <div className="space-y-4">

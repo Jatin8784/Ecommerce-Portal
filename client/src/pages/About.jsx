@@ -28,10 +28,10 @@ const About = () => {
     <div className="min-h-screen bg-background pt-20">
       <div className="max-w-4xl mx-auto px-4 py-16">
         <div className="text-center mb-16">
-          <h1 className="text-4xl font-bold text-foreground mb-6">
+          <h1 className="text-3xl sm:text-4xl font-bold text-foreground mb-6">
             About E-Kart
           </h1>
-          <p className="text-xl text-muted-foreground">
+          <p className="text-lg sm:text-xl text-muted-foreground">
             Your trusted e-commerce platform for quality products and
             exceptional service.
           </p>

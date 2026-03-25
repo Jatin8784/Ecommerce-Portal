@@ -156,47 +156,47 @@ const Payment = () => {
 
             {/* Progress Steps */}
             <div className="flex items-center justify-center mb-12">
-              <div className="flex items-center space-x-4">
+              <div className="flex items-center space-x-2 sm:space-x-4 scale-90 sm:scale-100">
                 {/* Step 1 */}
                 <div
-                  className={`flex items-center space-x-2 ${
+                  className={`flex items-center space-x-1 sm:space-x-2 ${
                     orderStep >= 1 ? "text-primary" : "text-muted-foreground"
                   }`}
                 >
                   <div
-                    className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                    className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center ${
                       orderStep >= 1
                         ? "gradient-primary text-primary-foreground"
                         : "bg-secondary"
                     }`}
                   >
-                    {orderStep > 1 ? <Check className="w-5 h-5" /> : "1"}
+                    {orderStep > 1 ? <Check className="w-4 h-4 sm:w-5 sm:h-5" /> : "1"}
                   </div>
-                  <span className="font-medium">Details</span>
+                  <span className="font-medium text-sm sm:text-base">Details</span>
                 </div>
 
                 <div
-                  className={`w-12 h-0.5 ${
+                  className={`w-8 sm:w-12 h-0.5 ${
                     orderStep >= 2 ? "bg-primary" : "bg-border"
                   }`}
                 />
 
                 {/* Step 2 */}
                 <div
-                  className={`flex items-center space-x-2 ${
+                  className={`flex items-center space-x-1 sm:space-x-2 ${
                     orderStep >= 2 ? "text-primary" : "text-muted-foreground"
                   }`}
                 >
                   <div
-                    className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                    className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center ${
                       orderStep >= 2
                         ? "gradient-primary text-primary-foreground"
                         : "bg-secondary"
                     }`}
                   >
-                    {orderStep > 2 ? <Check className="w-5 h-5" /> : "2"}
+                    {orderStep > 2 ? <Check className="w-4 h-4 sm:w-5 sm:h-5" /> : "2"}
                   </div>
-                  <span className="font-medium">Payment</span>
+                  <span className="font-medium text-sm sm:text-base">Payment</span>
                 </div>
               </div>
             </div>

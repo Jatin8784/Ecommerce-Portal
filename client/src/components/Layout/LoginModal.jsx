@@ -107,7 +107,7 @@ const LoginModal = () => {
       {/* Overlay */}
       <div className="absolute inset-0 backdrop-blur-md bg-black/40" />
 
-      <div className="relative z-10 glass-panel w-full max-w-md p-6 rounded-xl">
+      <div className="relative z-10 glass-panel w-full max-w-md p-6 rounded-xl max-h-[min(95vh,640px)] overflow-y-auto">
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-2xl font-bold">
