@@ -111,7 +111,7 @@ const Orders = () => {
           </div>
         ) : (
           <div className="space-y-6">
-            {filterOrders.map((order) => (
+            {filterOrders.map((order, product) => (
               <div key={order.id} className="glass-card p-6">
                 {/* Order Header */}
                 <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6 space-y-4 md:space-y-0">
