@@ -125,15 +125,16 @@ const Footer = () => {
           </div>
 
           {/* Follow Us QR */}
-          <div className="flex flex-col items-center lg:items-start justify-center">
+          <div className="flex flex-col items-center justify-center">
             <h3 className="text-lg font-semibold text-foreground mb-4">
               Follow Us
             </h3>
-            <div className="glass-card p-3 w-fit hover:glow-on-hover animate-smooth cursor-pointer group">
+            <div className="glass-card p-3 w-fit hover:glow-on-hover animate-smooth cursor-pointer group flex flex-col items-center">
               <a
-                href="https://www.instagram.com/jatin_bhoraniya/"
+                href="https://www.instagram.com/jatin_bhoraniya_007/"
                 target="_blank"
                 rel="noreferrer"
+                className="flex flex-col items-center"
               >
                 <img
                   src="/instagram-qr.png"
