@@ -89,35 +89,37 @@ const Orders = () => {
 
   const handleDownloadInvoice = (order) => {
     const doc = new jsPDF();
-    const logoImg = new Image();
-    logoImg.src = "/ekart-logo.png";
 
-    logoImg.onload = () => {
-      // --- HEADER SECTION ---
-      // Logo and Company Info
-      try {
-        doc.addImage(logoImg, "PNG", 20, 15, 25, 25);
-      } catch (e) {
-        console.error("Logo add failed", e);
-      }
-      
-      doc.setFontSize(24);
-      doc.setFont("helvetica", "bold");
-      doc.setTextColor(41, 128, 185); // Primary Blue
-      doc.text("E-KART", 50, 28);
-      
-      doc.setFontSize(9);
-      doc.setFont("helvetica", "normal");
-      doc.setTextColor(100, 100, 100);
-      doc.text("123 Tech Park, Silicon Valley", 50, 34);
-      doc.text("support@ekart.com | +91 98765 43210", 50, 39);
-      doc.text("www.e-kart.com", 50, 44);
+    // --- HEADER SECTION ---
+    // Professional Manual Logo Design (Bulletproof for Live Sites)
+    // 1. Blue Square Icon
+    doc.setFillColor(41, 128, 185); // Primary Blue
+    doc.roundedRect(20, 15, 15, 15, 3, 3, "F");
+    
+    // 2. White "E" in the square
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(14);
+    doc.setFont("helvetica", "bold");
+    doc.text("E", 25.5, 25.5);
 
-      // Invoice Label
-      doc.setFontSize(28);
-      doc.setFont("helvetica", "bold");
-      doc.setTextColor(220, 220, 220);
-      doc.text("INVOICE", 190, 35, { align: "right" });
+    // 3. Company Name & Info
+    doc.setFontSize(22);
+    doc.setFont("helvetica", "bold");
+    doc.setTextColor(41, 128, 185);
+    doc.text("KART", 38, 27);
+    
+    doc.setFontSize(9);
+    doc.setFont("helvetica", "normal");
+    doc.setTextColor(100, 100, 100);
+    doc.text("Premium E-Commerce Platform", 38, 33);
+    doc.text("support@ekart.com | +91 98765 43210", 38, 38);
+    doc.text("www.e-kart.com", 38, 43);
+
+    // Invoice Label
+    doc.setFontSize(28);
+    doc.setFont("helvetica", "bold");
+    doc.setTextColor(230, 230, 230);
+    doc.text("INVOICE", 190, 35, { align: "right" });
 
       // --- DETAILS SECTION ---
       doc.setDrawColor(41, 128, 185);
@@ -211,15 +213,6 @@ const Orders = () => {
       doc.save(`Invoice_${order.id.slice(-8)}.pdf`);
       toast.success("Professional Invoice downloaded!");
     };
-    
-    logoImg.onerror = () => {
-      // Fallback
-      doc.setFontSize(22);
-      doc.text("E-KART INVOICE", 105, 20, { align: "center" });
-      doc.save(`Invoice_${order.id.slice(-8)}.pdf`);
-      toast.info("Invoice generated without logo.");
-    };
-  };
 
   return (
     <div className="min-h-screen pt-20">
