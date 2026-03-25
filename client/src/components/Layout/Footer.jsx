@@ -41,7 +41,7 @@ const Footer = () => {
   return (
     <footer className="glass border-t border-[hsla(var(--glass-border))] mt-16">
       <div className="container mx-auto px-4 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 mb-12">
           {/* Brand & Contact */}
           <div className="lg:col-span-1">
             <h2 className="text-2xl font-bold gradient-primary bg-clip-text text-transparent mb-4">
@@ -122,6 +122,32 @@ const Footer = () => {
                 </li>
               ))}
             </ul>
+          </div>
+
+          {/* Follow Us QR */}
+          <div className="flex flex-col items-center lg:items-start">
+            <h3 className="text-lg font-semibold text-foreground mb-4">
+              Follow Us
+            </h3>
+            <div className="glass-card p-3 w-fit hover:glow-on-hover animate-smooth cursor-pointer group">
+              <a
+                href="https://www.instagram.com/jatin_bhoraniya/"
+                target="_blank"
+                rel="noreferrer"
+              >
+                <img
+                  src="/instagram-qr.png"
+                  alt="Scan to Follow us on Instagram"
+                  className="w-28 h-28 sm:w-32 sm:h-32 rounded-lg opacity-90 group-hover:opacity-100 transition-opacity"
+                />
+                <div className="mt-2 flex items-center justify-center space-x-2">
+                  <Instagram className="w-4 h-4 text-primary" />
+                  <span className="text-xs text-muted-foreground group-hover:text-primary transition-colors">
+                    @jatin_bhoraniya
+                  </span>
+                </div>
+              </a>
+            </div>
           </div>
         </div>
 
