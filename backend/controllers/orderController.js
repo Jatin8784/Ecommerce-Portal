@@ -150,6 +150,36 @@ export const placeNewOrder = catchAsyncErrors(async (req, res, next) => {
   });
 });
 
+// Helper to automatically advance order status based on time (Simulator/Automation Mode)
+const autoAdvanceStatus = async (order) => {
+  const now = new Date();
+  const createdAt = new Date(order.created_at);
+  const diffInMinutes = (now - createdAt) / (1000 * 60);
+
+  let newStatus = order.order_status;
+  
+  // Simulation Logic: 
+  // 0-2 mins: Processing
+  // 2-5 mins: Shipped
+  // 5+ mins: Delivered
+  if (order.order_status !== "Cancelled" && order.order_status !== "Delivered") {
+    if (diffInMinutes >= 5) {
+      newStatus = "Delivered";
+    } else if (diffInMinutes >= 2) {
+      newStatus = "Shipped";
+    }
+  }
+
+  if (newStatus !== order.order_status) {
+    await database.query(
+      `UPDATE orders SET order_status = $1 WHERE id = $2`,
+      [newStatus, order.id]
+    );
+    return { ...order, order_status: newStatus };
+  }
+  return order;
+};
+
 export const fetchSingleOrder = catchAsyncErrors(async (req, res, next) => {
   const { orderId } = req.params;
   const result = await database.query(
@@ -181,7 +211,7 @@ export const fetchSingleOrder = catchAsyncErrors(async (req, res, next) => {
     FROM orders o
     LEFT JOIN order_items oi ON o.id = oi.order_id
     LEFT JOIN shipping_info s ON o.id = s.order_id
-    WHERE o.id = $1  -- Changed from buyer_id to id and removed paid_at check
+    WHERE o.id = $1
     GROUP BY o.id, s.id;
     `,
     [orderId],
@@ -191,10 +221,15 @@ export const fetchSingleOrder = catchAsyncErrors(async (req, res, next) => {
     return next(new ErrorHandler("Order not found", 404));
   }
 
+  let order = result.rows[0];
+  
+  // Auto-advance status for tracking demo
+  order = await autoAdvanceStatus(order);
+
   res.status(200).json({
     success: true,
     message: "Order fetched.",
-    order: result.rows[0],
+    order,
   });
 });
 
@@ -233,10 +268,14 @@ export const fetchMyOrders = catchAsyncErrors(async (req, res, next) => {
     [req.user.id],
   );
 
+  const orders = await Promise.all(
+    result.rows.map(async (order) => await autoAdvanceStatus(order))
+  );
+
   res.status(200).json({
     success: true,
     message: "All your orders are fetched.",
-    myOrders: result.rows,
+    myOrders: orders,
   });
 });
 

@@ -81,71 +81,107 @@ const OrderDetail = () => {
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-8">
             {/* Real-Time Tracking Timeline */}
-            <div className="glass-card p-6 md:p-8">
-              <div className="flex items-center justify-between mb-8">
-                <h2 className="text-xl font-bold text-foreground">
-                  Order Tracking
-                </h2>
-                <div className="flex items-center space-x-2 text-xs text-muted-foreground animate-pulse">
-                  <span className="w-2 h-2 bg-green-500 rounded-full"></span>
-                  <span>Live Tracking Enabled</span>
+            <div className="glass-card p-6 md:p-8 relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full -mr-16 -mt-16 blur-3xl"></div>
+              
+              <div className="flex flex-col md:flex-row md:items-center justify-between mb-10 gap-4">
+                <div>
+                  <h2 className="text-2xl font-black text-foreground uppercase tracking-tight flex items-center gap-2">
+                    <Truck className="w-6 h-6 text-primary" />
+                    Track Order
+                  </h2>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    Order ID: <span className="font-mono text-primary">#{orderDetails.id.slice(0, 12)}</span>
+                  </p>
+                </div>
+                
+                <div className="flex flex-col items-end">
+                  <div className="flex items-center space-x-2 bg-green-500/10 px-3 py-1.5 rounded-full border border-green-500/20">
+                    <span className="w-2 h-2 bg-green-500 rounded-full animate-ping"></span>
+                    <span className="text-[10px] font-bold text-green-500 uppercase tracking-widest">Live Updates Enabled</span>
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-2">
+                    Est. Delivery: <span className="font-bold text-foreground">
+                      {new Date(new Date(orderDetails.created_at).getTime() + 5 * 24 * 60 * 60 * 1000).toLocaleDateString(undefined, { day: 'numeric', month: 'long' })}
+                    </span>
+                  </p>
                 </div>
               </div>
 
               {isCancelled ? (
-                <div className="flex items-center space-x-4 p-4 bg-red-500/10 border border-red-500/20 rounded-lg">
-                  <XCircle className="w-8 h-8 text-red-500" />
+                <div className="flex items-center space-x-6 p-6 bg-red-500/5 border border-red-500/10 rounded-2xl">
+                  <div className="w-16 h-16 bg-red-500/20 rounded-full flex items-center justify-center">
+                    <XCircle className="w-10 h-10 text-red-500" />
+                  </div>
                   <div>
-                    <h3 className="font-bold text-red-500">Order Cancelled</h3>
-                    <p className="text-sm text-red-400/80">
-                      This order was cancelled and will not be processed.
+                    <h3 className="text-xl font-bold text-red-500 uppercase tracking-tight">Order Cancelled</h3>
+                    <p className="text-muted-foreground">
+                      This order was cancelled and no further updates will be provided.
                     </p>
                   </div>
                 </div>
               ) : (
-                <div className="relative">
-                  {/* Progress Line */}
-                  <div className="absolute top-1/2 left-0 w-full h-1 bg-secondary -translate-y-1/2 hidden md:block"></div>
-                  <div
-                    className="absolute top-1/2 left-0 h-1 bg-primary -translate-y-1/2 transition-all duration-1000 hidden md:block"
-                    style={{
-                      width: `${(currentStatusIndex / (statusSteps.length - 1)) * 100}%`,
-                    }}
-                  ></div>
+                <div className="relative pl-8 md:pl-0">
+                  {/* Vertical line for mobile, horizontal for base desktop logic (we'll use vertical for all here for 'Flipkart' detail feel) */}
+                  <div className="absolute left-[15px] md:left-1/2 top-4 bottom-4 w-1 bg-secondary -translate-x-1/2 rounded-full overflow-hidden">
+                    <div 
+                      className="absolute top-0 left-0 w-full bg-primary transition-all duration-1000 ease-in-out shadow-[0_0_10px_rgba(var(--primary),0.5)]"
+                      style={{ height: `${(currentStatusIndex / (statusSteps.length - 1)) * 100}%` }}
+                    ></div>
+                  </div>
 
-                  <div className="relative flex flex-col md:flex-row justify-between items-start md:items-center space-y-8 md:space-y-0">
+                  <div className="space-y-12 relative">
                     {statusSteps.map((step, index) => {
                       const Icon = step.icon;
                       const isActive = index <= currentStatusIndex;
                       const isCurrent = index === currentStatusIndex;
+                      
+                      // Simulated detailed logs
+                      const logs = [
+                        "Our warehouse has received your order and is preparing it.",
+                        "Your package has been handed over to our courier partner.",
+                        "Package is being delivered to your doorstep."
+                      ];
 
                       return (
-                        <div
-                          key={step.label}
-                          className="flex md:flex-col items-center space-x-4 md:space-x-0 group w-full md:w-auto"
-                        >
-                          <div
-                            className={`w-12 h-12 rounded-full flex items-center justify-center transition-all duration-500 z-10 ${
-                              isActive
-                                ? "bg-primary text-primary-foreground shadow-[0_0_15px_rgba(var(--primary),0.5)]"
-                                : "bg-secondary text-muted-foreground"
-                            } ${isCurrent ? "animate-bounce" : ""}`}
-                          >
-                            <Icon className="w-6 h-6" />
+                        <div key={step.label} className={`flex items-start md:items-center gap-6 md:gap-0 ${index % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'}`}>
+                          <div className="flex-1 hidden md:block px-8 text-right">
+                             {index % 2 === 0 && (
+                               <div className={`${isActive ? 'opacity-100' : 'opacity-30'} transition-opacity`}>
+                                 <h4 className="font-bold text-lg text-foreground">{step.label}</h4>
+                                 <p className="text-sm text-muted-foreground mt-1 max-w-[200px] ml-auto">{logs[index]}</p>
+                               </div>
+                             )}
                           </div>
-                          <div className="md:mt-4 text-left md:text-center">
-                            <p
-                              className={`font-semibold transition-colors ${
-                                isActive ? "text-foreground" : "text-muted-foreground"
-                              }`}
+
+                          <div className="relative z-10">
+                            <div 
+                              className={`w-10 h-10 sm:w-12 sm:h-12 rounded-2xl flex items-center justify-center transition-all duration-700 transform border-2 ${
+                                isActive 
+                                  ? "bg-primary border-primary text-primary-foreground shadow-xl scale-110" 
+                                  : "bg-background border-border text-muted-foreground"
+                              } ${isCurrent ? "animate-pulse" : ""}`}
                             >
-                              {step.label}
-                            </p>
-                            {isActive && (
-                              <p className="text-xs text-muted-foreground">
-                                {isCurrent ? "Current Status" : "Completed"}
-                              </p>
-                            )}
+                              <Icon className="w-5 h-5 sm:w-6 sm:h-6" />
+                            </div>
+                          </div>
+
+                          <div className="flex-1 px-4 md:px-8 text-left">
+                            <div className={`${isActive ? 'opacity-100' : 'opacity-40'} transition-opacity`}>
+                              <div className="flex items-center gap-2">
+                                <h4 className="font-bold text-lg text-foreground md:hidden">{step.label}</h4>
+                                {index % 2 !== 0 && <h4 className="font-bold text-lg text-foreground hidden md:block">{step.label}</h4>}
+                                {isCurrent && <span className="bg-primary/10 text-primary text-[10px] px-2 py-0.5 rounded font-black uppercase tracking-tighter">Current</span>}
+                              </div>
+                              <p className="text-sm text-muted-foreground mt-1 max-w-[250px] md:hidden">{logs[index]}</p>
+                              {index % 2 !== 0 && <p className="text-sm text-muted-foreground mt-1 max-w-[250px] hidden md:block">{logs[index]}</p>}
+                              
+                              {isActive && (
+                                <p className="text-[10px] font-black text-primary uppercase mt-2">
+                                  {index === 0 ? 'Today' : (index === 1 ? 'Expected Tomorrow' : 'Estimated Arrival')}
+                                </p>
+                              )}
+                            </div>
                           </div>
                         </div>
                       );
