@@ -57,10 +57,10 @@ const Users = () => {
               {loading ? (
                 <div className="w-40 h-40 mx-auto border-2 border-white border-t-transparent rounded-full animate-spin" />
               ) : users && users.length > 0 ? (
-                <table className="min-w-full bg-white border border-gray-200">
+                <table className="min-w-[800px] w-full bg-white border border-gray-200">
                   <thead className="bg-blue-100 text-gray-700">
                     <tr>
-                      <th className="py-3 px-4 text-left">Avatar</th>
+                      <th className="py-3 px-4 text-left w-20">Avatar</th>
                       <th className="py-3 px-4 text-left">Name</th>
                       <th className="py-3 px-4 text-left">Email</th>
                       <th className="py-3 px-4 text-left">Registered On</th>
@@ -70,23 +70,31 @@ const Users = () => {
                   <tbody>
                     {users.map((user, index) => {
                       return (
-                        <tr key={index} className="border-t hover:bg-gray-50">
+                        <tr key={index} className="border-t hover:bg-gray-50 transition-colors">
                           <td className="py-3 px-4">
                             <img
                               src={user?.avatar?.url || avatar}
                               alt="avatar"
-                              className="w-10 h-10 rounded-full object-cover"
+                              className="w-10 h-10 rounded-full object-cover flex-shrink-0 border border-gray-100"
                             />
                           </td>
-                          <td className="px-3 py-4">{user.name}</td>
-                          <td className="px-3 py-4">{user.email}</td>
-                          <td className="px-3 py-4">
-                            {new Date(user.created_at).toLocaleDateString()}
+                          <td className="px-3 py-4 font-medium text-gray-900">{user.name}</td>
+                          <td className="px-3 py-4 max-w-[200px] sm:max-w-none">
+                            <p className="truncate text-gray-600" title={user.email}>
+                              {user.email}
+                            </p>
+                          </td>
+                          <td className="px-3 py-4 text-gray-500 text-sm">
+                            {new Date(user.created_at).toLocaleDateString(undefined, {
+                              year: 'numeric',
+                              month: 'short',
+                              day: 'numeric'
+                            })}
                           </td>
                           <td className="px-3 py-4">
                             <button
                               onClick={() => handleDeleteUser(user.id)}
-                              className="text-white rounded-md cursor-pointer px-3 py-2 font-semibold bg-red-gradient"
+                              className="text-white rounded-md cursor-pointer px-4 py-1.5 text-sm font-semibold bg-red-gradient hover:opacity-90 transition-opacity"
                             >
                               Delete
                             </button>
