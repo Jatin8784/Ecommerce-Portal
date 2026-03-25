@@ -56,7 +56,7 @@ const CartSidebar = () => {
           {cart && cart.length === 0 ? (
             <div className="text-center py-12 flex flex-col items-center justify-center h-full">
               <div className="w-20 h-20 bg-secondary/30 rounded-full flex items-center justify-center mb-4">
-                <ShoppingCart className="w-20 h-20 text-muted-foreground/50" />
+                <ShoppingCart className="w-20 h-20 text-muted-foreground/50 sm:w-12 sm:h-12" />
               </div>
               <p className="text-muted-foreground text-lg">
                 Your cart is empty.
