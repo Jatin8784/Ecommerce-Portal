@@ -269,16 +269,16 @@ const Orders = () => {
                 </div>
 
                 {/* Actions */}
-                <div className="flex flex-wrap items-center gap-3 mt-6 pt-6 border-t border-[hsla(var(--glass-border))]">
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 mt-6 pt-6 border-t border-[hsla(var(--glass-border))]">
                   <button
                     onClick={() => navigate(`/order/${order.id}`)}
-                    className="flex-1 sm:flex-none px-4 py-2.5 glass-card hover:glow-on-hover text-sm font-medium transition-all"
+                    className="flex items-center justify-center px-4 py-2.5 glass-card hover:glow-on-hover text-xs sm:text-sm font-bold transition-all h-full"
                   >
                     View Details
                   </button>
                   <button
                     onClick={() => navigate(`/order/${order.id}`)}
-                    className="flex-1 sm:flex-none px-4 py-2.5 glass-card hover:glow-on-hover text-sm font-medium transition-all"
+                    className="flex items-center justify-center px-4 py-2.5 glass-card hover:glow-on-hover text-xs sm:text-sm font-bold transition-all h-full"
                   >
                     Track Order
                   </button>
@@ -287,20 +287,20 @@ const Orders = () => {
                     <>
                       <button 
                         onClick={() => handleWriteReview(order)}
-                        className="flex-1 sm:flex-none px-4 py-2.5 glass-card hover:glow-on-hover text-sm font-medium transition-all"
+                        className="flex items-center justify-center px-4 py-2.5 glass-card hover:glow-on-hover text-xs sm:text-sm font-bold transition-all h-full"
                       >
                         Write Review
                       </button>
                       <button 
                         onClick={() => handleDownloadInvoice(order)}
-                        className="w-full sm:w-auto px-4 py-2.5 glass-card hover:glow-on-hover text-sm font-medium flex items-center justify-center space-x-2 transition-all"
+                        className="flex items-center justify-center px-4 py-2.5 glass-card hover:glow-on-hover text-xs sm:text-sm font-bold space-x-2 transition-all h-full"
                       >
-                        <FileText className="w-4 h-4 text-primary" />
-                        <span>Download Invoice</span>
+                        <FileText className="w-4 h-4 text-primary shrink-0" />
+                        <span className="truncate">Invoice</span>
                       </button>
                       <button 
                         onClick={() => handleReorder(order)}
-                        className="flex-1 sm:flex-none px-4 py-2.5 glass-card hover:glow-on-hover text-sm font-medium transition-all"
+                        className="flex items-center justify-center px-4 py-2.5 glass-card hover:glow-on-hover text-xs sm:text-sm font-bold transition-all h-full"
                       >
                         Reorder
                       </button>
