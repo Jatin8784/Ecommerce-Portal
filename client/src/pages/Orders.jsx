@@ -13,6 +13,7 @@ import OrderCardSkeleton from "../components/Orders/OrderCardSkeleton";
 import { addToCart } from "../store/slices/cartSlice";
 import { toast } from "react-toastify";
 
+// Orders page - Updated to remove Invoice button as requested
 const Orders = () => {
   const [statusFilter, setStatusFilter] = useState("All");
   const { myOrders, fetchingOrders } = useSelector((state) => state.order);
