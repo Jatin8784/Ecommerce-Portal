@@ -4,10 +4,10 @@ import { toast } from "react-toastify";
 
 export const fetchAllOrders = createAsyncThunk(
   "orders/fetchAll",
-  async (_, thunkAPI) => {
+  async (page, thunkAPI) => {
     try {
-      const res = await axiosInstance.get("/order/admin/getAll");
-      return res.data.orders;
+      const res = await axiosInstance.get(`/order/admin/getAll?page=${page || 1}`);
+      return res.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(
         error?.response?.data?.message || "Failed to fetch orders"
@@ -54,6 +54,7 @@ const orderSlice = createSlice({
   initialState: {
     loading: false,
     orders: [],
+    totalOrders: 0,
     error: null,
   },
   reducers: {},
@@ -64,7 +65,8 @@ const orderSlice = createSlice({
       })
       .addCase(fetchAllOrders.fulfilled, (state, action) => {
         state.loading = false;
-        state.orders = action.payload;
+        state.orders = action.payload.orders;
+        state.totalOrders = action.payload.totalOrders;
       })
       .addCase(fetchAllOrders.rejected, (state, action) => {
         state.loading = false;

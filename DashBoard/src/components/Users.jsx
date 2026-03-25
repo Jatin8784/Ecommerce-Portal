@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import avatar from "../assets/avatar.jpg";
+import { TableRowSkeleton } from "./Skeleton";
 import { useDispatch, useSelector } from "react-redux";
 import Header from "./Header";
 import { deleteAllUsers, fetchAllUsers } from "../store/slices/adminSlice";
@@ -55,7 +56,22 @@ const Users = () => {
               }`}
             >
               {loading ? (
-                <div className="w-40 h-40 mx-auto border-2 border-white border-t-transparent rounded-full animate-spin" />
+                <table className="min-w-[800px] w-full bg-white border border-gray-200">
+                  <thead className="bg-blue-100 text-gray-700">
+                    <tr>
+                      <th className="py-3 px-4 text-left w-20">Avatar</th>
+                      <th className="py-3 px-4 text-left">Name</th>
+                      <th className="py-3 px-4 text-left">Email</th>
+                      <th className="py-3 px-4 text-left">Registered On</th>
+                      <th className="py-3 px-4 text-left">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {[1, 2, 3, 4, 5, 6, 7, 8].map((n) => (
+                      <TableRowSkeleton key={n} columns={5} />
+                    ))}
+                  </tbody>
+                </table>
               ) : users && users.length > 0 ? (
                 <table className="min-w-[800px] w-full bg-white border border-gray-200">
                   <thead className="bg-blue-100 text-gray-700">
