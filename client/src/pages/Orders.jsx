@@ -194,7 +194,7 @@ const Orders = () => {
                     <>
                       <button
                         className="px-4 py-2 glass-card hover:glow-on-hover text-sm"
-                        onClick={() => navigate(`/order/${order.id}`)}
+                        onClick={() => navigate(`/product/${product.id}`)}
                       >
                         Write Review
                       </button>
