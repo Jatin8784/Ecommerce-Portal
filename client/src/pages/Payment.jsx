@@ -3,7 +3,12 @@ import { useState, useEffect, useCallback } from "react";
 import { ArrowLeft, Check, MapPin } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { PlaceOrder, VerifyPayment, resetOrderState, deleteOrder } from "../store/slices/orderSlice.js";
+import {
+  PlaceOrder,
+  VerifyPayment,
+  resetOrderState,
+  deleteOrder,
+} from "../store/slices/orderSlice.js";
 import { toast } from "react-toastify";
 import { clearCart } from "../store/slices/cartSlice.js";
 
@@ -14,15 +19,15 @@ const Payment = () => {
 
   const dispatch = useDispatch();
   const { cart } = useSelector((state) => state.cart);
-  const { 
-    orderStep, 
-    razorpayOrderId, 
-    razorpayAmount, 
-    razorpayCurrency, 
+  const {
+    orderStep,
+    razorpayOrderId,
+    razorpayAmount,
+    razorpayCurrency,
     currentOrderId,
-    placingOrder 
+    placingOrder,
   } = useSelector((state) => state.order);
-  
+
   const [paymentMethod, setPaymentMethod] = useState("Online"); // Renamed from Stripe
   const [paymentCancelled, setPaymentCancelled] = useState(false);
   const [shippingDetails, setShippingDetails] = useState({
@@ -47,39 +52,53 @@ const Payment = () => {
         try {
           const { latitude, longitude } = position.coords;
           const res = await fetch(
-            `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=18&addressdetails=1`
+            `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=18&addressdetails=1`,
           );
           const data = await res.json();
-          
+
           if (data.address) {
             const addr = data.address;
             const house = addr.house_number || "";
             const road = addr.road || "";
             const neighbourhood = addr.neighbourhood || addr.suburb || "";
-            const city = addr.city || addr.town || addr.village || addr.municipality || "";
+            const city =
+              addr.city || addr.town || addr.village || addr.municipality || "";
             const state = addr.state || "";
             const postcode = addr.postcode || "";
 
-            const streetAddress = [house, road, neighbourhood].filter(Boolean).join(", ");
-            const displayAddress = streetAddress || addr.suburb || addr.neighbourhood || addr.city || data.display_name.split(",")[0];
-            
-            console.log("Geocoding Result:", { streetAddress, displayAddress, city, state, postcode });
+            const streetAddress = [house, road, neighbourhood]
+              .filter(Boolean)
+              .join(", ");
+            const fullAddress =
+              data.display_name.split(",").slice(0, -2).join(",").trim() ||
+              displayAddress;
+
+            console.log("Geocoding Result:", {
+              streetAddress,
+              fullAddress,
+              city,
+              state,
+              postcode,
+            });
 
             setShippingDetails((prev) => ({
               ...prev,
-              address: displayAddress || prev.address,
+              address: fullAddress || prev.address,
               city: city || prev.city,
               state: state || prev.state,
               zipCode: postcode || prev.zipCode,
             }));
-            
+
             // Auto-scroll to show the filled fields
             const formElement = document.getElementById("shipping-form");
             if (formElement) {
-              formElement.scrollIntoView({ behavior: "smooth", block: "start" });
+              formElement.scrollIntoView({
+                behavior: "smooth",
+                block: "start",
+              });
             }
 
-            toast.success(`Location found: ${city}, ${state}`);
+            toast.success(`Location found: ${city}`);
           }
         } catch (error) {
           toast.error("Failed to fetch address details");
@@ -90,13 +109,13 @@ const Payment = () => {
       (error) => {
         setFetchingLocation(false);
         toast.error("Location access denied or unavailable");
-      }
+      },
     );
   };
 
   const total = cart.reduce(
     (sum, item) => sum + item.product.price * item.quantity,
-    0
+    0,
   );
 
   let totalWithTax = total + total * 0.18;
@@ -165,13 +184,13 @@ const Payment = () => {
     const rzp = new window.Razorpay(options);
     rzp.open();
   }, [
-    razorpayOrderId, 
-    razorpayAmount, 
-    razorpayCurrency, 
-    currentOrderId, 
-    shippingDetails, 
-    authUser.email, 
-    dispatch
+    razorpayOrderId,
+    razorpayAmount,
+    razorpayCurrency,
+    currentOrderId,
+    shippingDetails,
+    authUser.email,
+    dispatch,
   ]);
 
   useEffect(() => {
@@ -183,7 +202,13 @@ const Payment = () => {
       dispatch(clearCart());
       // reset state after some time or on unmount
     }
-  }, [orderStep, paymentMethod, handleRazorpayPayment, dispatch, paymentCancelled]);
+  }, [
+    orderStep,
+    paymentMethod,
+    handleRazorpayPayment,
+    dispatch,
+    paymentCancelled,
+  ]);
 
   if (cart.length === 0 && orderStep !== 3) {
     // ... same as before
@@ -238,9 +263,15 @@ const Payment = () => {
                         : "bg-secondary"
                     }`}
                   >
-                    {orderStep > 1 ? <Check className="w-4 h-4 sm:w-5 sm:h-5" /> : "1"}
+                    {orderStep > 1 ? (
+                      <Check className="w-4 h-4 sm:w-5 sm:h-5" />
+                    ) : (
+                      "1"
+                    )}
                   </div>
-                  <span className="font-medium text-sm sm:text-base">Details</span>
+                  <span className="font-medium text-sm sm:text-base">
+                    Details
+                  </span>
                 </div>
 
                 <div
@@ -262,9 +293,15 @@ const Payment = () => {
                         : "bg-secondary"
                     }`}
                   >
-                    {orderStep > 2 ? <Check className="w-4 h-4 sm:w-5 sm:h-5" /> : "2"}
+                    {orderStep > 2 ? (
+                      <Check className="w-4 h-4 sm:w-5 sm:h-5" />
+                    ) : (
+                      "2"
+                    )}
                   </div>
-                  <span className="font-medium text-sm sm:text-base">Payment</span>
+                  <span className="font-medium text-sm sm:text-base">
+                    Payment
+                  </span>
                 </div>
               </div>
             </div>
@@ -274,7 +311,11 @@ const Payment = () => {
               <div className="lg:col-span-2">
                 {orderStep === 1 ? (
                   // Step 1: User Details
-                  <form id="shipping-form" onSubmit={handlePlaceOrder} className="glass-panel">
+                  <form
+                    id="shipping-form"
+                    onSubmit={handlePlaceOrder}
+                    className="glass-panel"
+                  >
                     <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
                       <h2 className="text-xl font-semibold text-foreground">
                         Shipping Information
@@ -284,13 +325,17 @@ const Payment = () => {
                         onClick={handleUseLocation}
                         disabled={fetchingLocation}
                         className={`inline-flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-                          fetchingLocation 
-                            ? "bg-secondary text-muted-foreground cursor-not-allowed" 
+                          fetchingLocation
+                            ? "bg-secondary text-muted-foreground cursor-not-allowed"
                             : "gradient-primary text-primary-foreground hover:glow-on-hover"
                         }`}
                       >
-                        <MapPin className={`w-4 h-4 ${fetchingLocation ? "animate-pulse" : ""}`} />
-                        <span>{fetchingLocation ? "Fetching..." : "Use My Location"}</span>
+                        <MapPin
+                          className={`w-4 h-4 ${fetchingLocation ? "animate-pulse" : ""}`}
+                        />
+                        <span>
+                          {fetchingLocation ? "Fetching..." : "Use My Location"}
+                        </span>
                       </button>
                     </div>
                     <div className="mb-6">
@@ -508,7 +553,11 @@ const Payment = () => {
                       disabled={placingOrder}
                       className="w-full py-4 gradient-primary text-primary-foreground rounded-lg hover:glow-on-hover animate-smooth font-bold text-lg disabled:opacity-50"
                     >
-                      {placingOrder ? "Placing Order..." : (paymentMethod === "Online" ? "Continue to Payment" : "Place Order")}
+                      {placingOrder
+                        ? "Placing Order..."
+                        : paymentMethod === "Online"
+                          ? "Continue to Payment"
+                          : "Place Order"}
                     </button>
                   </form>
                 ) : (
@@ -522,7 +571,8 @@ const Payment = () => {
                           Order Placed Successfully!
                         </h2>
                         <p className="text-muted-foreground mb-8">
-                          Thank you for your purchase. You can track your order in the orders section.
+                          Thank you for your purchase. You can track your order
+                          in the orders section.
                         </p>
                         <Link
                           to={"/orders"}
@@ -534,13 +584,14 @@ const Payment = () => {
                     ) : paymentCancelled ? (
                       <>
                         <div className="w-20 h-20 bg-destructive/10 rounded-full flex items-center justify-center mx-auto mb-6">
-                           <div className="w-10 h-10 border-4 border-destructive border-t-transparent rounded-full"></div>
+                          <div className="w-10 h-10 border-4 border-destructive border-t-transparent rounded-full"></div>
                         </div>
                         <h2 className="text-2xl font-bold mb-4 text-destructive">
                           Payment Cancelled
                         </h2>
                         <p className="text-muted-foreground mb-8">
-                          Your payment was not completed. You can try again or change payment method.
+                          Your payment was not completed. You can try again or
+                          change payment method.
                         </p>
                         <button
                           onClick={() => {
@@ -595,7 +646,10 @@ const Payment = () => {
                           </p>
                         </div>
                         <p className="text-sm font-semibold">
-                          ${(Number(item.product.price) * item.quantity).toFixed(2)}
+                          $
+                          {(Number(item.product.price) * item.quantity).toFixed(
+                            2,
+                          )}
                         </p>
                       </div>
                     ))}
@@ -608,7 +662,9 @@ const Payment = () => {
                     </div>
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Shipping</span>
-                      <span className={totalWithTax >= 50 ? "text-green-500" : ""}>
+                      <span
+                        className={totalWithTax >= 50 ? "text-green-500" : ""}
+                      >
                         {totalWithTax >= 50 ? "Free" : "$2.00"}
                       </span>
                     </div>
