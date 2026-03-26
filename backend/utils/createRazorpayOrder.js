@@ -12,7 +12,7 @@ export async function createRazorpayOrder(orderId, totalPrice) {
     };
   }
 
-  const dollor_inr = 94.07;
+  const dollor_inr = 94;
 
   const razorpay = new Razorpay({
     key_id: process.env.RAZORPAY_KEY_ID.trim(),
