@@ -52,9 +52,18 @@ const Payment = () => {
           const data = await res.json();
           
           if (data.address) {
-            const { road, suburb, city, state, postcode, neighbourhood, house_number } = data.address;
-            const streetAddress = [house_number, road, neighbourhood, suburb].filter(Boolean).join(", ");
+            const addr = data.address;
+            const house = addr.house_number || "";
+            const road = addr.road || "";
+            const neighbourhood = addr.neighbourhood || addr.suburb || "";
+            const city = addr.city || addr.town || addr.village || addr.municipality || "";
+            const state = addr.state || "";
+            const postcode = addr.postcode || "";
+
+            const streetAddress = [house, road, neighbourhood].filter(Boolean).join(", ");
             
+            console.log("Geocoding Result:", { streetAddress, city, state, postcode });
+
             setShippingDetails((prev) => ({
               ...prev,
               address: streetAddress || prev.address,
@@ -312,13 +321,19 @@ const Payment = () => {
                           className="w-full px-4 py-3 bg-secondary border border-border rounded-lg text-foreground focus:ring-2 focus:ring-primary/20 transition-all outline-none appearance-none"
                         >
                           <option value="Gujarat">Gujarat</option>
+                          <option value="Maharashtra">Maharashtra</option>
+                          <option value="Delhi">Delhi</option>
+                          <option value="Karnataka">Karnataka</option>
+                          <option value="Tamil Nadu">Tamil Nadu</option>
+                          <option value="West Bengal">West Bengal</option>
+                          <option value="Rajasthan">Rajasthan</option>
                           <option value="Punjab">Punjab</option>
-                          <option value="Karachi">Karachi</option>
-                          <option value="Goa">Goa</option>
-                          <option value="Himachal Pradesh">
-                            Himachal Pradesh
-                          </option>
                           <option value="Uttar Pradesh">Uttar Pradesh</option>
+                          <option value="Haryana">Haryana</option>
+                          <option value="Madhya Pradesh">Madhya Pradesh</option>
+                          <option value="Goa">Goa</option>
+                          <option value="Bihar">Bihar</option>
+                          <option value="Assam">Assam</option>
                         </select>
                       </div>
 
