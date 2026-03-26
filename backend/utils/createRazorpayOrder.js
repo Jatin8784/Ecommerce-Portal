@@ -6,8 +6,13 @@ dotenv.config({ path: "./config/config.env" });
 export async function createRazorpayOrder(orderId, totalPrice) {
   if (!process.env.RAZORPAY_KEY_ID || !process.env.RAZORPAY_KEY_SECRET) {
     console.error("Missing Razorpay Keys in Environment!");
-    return { success: false, message: "Missing Razorpay Keys. Check Render Dashboard." };
+    return {
+      success: false,
+      message: "Missing Razorpay Keys. Check Render Dashboard.",
+    };
   }
+
+  const dollor_inr = 94.07;
 
   const razorpay = new Razorpay({
     key_id: process.env.RAZORPAY_KEY_ID.trim(),
@@ -16,7 +21,7 @@ export async function createRazorpayOrder(orderId, totalPrice) {
 
   try {
     const options = {
-      amount: totalPrice * 100, // Amount in paise
+      amount: totalPrice * dollor_inr, // Amount in paise
       currency: "INR",
       receipt: `${orderId}`,
     };
@@ -31,7 +36,9 @@ export async function createRazorpayOrder(orderId, totalPrice) {
     return { success: true, razorpayOrder };
   } catch (error) {
     console.error("Razorpay Order Error Full:", JSON.stringify(error, null, 2));
-    const errorMsg = error.error ? error.error.description : (error.message || "Unknown Razorpay error");
+    const errorMsg = error.error
+      ? error.error.description
+      : error.message || "Unknown Razorpay error";
     return { success: false, message: errorMsg };
   }
 }
