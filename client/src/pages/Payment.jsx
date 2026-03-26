@@ -24,6 +24,7 @@ const Payment = () => {
   } = useSelector((state) => state.order);
   
   const [paymentMethod, setPaymentMethod] = useState("Online"); // Renamed from Stripe
+  const [paymentCancelled, setPaymentCancelled] = useState(false);
   const [shippingDetails, setShippingDetails] = useState({
     fullName: "",
     state: "Gujarat",
@@ -92,6 +93,11 @@ const Payment = () => {
       theme: {
         color: "#6366f1",
       },
+      modal: {
+        ondismiss: function () {
+          setPaymentCancelled(true);
+        },
+      },
     };
 
     const rzp = new window.Razorpay(options);
@@ -107,7 +113,7 @@ const Payment = () => {
   ]);
 
   useEffect(() => {
-    if (orderStep === 2 && paymentMethod === "Online") {
+    if (orderStep === 2 && paymentMethod === "Online" && !paymentCancelled) {
       handleRazorpayPayment();
     }
     if (orderStep === 3) {
@@ -115,7 +121,7 @@ const Payment = () => {
       dispatch(clearCart());
       // reset state after some time or on unmount
     }
-  }, [orderStep, paymentMethod, handleRazorpayPayment, dispatch]);
+  }, [orderStep, paymentMethod, handleRazorpayPayment, dispatch, paymentCancelled]);
 
   if (cart.length === 0 && orderStep !== 3) {
     // ... same as before
@@ -441,6 +447,27 @@ const Payment = () => {
                         >
                           View My Orders
                         </Link>
+                      </>
+                    ) : paymentCancelled ? (
+                      <>
+                        <div className="w-20 h-20 bg-destructive/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                           <div className="w-10 h-10 border-4 border-destructive border-t-transparent rounded-full"></div>
+                        </div>
+                        <h2 className="text-2xl font-bold mb-4 text-destructive">
+                          Payment Cancelled
+                        </h2>
+                        <p className="text-muted-foreground mb-8">
+                          Your payment was not completed. You can try again or change payment method.
+                        </p>
+                        <button
+                          onClick={() => {
+                            setPaymentCancelled(false);
+                            dispatch(resetOrderState());
+                          }}
+                          className="inline-flex items-center space-x-2 px-8 py-3 rounded-lg text-primary-foreground gradient-primary animate-smooth hover:glow-on-hover font-semibold"
+                        >
+                          Try Again
+                        </button>
                       </>
                     ) : (
                       <>

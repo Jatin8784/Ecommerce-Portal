@@ -21,7 +21,7 @@ export async function createRazorpayOrder(orderId, totalPrice) {
 
   try {
     const options = {
-      amount: totalPrice * dollor_inr, // Amount in paise
+      amount: totalPrice * dollor_inr * 100, // Amount in paise
       currency: "INR",
       receipt: `${orderId}`,
     };
