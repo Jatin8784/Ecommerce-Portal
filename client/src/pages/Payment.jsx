@@ -72,7 +72,14 @@ const Payment = () => {
               state: state || prev.state,
               zipCode: postcode || prev.zipCode,
             }));
-            toast.success("Location updated successfully!");
+            
+            // Auto-scroll to show the filled fields
+            const formElement = document.getElementById("shipping-form");
+            if (formElement) {
+              formElement.scrollIntoView({ behavior: "smooth", block: "start" });
+            }
+
+            toast.success(`Location found: ${city}, ${state}`);
           }
         } catch (error) {
           toast.error("Failed to fetch address details");
@@ -267,7 +274,7 @@ const Payment = () => {
               <div className="lg:col-span-2">
                 {orderStep === 1 ? (
                   // Step 1: User Details
-                  <form onSubmit={handlePlaceOrder} className="glass-panel">
+                  <form id="shipping-form" onSubmit={handlePlaceOrder} className="glass-panel">
                     <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
                       <h2 className="text-xl font-semibold text-foreground">
                         Shipping Information
