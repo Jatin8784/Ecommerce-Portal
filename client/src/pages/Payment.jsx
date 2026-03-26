@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import { useState, useEffect, useCallback } from "react";
-import { ArrowLeft, Check } from "lucide-react";
+import { ArrowLeft, Check, MapPin } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { PlaceOrder, VerifyPayment, resetOrderState, deleteOrder } from "../store/slices/orderSlice.js";
@@ -34,6 +34,48 @@ const Payment = () => {
     zipCode: "",
     country: "India",
   });
+  const [fetchingLocation, setFetchingLocation] = useState(false);
+
+  const handleUseLocation = () => {
+    if (!navigator.geolocation) {
+      return toast.error("Geolocation is not supported by your browser");
+    }
+
+    setFetchingLocation(true);
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        try {
+          const { latitude, longitude } = position.coords;
+          const res = await fetch(
+            `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=18&addressdetails=1`
+          );
+          const data = await res.json();
+          
+          if (data.address) {
+            const { road, suburb, city, state, postcode, neighbourhood, house_number } = data.address;
+            const streetAddress = [house_number, road, neighbourhood, suburb].filter(Boolean).join(", ");
+            
+            setShippingDetails((prev) => ({
+              ...prev,
+              address: streetAddress || prev.address,
+              city: city || prev.city,
+              state: state || prev.state,
+              zipCode: postcode || prev.zipCode,
+            }));
+            toast.success("Location updated successfully!");
+          }
+        } catch (error) {
+          toast.error("Failed to fetch address details");
+        } finally {
+          setFetchingLocation(false);
+        }
+      },
+      (error) => {
+        setFetchingLocation(false);
+        toast.error("Location access denied or unavailable");
+      }
+    );
+  };
 
   const total = cart.reduce(
     (sum, item) => sum + item.product.price * item.quantity,
@@ -216,9 +258,24 @@ const Payment = () => {
                 {orderStep === 1 ? (
                   // Step 1: User Details
                   <form onSubmit={handlePlaceOrder} className="glass-panel">
-                    <h2 className="text-xl font-semibold text-foreground mb-6">
-                      Shipping Information
-                    </h2>
+                    <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+                      <h2 className="text-xl font-semibold text-foreground">
+                        Shipping Information
+                      </h2>
+                      <button
+                        type="button"
+                        onClick={handleUseLocation}
+                        disabled={fetchingLocation}
+                        className={`inline-flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                          fetchingLocation 
+                            ? "bg-secondary text-muted-foreground cursor-not-allowed" 
+                            : "gradient-primary text-primary-foreground hover:glow-on-hover"
+                        }`}
+                      >
+                        <MapPin className={`w-4 h-4 ${fetchingLocation ? "animate-pulse" : ""}`} />
+                        <span>{fetchingLocation ? "Fetching..." : "Use My Location"}</span>
+                      </button>
+                    </div>
                     <div className="mb-6">
                       <div>
                         <label className="block text-sm font-medium text-foreground mb-2">
