@@ -358,14 +358,22 @@ export const updateOrderStatus = catchAsyncErrors(async (req, res, next) => {
 
 export const deleteOrder = catchAsyncErrors(async (req, res, next) => {
   const { orderId } = req.params;
+
+  // Security: If not Admin, only allow deleting their own order
+  const { rows: order } = await database.query("SELECT buyer_id FROM orders WHERE id = $1", [orderId]);
+  
+  if (order.length === 0) {
+    return next(new ErrorHandler("Order not found.", 404));
+  }
+
+  if (req.user.role !== "Admin" && order[0].buyer_id !== req.user.id) {
+    return next(new ErrorHandler("You are not authorized to delete this order.", 403));
+  }
+
   const result = await database.query(
     `DELETE FROM orders WHERE id = $1 RETURNING *`,
     [orderId],
   );
-
-  if (result.rows.length === 0) {
-    return next(new ErrorHandler("Invalid order ID.", 404));
-  }
 
   res.status(200).json({
     success: true,

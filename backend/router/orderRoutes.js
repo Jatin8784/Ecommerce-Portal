@@ -28,6 +28,7 @@ router.put(
   authorizedRoles("Admin"),
   updateOrderStatus
 );
+router.delete("/delete/:orderId", isAuthenticatedUser, deleteOrder);
 router.delete(
   "/admin/delete/:orderId",
   isAuthenticatedUser,
