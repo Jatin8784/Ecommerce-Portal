@@ -3,7 +3,7 @@ import { useState, useEffect, useCallback } from "react";
 import { ArrowLeft, Check } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { PlaceOrder, VerifyPayment, resetOrderState } from "../store/slices/orderSlice.js";
+import { PlaceOrder, VerifyPayment, resetOrderState, deleteOrder } from "../store/slices/orderSlice.js";
 import { toast } from "react-toastify";
 import { clearCart } from "../store/slices/cartSlice.js";
 
@@ -95,6 +95,9 @@ const Payment = () => {
       },
       modal: {
         ondismiss: function () {
+          if (currentOrderId) {
+            dispatch(deleteOrder(currentOrderId));
+          }
           setPaymentCancelled(true);
         },
       },

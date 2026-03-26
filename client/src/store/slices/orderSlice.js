@@ -63,6 +63,18 @@ export const VerifyPayment = createAsyncThunk(
   }
 );
 
+export const deleteOrder = createAsyncThunk(
+  "/order/delete",
+  async (orderId, thunkAPI) => {
+    try {
+      const res = await axiosInstance.delete(`/order/delete/${orderId}`);
+      return res.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response?.data?.message);
+    }
+  }
+);
+
 const orderSlice = createSlice({
   name: "order",
   initialState: {
