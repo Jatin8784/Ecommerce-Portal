@@ -15,8 +15,8 @@ L.Icon.Default.mergeOptions({
 const AddressPickerMap = ({ onSelectAddress }) => {
   const [position, setPosition] = useState(null);
   const [userLocation, setUserLocation] = useState(null);
-  const [address, setAddress] = useState("Finding your building...");
-  const [houseNo, setHouseNo] = useState(""); // Manual entry for door
+  const [address, setAddress] = useState("Pinpointing your exact building...");
+  const [houseNo, setHouseNo] = useState(""); 
   const [loading, setLoading] = useState(true);
   const [isMoving, setIsMoving] = useState(false);
   const [isSatellite, setIsSatellite] = useState(false);
@@ -24,21 +24,28 @@ const AddressPickerMap = ({ onSelectAddress }) => {
 
   useEffect(() => {
     let watchId = null;
-    if (navigator.geolocation) {
+    const startGPS = () => {
+      if (!navigator.geolocation) {
+        setError("Your browser does not support GPS tracking.");
+        setLoading(false);
+        return;
+      }
+
+      // NO FALLBACK. We wait for REAL GPS.
       navigator.geolocation.getCurrentPosition(
         (pos) => {
           const newPos = [pos.coords.latitude, pos.coords.longitude];
           setPosition(newPos);
           setUserLocation(newPos);
           fetchAddress(newPos[0], newPos[1]);
+          setError(null);
         },
         (err) => {
-          console.warn("GPS failed, using fallback:", err);
-          const defaultPos = [22.3039, 70.8022];
-          setPosition(defaultPos);
-          fetchAddress(defaultPos[0], defaultPos[1]);
+          console.warn("GPS Error:", err);
+          setError("GPS Permission Denied. Please click 'Allow' or enable Location in your settings to use the Live Map.");
+          setLoading(false);
         },
-        { enableHighAccuracy: true, timeout: 5000 }
+        { enableHighAccuracy: true, timeout: 20000, maximumAge: 0 }
       );
 
       watchId = navigator.geolocation.watchPosition(
@@ -46,7 +53,9 @@ const AddressPickerMap = ({ onSelectAddress }) => {
         null,
         { enableHighAccuracy: true }
       );
-    }
+    };
+
+    startGPS();
     return () => watchId && navigator.geolocation.clearWatch(watchId);
   }, []);
 
@@ -57,33 +66,21 @@ const AddressPickerMap = ({ onSelectAddress }) => {
         `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=18&addressdetails=1`
       );
       const data = await res.json();
-      if (data.address) {
-        const addr = data.address;
+      if (data) {
+        const addr = data.address || {};
         
-        // Advanced Building/Street Parsing
-        const bldg = addr.building || addr.office || addr.amenity || addr.house_name || "";
-        const house = addr.house_number || "";
-        const road = addr.road || addr.pedestrian || "";
-        const neighbourhood = addr.neighbourhood || addr.suburb || "";
+        // Extract MOST DETAILED address string possible automatically
+        const displayAddress = data.display_name.split(",").slice(0, -3).join(",").trim() || data.display_name;
+        
         const city = addr.city || addr.town || addr.village || "";
         const state = addr.state || "";
-        
-        const streetPart = [house, bldg, road].filter(Boolean).join(", ");
-        const areaPart = [neighbourhood, city].filter(Boolean).join(", ");
-        const fullDisplay = [streetPart, areaPart].filter(Boolean).join(", ") || data.display_name;
-        
-        setAddress(fullDisplay);
-        return { 
-          address: fullDisplay, 
-          city, 
-          state, 
-          zipCode: addr.postcode || "", 
-          lat, 
-          lon 
-        };
+        const zip = addr.postcode || "";
+
+        setAddress(displayAddress);
+        return { address: displayAddress, city, state, zipCode: zip, lat, lon };
       }
-    } catch (error) {
-       console.error(error);
+    } catch (err) {
+       console.error(err);
     } finally {
       setLoading(false);
     }
@@ -103,95 +100,116 @@ const AddressPickerMap = ({ onSelectAddress }) => {
     return null;
   };
 
+  if (error) {
+    return (
+      <div className="w-full h-[400px] rounded-2xl bg-destructive/5 flex flex-col items-center justify-center p-8 text-center space-y-4 border-2 border-destructive/20 border-dashed">
+        <div className="w-16 h-16 bg-destructive/10 rounded-full flex items-center justify-center">
+            <Target className="w-8 h-8 text-destructive animate-pulse" />
+        </div>
+        <div className="space-y-2">
+          <p className="font-black text-destructive uppercase tracking-widest text-sm">GPS Permission Required</p>
+          <p className="text-sm text-foreground/70 leading-relaxed font-medium">
+            We cannot fetch your <b>Live Location</b> because it is blocked. <br/>
+            Please enable <b>Location Services</b> in your browser settings to continue automatically.
+          </p>
+        </div>
+        <button 
+          onClick={() => window.location.reload()}
+          className="px-6 py-2 bg-destructive text-destructive-foreground rounded-xl font-bold text-sm hover:scale-105 transition-transform"
+        >
+          Try Again
+        </button>
+      </div>
+    );
+  }
+
   if (!position) {
     return (
-      <div className="w-full h-[400px] rounded-2xl bg-secondary flex flex-col items-center justify-center space-y-4 shadow-inner">
-        <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin" />
-        <p className="font-bold animate-pulse text-primary tracking-widest uppercase text-xs">Connecting to Nav-Sat...</p>
+      <div className="w-full h-[400px] rounded-2xl bg-secondary flex flex-col items-center justify-center p-8 space-y-6 shadow-inner relative overflow-hidden">
+        <div className="absolute inset-0 bg-primary/5 animate-pulse" />
+        <div className="relative">
+             <div className="w-20 h-20 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+             <div className="absolute inset-0 flex items-center justify-center">
+                <Target className="w-8 h-8 text-primary animate-ping" />
+             </div>
+        </div>
+        <div className="text-center relative z-10">
+          <p className="font-black text-primary tracking-[0.2em] uppercase text-sm mb-1">Live Tracking Active</p>
+          <p className="text-xs font-bold text-muted-foreground animate-bounce">Fetching your Real-World Coordinates...</p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="relative w-full h-[450px] rounded-3xl overflow-hidden shadow-2xl border-4 border-white group transition-all duration-500">
+    <div className="relative w-full h-[450px] rounded-3xl overflow-hidden shadow-2xl border-4 border-white group">
       <MapContainer center={position} zoom={18} style={{ height: '100%', width: '100%' }}>
         <TileLayer
           url={isSatellite 
-            ? 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}' 
+            ? 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{x}/{y}' 
             : 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'}
           attribution='&copy; ESRI / OpenStreetMap'
         />
         {userLocation && (
           <Marker position={userLocation} icon={L.divIcon({
             className: 'blue-dot-container',
-            html: `
-              <div class="relative flex items-center justify-center">
-                <div class="absolute w-8 h-8 bg-blue-500/20 rounded-full animate-ping"></div>
-                <div class="w-4 h-4 bg-blue-600 rounded-full border-2 border-white shadow-xl"></div>
-              </div>
-            `,
-            iconSize: [32, 32]
+            html: `<div class="relative flex items-center justify-center">
+                    <div class="absolute w-10 h-10 bg-blue-500/20 rounded-full animate-ping"></div>
+                    <div class="w-5 h-5 bg-blue-600 rounded-full border-2 border-white shadow-2xl"></div>
+                   </div>`,
+            iconSize: [40, 40]
           })} />
         )}
         <MapEvents />
       </MapContainer>
 
-      {/* PIN OVERLAY */}
+      {/* FLOATING PIN (CENTER) */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[1000] pointer-events-none -mt-4">
-        <div className={`transition-all duration-300 ${isMoving ? "-translate-y-8 scale-125" : "translate-y-0"}`}>
+        <div className={`transition-all duration-300 ${isMoving ? "-translate-y-10 scale-125" : "translate-y-0"}`}>
           <div className="flex flex-col items-center">
-            <div className={`w-12 h-12 rounded-full border-4 border-white shadow-2xl flex items-center justify-center ${isMoving ? "bg-primary" : "bg-black"}`}>
-               <MapPin className="w-6 h-6 text-white" />
+            <div className={`w-14 h-14 rounded-full border-4 border-white shadow-2xl flex items-center justify-center ${isMoving ? "bg-primary animate-pulse" : "bg-black"}`}>
+               <MapPin className="w-8 h-8 text-white" />
             </div>
             <div className={`w-1.5 h-6 mx-auto -mt-1 rounded-full ${isMoving ? "bg-primary" : "bg-black"}`}></div>
-            <div className={`w-4 h-1 bg-black/30 rounded-full blur-[1px] mt-1 transition-opacity ${isMoving ? "opacity-100 scale-50" : "opacity-0 scale-100"}`}></div>
           </div>
         </div>
       </div>
 
-      {/* TOP PANEL: ADDRESS & HOUSE NO */}
-      <div className="absolute top-4 left-4 right-4 z-[1000] flex flex-col space-y-2 pointer-events-none">
-        <div className="glass-panel p-4 shadow-2xl border-white/20 backdrop-blur-xl pointer-events-auto rounded-2xl flex flex-col space-y-3">
-          <div className="flex items-start space-x-3">
-            <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${loading ? "bg-primary/20 animate-pulse" : "bg-black text-white"}`}>
-              <MapPin className="w-4 h-4" />
+      {/* AUTOMATIC ADDRESS BAR */}
+      <div className="absolute top-4 left-4 right-4 z-[1000] pointer-events-none">
+        <div className="glass-panel p-5 shadow-2xl border-white/20 backdrop-blur-2xl rounded-2xl flex flex-col space-y-4 pointer-events-auto border-2 border-black/5">
+          <div className="flex items-start space-x-4">
+            <div className={`w-10 h-10 rounded-xl flex items-center justify-center shadow-lg transition-colors ${loading ? "bg-primary/20 animate-pulse" : "bg-black text-white"}`}>
+              <MapPin className="w-5 h-5" />
             </div>
-            <div className="flex-1">
-              <p className="text-[10px] font-black uppercase text-primary tracking-tighter mb-0.5">Live Delivery Point</p>
-              <p className="text-sm font-bold truncate">{loading ? "Pinpointing Accuracy..." : address}</p>
+            <div className="flex-1 min-w-0">
+              <p className="text-[10px] font-black uppercase text-primary tracking-widest mb-1">Detected Live Address</p>
+              <p className="text-sm font-black truncate text-black">{loading ? "Pinpointing Accuracy..." : address}</p>
             </div>
           </div>
           
-          <div className="relative group/input">
+          <div className="h-px bg-black/5 w-full" />
+          
+          <div className="flex items-center space-x-2">
             <input 
               type="text"
-              placeholder="House No / Flat / Building Name..."
+              placeholder="Add Floor / Building / Landmark (Optional)..."
               value={houseNo}
               onChange={(e) => setHouseNo(e.target.value)}
-              className="w-full bg-secondary/50 border-2 border-transparent focus:border-primary/50 rounded-xl px-4 py-2.5 text-sm font-bold outline-none transition-all placeholder:text-muted-foreground/60"
+              className="flex-1 bg-secondary/30 border-2 border-transparent focus:border-black/10 rounded-xl px-4 py-3 text-xs font-bold outline-none transition-all"
             />
-            <div className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-black text-primary/50 opacity-0 group-focus-within/input:opacity-100 transition-opacity">REQUIRED</div>
           </div>
         </div>
       </div>
 
-      {/* SIDE BUTTONS */}
-      <div className="absolute bottom-6 right-6 z-[1000] flex flex-col space-y-3">
+      {/* CONTROL BUTTONS */}
+      <div className="absolute bottom-6 right-6 z-[1000] flex flex-col space-y-4">
         <button
           type="button"
           onClick={() => setIsSatellite(!isSatellite)}
-          className={`w-12 h-12 rounded-2xl shadow-2xl flex items-center justify-center transition-all border-2 ${isSatellite ? "bg-black text-white border-white" : "bg-white text-black border-transparent"}`}
-          title="Satellite View"
+          className={`w-14 h-14 rounded-2xl shadow-2xl flex items-center justify-center transition-all border-4 ${isSatellite ? "bg-black text-white border-white" : "bg-white text-black border-transparent"}`}
         >
-          <Target className="w-6 h-6" />
-        </button>
-
-        <button
-          type="button"
-          onClick={() => { if (userLocation) setPosition(userLocation); }}
-          className="w-12 h-12 bg-white text-blue-600 rounded-2xl shadow-2xl flex items-center justify-center outline-none border-2 border-transparent hover:border-blue-400 transition-all"
-        >
-          <MapPin className="w-6 h-6 animate-pulse" />
+          <Target className="w-7 h-7" />
         </button>
 
         <button
@@ -203,18 +221,17 @@ const AddressPickerMap = ({ onSelectAddress }) => {
               onSelectAddress({ ...data, address: finalAddress });
             }
           }}
-          className="px-8 py-4 bg-black text-white rounded-2xl shadow-2xl font-black text-sm uppercase tracking-widest flex items-center space-x-2 active:scale-95 transition-all border-2 border-transparent hover:border-white/20"
+          className="h-14 px-10 bg-black text-white rounded-2xl shadow-2xl font-black text-sm uppercase tracking-widest flex items-center space-x-3 active:scale-95 transition-all hover:bg-zinc-800"
           disabled={loading || isMoving}
         >
-          <Check className="w-5 h-5 text-green-400" />
-          <span>Confirm Door</span>
+          <Check className="w-6 h-6 text-green-400" />
+          <span>Confirm Location</span>
         </button>
       </div>
 
       <style>{`
         .blue-dot-container { background: transparent !important; border: none !important; }
-        .glass-panel { background: rgba(255, 255, 255, 0.85); transition: background 0.3s ease; }
-        .glass-panel:focus-within { background: rgba(255, 255, 255, 0.95); }
+        .glass-panel { background: rgba(255, 255, 255, 0.9); }
       `}</style>
     </div>
   );
