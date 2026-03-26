@@ -170,7 +170,7 @@ const Footer = () => {
               © 2024 E-Kart. All rights reserved.
             </p>
             <p className="text-muted-foreground text-xs mt-1">
-              Developed By CodeWithZeeshu
+              Developed By Jatin Bhoraniya
             </p>
           </div>
         </div>
