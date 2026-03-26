@@ -1,11 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {
-  Filter,
-  Package,
-  Truck,
-  CheckCircle,
-  XCircle,
-} from "lucide-react";
+import { Filter, Package, Truck, CheckCircle, XCircle } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { fetchMyOrders } from "../store/slices/orderSlice";
@@ -217,7 +211,11 @@ const Orders = () => {
                 {/* Actions */}
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 mt-6 pt-6 border-t border-[hsla(var(--glass-border))]">
                   <button
-                    onClick={() => navigate(`/order/${order.id}`)}
+                    onClick={() => {
+                      if (order.order_items && order.order_items.length > 0) {
+                        navigate(`/product/${order.order_items[0].product_id}`);
+                      }
+                    }}
                     className="flex items-center justify-center px-4 py-2.5 glass-card hover:glow-on-hover text-xs sm:text-sm font-bold transition-all h-full"
                   >
                     View Details
