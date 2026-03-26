@@ -61,12 +61,13 @@ const Payment = () => {
             const postcode = addr.postcode || "";
 
             const streetAddress = [house, road, neighbourhood].filter(Boolean).join(", ");
+            const displayAddress = streetAddress || addr.suburb || addr.neighbourhood || addr.city || data.display_name.split(",")[0];
             
-            console.log("Geocoding Result:", { streetAddress, city, state, postcode });
+            console.log("Geocoding Result:", { streetAddress, displayAddress, city, state, postcode });
 
             setShippingDetails((prev) => ({
               ...prev,
-              address: streetAddress || prev.address,
+              address: displayAddress || prev.address,
               city: city || prev.city,
               state: state || prev.state,
               zipCode: postcode || prev.zipCode,
