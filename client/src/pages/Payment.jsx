@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import { useState, useEffect, useCallback } from "react";
-import { ArrowLeft, Check, MapPin } from "lucide-react";
+import { ArrowLeft, Check, MapPin, Map as MapIcon } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -11,6 +11,7 @@ import {
 } from "../store/slices/orderSlice.js";
 import { toast } from "react-toastify";
 import { clearCart } from "../store/slices/cartSlice.js";
+import AddressPickerMap from "../components/Tracking/AddressPickerMap";
 
 const Payment = () => {
   const { authUser } = useSelector((state) => state.auth);
@@ -39,78 +40,18 @@ const Payment = () => {
     zipCode: "",
     country: "India",
   });
-  const [fetchingLocation, setFetchingLocation] = useState(false);
+  const [showMap, setShowMap] = useState(false);
 
-  const handleUseLocation = () => {
-    if (!navigator.geolocation) {
-      return toast.error("Geolocation is not supported by your browser");
-    }
-
-    setFetchingLocation(true);
-    navigator.geolocation.getCurrentPosition(
-      async (position) => {
-        try {
-          const { latitude, longitude } = position.coords;
-          const res = await fetch(
-            `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=18&addressdetails=1`,
-          );
-          const data = await res.json();
-
-          if (data.address) {
-            const addr = data.address;
-            const house = addr.house_number || "";
-            const road = addr.road || "";
-            const neighbourhood = addr.neighbourhood || addr.suburb || "";
-            const city =
-              addr.city || addr.town || addr.village || addr.municipality || "";
-            const state = addr.state || "";
-            const postcode = addr.postcode || "";
-
-            const streetAddress = [house, road, neighbourhood]
-              .filter(Boolean)
-              .join(", ");
-            const fullAddress =
-              data.display_name.split(",").slice(0, -2).join(",").trim() ||
-              displayAddress;
-
-            console.log("Geocoding Result:", {
-              streetAddress,
-              fullAddress,
-              city,
-              state,
-              postcode,
-            });
-
-            setShippingDetails((prev) => ({
-              ...prev,
-              address: fullAddress || prev.address,
-              city: city || prev.city,
-              state: state || prev.state,
-              zipCode: postcode || prev.zipCode,
-            }));
-
-            // Auto-scroll to show the filled fields
-            const formElement = document.getElementById("shipping-form");
-            if (formElement) {
-              formElement.scrollIntoView({
-                behavior: "smooth",
-                block: "start",
-              });
-            }
-
-            toast.success(`Location found: ${city}`);
-          }
-        } catch (error) {
-          toast.error("Failed to fetch address details");
-        } finally {
-          setFetchingLocation(false);
-        }
-      },
-      (error) => {
-        setFetchingLocation(false);
-        toast.error("Location access denied or unavailable");
-      },
-    );
+  const handleMapSelect = (data) => {
+    setShippingDetails((prev) => ({
+      ...prev,
+      address: data.address || prev.address,
+      city: data.city || prev.city,
+      state: data.state || prev.state,
+      zipCode: data.zipCode || prev.zipCode,
+    }));
+    setShowMap(false);
+    toast.success("Location confirmed from map!");
   };
 
   const total = cart.reduce(
@@ -322,22 +263,22 @@ const Payment = () => {
                       </h2>
                       <button
                         type="button"
-                        onClick={handleUseLocation}
-                        disabled={fetchingLocation}
-                        className={`inline-flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-                          fetchingLocation
-                            ? "bg-secondary text-muted-foreground cursor-not-allowed"
-                            : "gradient-primary text-primary-foreground hover:glow-on-hover"
-                        }`}
+                        onClick={() => setShowMap(!showMap)}
+                        className="inline-flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-medium transition-all gradient-primary text-primary-foreground hover:glow-on-hover"
                       >
-                        <MapPin
-                          className={`w-4 h-4 ${fetchingLocation ? "animate-pulse" : ""}`}
-                        />
-                        <span>
-                          {fetchingLocation ? "Fetching..." : "Use My Location"}
-                        </span>
+                        <MapIcon className="w-4 h-4" />
+                        <span>{showMap ? "Close Map" : "Select on Map"}</span>
                       </button>
                     </div>
+
+                    {showMap && (
+                      <div className="mb-8 animate-in fade-in slide-in-from-top-4 duration-500">
+                        <AddressPickerMap onSelectAddress={handleMapSelect} />
+                        <p className="mt-2 text-xs text-muted-foreground text-center">
+                          Drag the pin to your exact location and click "Confirm"
+                        </p>
+                      </div>
+                    )}
                     <div className="mb-6">
                       <div>
                         <label className="block text-sm font-medium text-foreground mb-2">
