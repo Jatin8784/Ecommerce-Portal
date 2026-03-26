@@ -18,6 +18,25 @@ const AddressPickerMap = ({ onSelectAddress, initialCoords = [22.3039, 70.8022] 
   const [loading, setLoading] = useState(false);
   const markerRef = useRef(null);
 
+  // Auto-detect location on mount
+  useEffect(() => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          const newPos = [pos.coords.latitude, pos.coords.longitude];
+          setPosition(newPos);
+          fetchAddress(newPos[0], newPos[1]);
+        },
+        (error) => {
+          console.warn("Geolocation denied, using default coordinates");
+          fetchAddress(initialCoords[0], initialCoords[1]);
+        }
+      );
+    } else {
+      fetchAddress(initialCoords[0], initialCoords[1]);
+    }
+  }, []);
+
   const fetchAddress = async (lat, lon) => {
     setLoading(true);
     try {
@@ -74,10 +93,6 @@ const AddressPickerMap = ({ onSelectAddress, initialCoords = [22.3039, 70.8022] 
     });
     return null;
   };
-
-  useEffect(() => {
-    fetchAddress(position[0], position[1]);
-  }, []);
 
   return (
     <div className="relative w-full h-[400px] rounded-2xl overflow-hidden border-2 border-primary/20 shadow-2xl group">
