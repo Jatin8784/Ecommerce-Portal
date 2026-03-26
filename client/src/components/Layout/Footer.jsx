@@ -123,33 +123,6 @@ const Footer = () => {
               ))}
             </ul>
           </div>
-
-          {/* Follow Us QR */}
-          <div className="flex flex-col items-center justify-center">
-            <h3 className="text-lg font-semibold text-foreground mb-4">
-              Follow Us
-            </h3>
-            <div className="glass-card p-3 w-fit hover:glow-on-hover animate-smooth cursor-pointer group flex flex-col items-center">
-              <a
-                href="https://www.instagram.com/jatin_bhoraniya_007/"
-                target="_blank"
-                rel="noreferrer"
-                className="flex flex-col items-center"
-              >
-                <img
-                  src="/instagram-qr.png"
-                  alt="Scan to Follow us on Instagram"
-                  className="w-28 h-28 sm:w-32 sm:h-32 rounded-lg opacity-90 group-hover:opacity-100 transition-opacity"
-                />
-                <div className="mt-2 flex items-center justify-center space-x-2">
-                  <Instagram className="w-4 h-4 text-primary" />
-                  <span className="text-xs text-muted-foreground group-hover:text-primary transition-colors">
-                    @jatin_bhoraniya_007
-                  </span>
-                </div>
-              </a>
-            </div>
-          </div>
         </div>
 
         {/* Newsletter Signup */}
