@@ -136,7 +136,9 @@ export const placeNewOrder = catchAsyncErrors(async (req, res, next) => {
   const paymentResponse = await createRazorpayOrder(orderId, total_price);
 
   if (!paymentResponse.success) {
-    return next(new ErrorHandler("Payment setup failed: " + paymentResponse.message, 500));
+    return next(
+      new ErrorHandler("Payment setup failed: " + paymentResponse.message, 500),
+    );
   }
 
   res.status(200).json({
@@ -157,12 +159,15 @@ const autoAdvanceStatus = async (order) => {
   const diffInHours = (now - createdAt) / (1000 * 60 * 60);
 
   let newStatus = order.order_status;
-  
+
   // Real-World Style Tracking Logic:
   // < 24 hours: Processing
   // 24 to 72 hours: Shipped
   // > 72 hours: Delivered
-  if (order.order_status !== "Cancelled" && order.order_status !== "Delivered") {
+  if (
+    order.order_status !== "Cancelled" &&
+    order.order_status !== "Delivered"
+  ) {
     if (diffInHours >= 72) {
       newStatus = "Delivered";
     } else if (diffInHours >= 24) {
@@ -171,10 +176,10 @@ const autoAdvanceStatus = async (order) => {
   }
 
   if (newStatus !== order.order_status) {
-    await database.query(
-      `UPDATE orders SET order_status = $1 WHERE id = $2`,
-      [newStatus, order.id]
-    );
+    await database.query(`UPDATE orders SET order_status = $1 WHERE id = $2`, [
+      newStatus,
+      order.id,
+    ]);
     return { ...order, order_status: newStatus };
   }
   return order;
@@ -222,7 +227,7 @@ export const fetchSingleOrder = catchAsyncErrors(async (req, res, next) => {
   }
 
   let order = result.rows[0];
-  
+
   // Auto-advance status for tracking demo
   order = await autoAdvanceStatus(order);
 
@@ -269,7 +274,7 @@ export const fetchMyOrders = catchAsyncErrors(async (req, res, next) => {
   );
 
   const orders = await Promise.all(
-    result.rows.map(async (order) => await autoAdvanceStatus(order))
+    result.rows.map(async (order) => await autoAdvanceStatus(order)),
   );
 
   res.status(200).json({
@@ -287,7 +292,8 @@ export const fetchAllOrders = catchAsyncErrors(async (req, res, next) => {
   const countResult = await database.query("SELECT COUNT(*) FROM orders");
   const totalOrders = parseInt(countResult.rows[0].count);
 
-  const result = await database.query(`
+  const result = await database.query(
+    `
     SELECT o.*,
     COALESCE(json_agg(
       json_build_object(
@@ -360,14 +366,19 @@ export const deleteOrder = catchAsyncErrors(async (req, res, next) => {
   const { orderId } = req.params;
 
   // Security: If not Admin, only allow deleting their own order
-  const { rows: order } = await database.query("SELECT buyer_id FROM orders WHERE id = $1", [orderId]);
-  
+  const { rows: order } = await database.query(
+    "SELECT buyer_id FROM orders WHERE id = $1",
+    [orderId],
+  );
+
   if (order.length === 0) {
     return next(new ErrorHandler("Order not found.", 404));
   }
 
   if (req.user.role !== "Admin" && order[0].buyer_id !== req.user.id) {
-    return next(new ErrorHandler("You are not authorized to delete this order.", 403));
+    return next(
+      new ErrorHandler("You are not authorized to delete this order.", 403),
+    );
   }
 
   const result = await database.query(
