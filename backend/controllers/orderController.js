@@ -285,15 +285,23 @@ export const fetchMyOrders = catchAsyncErrors(async (req, res, next) => {
 });
 
 export const fetchAllOrders = catchAsyncErrors(async (req, res, next) => {
+  const { status } = req.query;
   const page = parseInt(req.query.page) || 1;
   const limit = 10;
   const offset = (page - 1) * limit;
 
-  const countResult = await database.query("SELECT COUNT(*) FROM orders");
+  let countQuery = "SELECT COUNT(*) FROM orders";
+  let queryParams = [];
+
+  if (status && status !== "All") {
+    countQuery += " WHERE order_status = $1";
+    queryParams.push(status);
+  }
+
+  const countResult = await database.query(countQuery, queryParams);
   const totalOrders = parseInt(countResult.rows[0].count);
 
-  const result = await database.query(
-    `
+  let fetchQuery = `
     SELECT o.*,
     COALESCE(json_agg(
       json_build_object(
@@ -318,12 +326,22 @@ export const fetchAllOrders = catchAsyncErrors(async (req, res, next) => {
      FROM orders o
      LEFT JOIN order_items oi ON o.id = oi.order_id
      LEFT JOIN shipping_info s ON o.id = s.order_id
+  `;
+
+  let fetchParams = [];
+  if (status && status !== "All") {
+    fetchQuery += " WHERE o.order_status = $1";
+    fetchParams.push(status);
+  }
+
+  fetchQuery += `
      GROUP BY o.id, s.id
      ORDER BY o.created_at DESC
-     LIMIT $1 OFFSET $2
-    `,
-    [limit, offset],
-  );
+     LIMIT $${fetchParams.length + 1} OFFSET $${fetchParams.length + 2}
+  `;
+  fetchParams.push(limit, offset);
+
+  const result = await database.query(fetchQuery, fetchParams);
 
   res.status(200).json({
     success: true,

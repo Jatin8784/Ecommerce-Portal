@@ -4,9 +4,10 @@ import { toast } from "react-toastify";
 
 export const fetchAllOrders = createAsyncThunk(
   "orders/fetchAll",
-  async (page, thunkAPI) => {
+  async ({ page, status }, thunkAPI) => {
     try {
-      const res = await axiosInstance.get(`/order/admin/getAll?page=${page || 1}`);
+      const url = `/order/admin/getAll?page=${page || 1}${status && status !== "All" ? `&status=${status}` : ""}`;
+      const res = await axiosInstance.get(url);
       return res.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(

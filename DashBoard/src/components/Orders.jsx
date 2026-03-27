@@ -29,8 +29,12 @@ const Orders = () => {
   const [maxPage, setMaxPage] = useState(1);
 
   useEffect(() => {
-    dispatch(fetchAllOrders(page));
-  }, [dispatch, page]);
+    dispatch(fetchAllOrders({ page, status: filterByStatus }));
+  }, [dispatch, page, filterByStatus]);
+
+  useEffect(() => {
+    setPage(1);
+  }, [filterByStatus]);
 
   useEffect(() => {
     if (totalOrders !== undefined) {
@@ -44,14 +48,11 @@ const Orders = () => {
     dispatch(updateOrderstatus({ orderId, status: newStatus }));
   };
 
-  const filteredOrders =
-    filterByStatus === "All"
-      ? orders || []
-      : orders?.filter((order) => order.order_status === filterByStatus);
+  const filteredOrders = orders || [];
 
   const confirmDelete = async () => {
     await dispatch(deleteOrder(deleteConfirm.id));
-    dispatch(fetchAllOrders(page));
+    dispatch(fetchAllOrders({ page, status: filterByStatus }));
     setDeleteConfirm({ open: false, id: null });
   };
 
