@@ -55,7 +55,6 @@ const LoginModal = () => {
     }
   }, [location.pathname, dispatch]);
 
-
   const handleSubmit = (e) => {
     e.preventDefault();
 
@@ -229,7 +228,7 @@ const LoginModal = () => {
                 : mode === "signup"
                   ? isOtpSent
                     ? "Verify & Create Account"
-                    : "Sign In"
+                    : "Sign Up"
                   : mode === "forgot"
                     ? "Send Reset Email"
                     : "Sign In"}
@@ -277,7 +276,6 @@ const LoginModal = () => {
             </button>
           </div>
         )}
-
 
         {/* Toggle */}
         {["signin", "signup"].includes(mode) && (
