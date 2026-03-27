@@ -8,7 +8,6 @@ import {
   forgotPassword,
   resetPassword,
   updatePassword,
-  updatePassword,
   updateProfile,
   firebaseLogin,
 } from "../controllers/authController.js";
