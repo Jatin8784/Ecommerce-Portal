@@ -23,7 +23,7 @@ const Header = () => {
         </p>
         <div className="flex gap-4 items-center">
           <button
-            onClick={toggleTheme}
+            onClick={(e) => toggleTheme(e)}
             className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors pointer-events-auto"
           >
             {theme === "dark" ? (
