@@ -24,6 +24,5 @@ router.post("/password/forgot", forgotPassword);
 router.put("/password/reset/:token", resetPassword);
 router.put("/password/update", isAuthenticatedUser, updatePassword);
 router.put("/profile/update", isAuthenticatedUser, updateProfile);
-router.post("/firebase-login", firebaseLogin);
 
 export default router;
