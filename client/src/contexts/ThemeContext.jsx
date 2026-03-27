@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
+import { flushSync } from "react-dom";
 
 const ThemeContext = createContext();
 
@@ -18,10 +19,27 @@ export const ThemeProvider = ({ children }) => {
     return "dark";
   });
 
-  const toggleTheme = () => {
-    const newTheme = theme === "dark" ? "light" : "dark";
-    setTheme(newTheme);
-    localStorage.setItem("theme", newTheme);
+  const toggleTheme = (event) => {
+    const x = event?.clientX ?? window.innerWidth / 2;
+    const y = event?.clientY ?? window.innerHeight / 2;
+
+    if (!document.startViewTransition) {
+      const newTheme = theme === "dark" ? "light" : "dark";
+      setTheme(newTheme);
+      localStorage.setItem("theme", newTheme);
+      return;
+    }
+
+    document.documentElement.style.setProperty("--x", `${x}px`);
+    document.documentElement.style.setProperty("--y", `${y}px`);
+
+    document.startViewTransition(() => {
+      flushSync(() => {
+        const newTheme = theme === "dark" ? "light" : "dark";
+        setTheme(newTheme);
+        localStorage.setItem("theme", newTheme);
+      });
+    });
   };
 
   useEffect(() => {
