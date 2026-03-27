@@ -9,6 +9,7 @@ import {
   resetPassword,
   updatePassword,
   updateProfile,
+  googleAuth,
 } from "../controllers/authController.js";
 import { isAuthenticatedUser } from "../middleware/authMiddleware.js";
 
@@ -23,5 +24,6 @@ router.post("/password/forgot", forgotPassword);
 router.put("/password/reset/:token", resetPassword);
 router.put("/password/update", isAuthenticatedUser, updatePassword);
 router.put("/profile/update", isAuthenticatedUser, updateProfile);
+router.post("/google", googleAuth);
 
 export default router;

@@ -311,3 +311,37 @@ export const updateProfile = catchAsyncErrors(async (req, res, next) => {
   });
 });
 
+export const googleAuth = catchAsyncErrors(async (req, res, next) => {
+  const { name, email, avatar } = req.body;
+  if (!email) {
+    return next(new ErrorHandler("Email is required", 400));
+  }
+
+  let userResults = await database.query("SELECT * FROM users WHERE email = $1", [
+    email,
+  ]);
+  let user;
+
+  if (userResults.rows.length === 0) {
+    // Register new user
+    // Generate a secure random password since schema requires it
+    const randomPassword = crypto.randomBytes(16).toString("hex");
+    const hashedPassword = await bcrypt.hash(randomPassword, 10);
+
+    const newUser = await database.query(
+      "INSERT INTO users (name, email, password, avatar) VALUES ($1, $2, $3, $4) RETURNING *",
+      [
+        name || email.split("@")[0],
+        email,
+        hashedPassword,
+        avatar ? JSON.stringify(avatar) : null,
+      ]
+    );
+    user = newUser.rows[0];
+  } else {
+    user = userResults.rows[0];
+  }
+
+  sendToken(user, 200, "Login Successfully", res);
+});
+

@@ -2,6 +2,8 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { axiosInstance } from "../../lib/axios";
 import { toast } from "react-toastify";
 import { toggleAuthPopup } from "./popupSlice";
+import { signInWithPopup } from "firebase/auth";
+import { auth, provider } from "../../config/firebase";
 
 export const sendOtp = createAsyncThunk(
   "auth/sendOtp",
@@ -46,6 +48,34 @@ export const login = createAsyncThunk("auth/login", async (data, thunkAPI) => {
     return thunkAPI.rejectWithValue(message);
   }
 });
+
+export const googleLogin = createAsyncThunk(
+  "auth/googleLogin",
+  async (_, thunkAPI) => {
+    try {
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user;
+      const data = {
+        name: user.displayName,
+        email: user.email,
+        avatar: {
+          url: user.photoURL,
+          public_id: "google_avatar",
+        },
+      };
+
+      const res = await axiosInstance.post("/auth/google", data);
+      toast.success(res.data.message);
+      thunkAPI.dispatch(toggleAuthPopup());
+      return res.data.user;
+    } catch (error) {
+      const message =
+        error.response?.data?.message || error.message || "Google Login failed";
+      toast.error(message);
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
 
 
 export const getUser = createAsyncThunk("auth/getUser", async (_, thumbAPI) => {
@@ -180,6 +210,16 @@ const authSlice = createSlice({
         state.authUser = action.payload;
       })
       .addCase(login.rejected, (state) => {
+        state.isLoggingIn = false;
+      })
+      .addCase(googleLogin.pending, (state) => {
+        state.isLoggingIn = true;
+      })
+      .addCase(googleLogin.fulfilled, (state, action) => {
+        state.isLoggingIn = false;
+        state.authUser = action.payload;
+      })
+      .addCase(googleLogin.rejected, (state) => {
         state.isLoggingIn = false;
       })
       .addCase(getUser.pending, (state, action) => {
