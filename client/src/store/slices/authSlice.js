@@ -180,6 +180,7 @@ const authSlice = createSlice({
     isUpdatingPassword: false,
     isRequestingForToken: false,
     isCheckingAuth: true,
+    isLoggingOut: false,
   },
   extraReducers: (builder) => {
     builder
@@ -234,10 +235,15 @@ const authSlice = createSlice({
         state.isCheckingAuth = false;
         state.authUser = null;
       })
+      .addCase(logout.pending, (state) => {
+        state.isLoggingOut = true;
+      })
       .addCase(logout.fulfilled, (state, action) => {
+        state.isLoggingOut = false;
         state.authUser = null;
       })
       .addCase(logout.rejected, (state, action) => {
+        state.isLoggingOut = false;
         // eslint-disable-next-line no-self-assign
         state.authUser = state.authUser;
       })

@@ -15,7 +15,7 @@ import {
 const ProfilePanel = () => {
   const dispatch = useDispatch();
   const { isAuthPopupOpen } = useSelector((state) => state.popup);
-  const { authUser, isUpdatingProfile, isUpdatingPassword } = useSelector(
+  const { authUser, isUpdatingProfile, isUpdatingPassword, isLoggingOut } = useSelector(
     (state) => state.auth,
   );
 
@@ -219,11 +219,21 @@ const ProfilePanel = () => {
 
         {/* Footer Logout */}
         <button
-          className="flex items-center justify-center space-x-3 w-full p-4 rounded-xl bg-destructive/10 text-destructive hover:bg-destructive hover:text-white transition-all font-bold shadow-sm group"
+          className="flex items-center justify-center space-x-3 w-full p-4 rounded-xl bg-destructive/10 text-destructive hover:bg-destructive hover:text-white transition-all font-bold shadow-sm group disabled:opacity-70 disabled:cursor-not-allowed"
           onClick={handleLogout}
+          disabled={isLoggingOut}
         >
-          <LogOut className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
-          <span>Sign Out From Device</span>
+          {isLoggingOut ? (
+            <>
+              <div className="w-5 h-5 border-2 border-destructive/30 border-t-destructive group-hover:border-white/30 group-hover:border-t-white rounded-full animate-spin" />
+              <span>Signing Out...</span>
+            </>
+          ) : (
+            <>
+              <LogOut className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
+              <span>Sign Out From Device</span>
+            </>
+          )}
         </button>
       </div>
     </>
