@@ -43,7 +43,7 @@ const Navbar = () => {
             <div className="flex-1 flex items-center justify-end space-x-1 sm:space-x-2">
               {/* Theme Toggle */}
               <button
-                onClick={toggleTheme}
+                onClick={(e) => toggleTheme(e)}
                 className="p-1 sm:p-2 rounded-lg hover:bg-secondary transition-colors"
               >
                 {theme === "dark" ? (
