@@ -30,57 +30,53 @@ const Navbar = () => {
                 onClick={() => dispatch(toggleSidebar())}
                 className="p-2 rounded-lg hover:bg-secondary transition-colors"
               >
-                <Menu className="w-6 h-6 sm:w-7 sm:h-7 text-foreground" />
+                <Menu className="w-6 h-6 text-foreground" />
               </button>
             </div>
 
             {/* Center Logo */}
             <div className="flex flex-shrink-0 justify-center">
-              <h1 className="text-2xl sm:text-3xl font-bold text-primary tracking-tight">E-Kart</h1>
+              <h1 className="text-2xl font-bold text-primary">E-Kart</h1>
             </div>
 
             {/* Right Side Icons */}
-            <div className="flex-1 flex items-center justify-end gap-2 sm:gap-4">
+            <div className="flex-1 flex items-center justify-end space-x-1 sm:space-x-2">
               {/* Theme Toggle */}
               <button
                 onClick={(e) => toggleTheme(e)}
-                className="p-2 rounded-lg hover:bg-secondary transition-colors"
-                aria-label="Toggle theme"
+                className="p-1 sm:p-2 rounded-lg hover:bg-secondary transition-colors"
               >
                 {theme === "dark" ? (
-                  <Sun className="w-6 h-6 text-foreground" />
+                  <Sun className="w-4 h-4 sm:w-5 sm:h-5 text-foreground" />
                 ) : (
-                  <Moon className="w-6 h-6 text-foreground" />
+                  <Moon className="w-4 h-4 sm:w-5 sm:h-5 text-foreground" />
                 )}
               </button>
 
               {/* Search Overlay */}
               <button
                 onClick={() => dispatch(toggleSearchBar())}
-                className="p-2 rounded-lg hover:bg-secondary transition-colors"
-                aria-label="Search"
+                className="p-1 sm:p-2 rounded-lg hover:bg-secondary transition-colors"
               >
-                <Search className="w-6 h-6 text-foreground" />
+                <Search className="w-4 h-4 sm:w-5 sm:h-5 text-foreground" />
               </button>
 
               {/* User Profile */}
               <button
                 onClick={() => dispatch(toggleAuthPopup())}
-                className="p-2 rounded-lg hover:bg-secondary transition-colors"
-                aria-label="Profile"
+                className="p-1 sm:p-2 rounded-lg hover:bg-secondary transition-colors"
               >
-                <User className="w-6 h-6 text-foreground" />
+                <User className="w-4 h-4 sm:w-5 sm:h-5 text-foreground" />
               </button>
 
               {/* Cart */}
               <button
                 onClick={() => dispatch(toggleCart())}
-                className="relative p-2 rounded-lg hover:bg-secondary transition-colors"
-                aria-label="Cart"
+                className="relative p-1 sm:p-2 rounded-lg hover:bg-secondary transition-colors"
               >
-                <ShoppingCart className="w-6 h-6 text-foreground" />
+                <ShoppingCart className="w-4 h-4 sm:w-5 sm:h-5 text-foreground" />
                 {cartItemsCount > 0 && (
-                  <span className="absolute top-1 right-1 bg-primary text-primary-foreground text-[10px] rounded-full min-w-[20px] h-[20px] flex items-center justify-center px-1 border-2 border-background font-bold">
+                  <span className="absolute -top-1 -right-1 bg-primary text-primary-foreground text-[10px] sm:text-xs rounded-full w-4 h-4 sm:w-5 sm:h-5 flex items-center justify-center">
                     {cartItemsCount}
                   </span>
                 )}
