@@ -8,7 +8,9 @@ import {
   forgotPassword,
   resetPassword,
   updatePassword,
+  updatePassword,
   updateProfile,
+  firebaseLogin,
 } from "../controllers/authController.js";
 import { isAuthenticatedUser } from "../middleware/authMiddleware.js";
 
@@ -23,5 +25,6 @@ router.post("/password/forgot", forgotPassword);
 router.put("/password/reset/:token", resetPassword);
 router.put("/password/update", isAuthenticatedUser, updatePassword);
 router.put("/profile/update", isAuthenticatedUser, updateProfile);
+router.post("/firebase-login", firebaseLogin);
 
 export default router;

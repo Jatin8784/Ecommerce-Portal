@@ -9,6 +9,7 @@ import { generateOtpTemplate } from "../utils/generateOtpTemplate.js";
 import { sendEmail } from "../utils/sendEmail.js";
 import crypto from "crypto";
 import { v2 as cloudinary } from "cloudinary";
+import admin from "../config/firebaseAdmin.js";
 
 export const sendOtpForRegistration = catchAsyncErrors(async (req, res, next) => {
   const { name, email, password } = req.body;
@@ -309,4 +310,46 @@ export const updateProfile = catchAsyncErrors(async (req, res, next) => {
     message: "Profile Updated Successfully",
     user: user.rows[0],
   });
+});
+
+export const firebaseLogin = catchAsyncErrors(async (req, res, next) => {
+  const { token } = req.body;
+
+  if (!token) {
+    return next(new ErrorHandler("Firebase Token not found", 400));
+  }
+
+  try {
+    const decodedToken = await admin.auth().verifyIdToken(token);
+    const { email, name, picture } = decodedToken;
+
+    let userResult = await database.query("SELECT * FROM users WHERE email = $1", [
+      email,
+    ]);
+
+    let user;
+    if (userResult.rows.length === 0) {
+      // Create new user if not exists
+      const newUser = await database.query(
+        "INSERT INTO users (name, email, avatar, google_id) VALUES ($1, $2, $3, $4) RETURNING *",
+        [name, email, { url: picture }, decodedToken.uid],
+      );
+      user = newUser.rows[0];
+    } else {
+      user = userResult.rows[0];
+      // Update google_id if it's the first time logging in with Google
+      if (!user.google_id) {
+        const updated = await database.query(
+          "UPDATE users SET google_id = $1 WHERE email = $2 RETURNING *",
+          [decodedToken.uid, email],
+        );
+        user = updated.rows[0];
+      }
+    }
+
+    sendToken(user, 200, "Login Successfully via Google", res);
+  } catch (error) {
+    console.error("Firebase Auth Error:", error);
+    return next(new ErrorHandler("Authentication failed with Google", 401));
+  }
 });
