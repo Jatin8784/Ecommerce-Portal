@@ -9,7 +9,6 @@ import { generateOtpTemplate } from "../utils/generateOtpTemplate.js";
 import { sendEmail } from "../utils/sendEmail.js";
 import crypto from "crypto";
 import { v2 as cloudinary } from "cloudinary";
-import admin from "../config/firebaseAdmin.js";
 
 export const sendOtpForRegistration = catchAsyncErrors(async (req, res, next) => {
   const { name, email, password } = req.body;
