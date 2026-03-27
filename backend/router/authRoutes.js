@@ -9,7 +9,6 @@ import {
   resetPassword,
   updatePassword,
   updateProfile,
-  firebaseLogin,
 } from "../controllers/authController.js";
 import { isAuthenticatedUser } from "../middleware/authMiddleware.js";
 

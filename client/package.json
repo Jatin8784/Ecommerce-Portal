@@ -14,7 +14,6 @@
     "@stripe/react-stripe-js": "^3.8.0",
     "@stripe/stripe-js": "^7.6.1",
     "axios": "^1.10.0",
-    "firebase": "^12.11.0",
     "jspdf": "^4.2.1",
     "jspdf-autotable": "^5.0.7",
     "leaflet": "^1.9.4",

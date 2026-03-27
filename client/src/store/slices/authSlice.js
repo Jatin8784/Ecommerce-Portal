@@ -47,21 +47,6 @@ export const login = createAsyncThunk("auth/login", async (data, thunkAPI) => {
   }
 });
 
-export const firebaseLogin = createAsyncThunk(
-  "auth/firebaseLogin",
-  async (token, thunkAPI) => {
-    try {
-      const res = await axiosInstance.post("/auth/firebase-login", { token });
-      toast.success(res.data.message);
-      thunkAPI.dispatch(toggleAuthPopup());
-      return res.data.user;
-    } catch (error) {
-      const message = error.response?.data?.message || "Google login failed";
-      toast.error(message);
-      return thunkAPI.rejectWithValue(message);
-    }
-  }
-);
 
 export const getUser = createAsyncThunk("auth/getUser", async (_, thumbAPI) => {
   try {
@@ -195,16 +180,6 @@ const authSlice = createSlice({
         state.authUser = action.payload;
       })
       .addCase(login.rejected, (state) => {
-        state.isLoggingIn = false;
-      })
-      .addCase(firebaseLogin.pending, (state) => {
-        state.isLoggingIn = true;
-      })
-      .addCase(firebaseLogin.fulfilled, (state, action) => {
-        state.isLoggingIn = false;
-        state.authUser = action.payload;
-      })
-      .addCase(firebaseLogin.rejected, (state) => {
         state.isLoggingIn = false;
       })
       .addCase(getUser.pending, (state, action) => {
