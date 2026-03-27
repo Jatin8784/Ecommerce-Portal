@@ -11,6 +11,7 @@ const authSlice = createSlice({
     loading: false,
     user: null,
     isAuthenticated: false,
+    isLoggingOut: false,
   },
   reducers: {
     loginRequest(state) {
@@ -41,15 +42,15 @@ const authSlice = createSlice({
       state.isAuthenticated = false;
     },
     logoutRequest(state) {
-      state.loading = false;
+      state.isLoggingOut = true;
     },
     logoutSuccess(state, action) {
-      state.loading = false;
+      state.isLoggingOut = false;
       state.user = null;
       state.isAuthenticated = false;
     },
     logoutFailed(state) {
-      state.loading = false;
+      state.isLoggingOut = false;
     },
     forgotPasswordRequest(state) {
       state.loading = true;
@@ -136,7 +137,7 @@ export const logout = (data) => async (dispatch) => {
       dispatch(authSlice.actions.resetAuthSlice());
     });
   } catch (error) {
-    dispatch(authSlice.actions.loginFailed());
+    dispatch(authSlice.actions.logoutFailed());
     toast.error(error.response.data.message || "Logout Failed");
     dispatch(authSlice.actions.resetAuthSlice());
   }

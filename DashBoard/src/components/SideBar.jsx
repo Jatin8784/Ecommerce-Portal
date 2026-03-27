@@ -41,7 +41,7 @@ const SideBar = () => {
   ];
 
   const { isNavbarOpened } = useSelector((state) => state.extra);
-  const { isAuthenticated } = useSelector((state) => state.auth);
+  const { isAuthenticated, isLoggingOut } = useSelector((state) => state.auth);
 
   const dispatch = useDispatch();
   const handleLogout = () => {
@@ -97,10 +97,20 @@ const SideBar = () => {
         </nav>
         <button
           onClick={handleLogout}
-          className="text-white rounded-md cursor-pointer px-3 py-2 gap-2 bg-red-gradient flex items-center "
+          disabled={isLoggingOut}
+          className="text-white rounded-md cursor-pointer px-3 py-2 gap-2 bg-red-gradient flex items-center justify-center disabled:opacity-70 disabled:cursor-not-allowed"
         >
-          <LogOut />
-          Logout
+          {isLoggingOut ? (
+            <>
+              <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+              <span>Logging Out...</span>
+            </>
+          ) : (
+            <>
+              <LogOut size={20} />
+              <span>Logout</span>
+            </>
+          )}
         </button>
       </aside>
     </>

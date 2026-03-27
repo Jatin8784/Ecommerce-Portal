@@ -45,7 +45,7 @@ const Login = () => {
                 value={formData.email}
                 onChange={handleChange}
                 placeholder="Enter Your Email"
-                className="w-full px-4 py-4 border border-gray-300 rounded-md"
+                className="w-full px-4 py-4 border border-gray-300 rounded-md text-gray-900"
               />
             </div>
             <div className="p-2">
@@ -61,7 +61,7 @@ const Login = () => {
                 value={formData.password}
                 onChange={handleChange}
                 placeholder="Enter Your Password"
-                className="w-full px-4 py-4 border border-gray-300 rounded-md"
+                className="w-full px-4 py-4 border border-gray-300 rounded-md text-gray-900"
               />
             </div>
             <div className="px-2 flex justify-between items-center text-sm text-gray-500">
