@@ -30,17 +30,17 @@ const Navbar = () => {
                 onClick={() => dispatch(toggleSidebar())}
                 className="p-2 rounded-lg hover:bg-secondary transition-colors"
               >
-                <Menu className="w-6 h-6 text-foreground" />
+                <Menu className="w-6 h-6 sm:w-7 sm:h-7 text-foreground" />
               </button>
             </div>
 
             {/* Center Logo */}
             <div className="flex flex-shrink-0 justify-center">
-              <h1 className="text-2xl font-bold text-primary">E-Kart</h1>
+              <h1 className="text-2xl sm:text-3xl font-bold text-primary tracking-tight">E-Kart</h1>
             </div>
 
             {/* Right Side Icons */}
-            <div className="flex-1 flex items-center justify-end gap-1 sm:gap-2">
+            <div className="flex-1 flex items-center justify-end gap-2 sm:gap-4">
               {/* Theme Toggle */}
               <button
                 onClick={(e) => toggleTheme(e)}
@@ -48,9 +48,9 @@ const Navbar = () => {
                 aria-label="Toggle theme"
               >
                 {theme === "dark" ? (
-                  <Sun className="w-5 h-5 text-foreground" />
+                  <Sun className="w-6 h-6 text-foreground" />
                 ) : (
-                  <Moon className="w-5 h-5 text-foreground" />
+                  <Moon className="w-6 h-6 text-foreground" />
                 )}
               </button>
 
@@ -60,7 +60,7 @@ const Navbar = () => {
                 className="p-2 rounded-lg hover:bg-secondary transition-colors"
                 aria-label="Search"
               >
-                <Search className="w-5 h-5 text-foreground" />
+                <Search className="w-6 h-6 text-foreground" />
               </button>
 
               {/* User Profile */}
@@ -69,7 +69,7 @@ const Navbar = () => {
                 className="p-2 rounded-lg hover:bg-secondary transition-colors"
                 aria-label="Profile"
               >
-                <User className="w-5 h-5 text-foreground" />
+                <User className="w-6 h-6 text-foreground" />
               </button>
 
               {/* Cart */}
@@ -78,9 +78,9 @@ const Navbar = () => {
                 className="relative p-2 rounded-lg hover:bg-secondary transition-colors"
                 aria-label="Cart"
               >
-                <ShoppingCart className="w-5 h-5 text-foreground" />
+                <ShoppingCart className="w-6 h-6 text-foreground" />
                 {cartItemsCount > 0 && (
-                  <span className="absolute top-1 right-1 bg-primary text-primary-foreground text-[10px] rounded-full min-w-[18px] h-[18px] flex items-center justify-center px-1 border-2 border-background font-bold">
+                  <span className="absolute top-1 right-1 bg-primary text-primary-foreground text-[10px] rounded-full min-w-[20px] h-[20px] flex items-center justify-center px-1 border-2 border-background font-bold">
                     {cartItemsCount}
                   </span>
                 )}
