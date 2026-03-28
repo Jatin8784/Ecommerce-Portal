@@ -20,16 +20,18 @@ export async function getAIRecommendation(req, res, userPrompt, products) {
     }));
 
     const geminiPrompt = `
-        You are an expert e-commerce shopping assistant. Your goal is to find the most relevant products from the provided list based on the user's natural language request.
+        You are an expert e-commerce shopping assistant. Your goal is to find the most relevant products from the provided list based on the user's request.
+        
+        The user's request could be a natural language description (e.g., "blue sporty shoes for running") OR a single keyword/category (e.g., "mobile", "laptop", "toys").
 
         User Request: "${userPrompt}"
         
         Available Products (JSON): ${JSON.stringify(productContext)}
 
         Instructions:
-        1. Analyze the user's intent, category preferences, price range, and specific features mentioned.
-        2. Match the request against product names, categories, and descriptions.
-        3. Rank the results by relevance.
+        1. If the request is a single keyword or category, find all products that belong to that category or have that keyword in their name/description.
+        2. If the request is a detailed description, analyze the intent, preferences, and features mentioned.
+        3. Match the request against product names, categories, and descriptions.
         4. Return ONLY a valid JSON array of product IDs that match the criteria.
         
         Constraints:

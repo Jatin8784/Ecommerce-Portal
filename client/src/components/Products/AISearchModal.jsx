@@ -1,6 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { X, Search, Sparkles } from "lucide-react";
-import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchProductWithAI } from "../../store/slices/productSlice.js";
 import { toggleAIModal } from "../../store/slices/popupSlice.js";
@@ -9,6 +8,13 @@ const AISearchModal = () => {
   const [userPrompt, setUserPrompt] = useState("");
   const { aiSearching } = useSelector((state) => state.product);
   const { isAIPopupOpen } = useSelector((state) => state.popup);
+
+  // Clear input when modal closes
+  useEffect(() => {
+    if (!isAIPopupOpen) {
+      setUserPrompt("");
+    }
+  }, [isAIPopupOpen]);
 
   const exampleText = [
     "Find the best suitable GPU with Ryzen 5600X",
