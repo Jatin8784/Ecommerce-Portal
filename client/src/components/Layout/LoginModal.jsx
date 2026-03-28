@@ -1,5 +1,4 @@
-import { useState, useEffect } from "react";
-import { X, User } from "lucide-react";
+import { X, User, Eye, EyeOff } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
 import { toggleAuthPopup } from "../../store/slices/popupSlice.js";
@@ -28,6 +27,7 @@ const LoginModal = () => {
 
   const [mode, setMode] = useState("signin"); // signin | signup | forgot | reset
   const [isOtpSent, setIsOtpSent] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const [formdata, setFormData] = useState({
     name: "",
     email: "",
@@ -173,33 +173,45 @@ const LoginModal = () => {
 
           {/* Password */}
           {mode !== "forgot" && !isOtpSent && (
-            <input
-              type="password"
-              placeholder="Password"
-              value={formdata.password}
-              onChange={(e) =>
-                setFormData({ ...formdata, password: e.target.value })
-              }
-              required
-              className="w-full p-3 rounded-lg bg-secondary text-foreground placeholder-muted-foreground border border-border focus:outline-none"
-            />
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                placeholder="Password"
+                value={formdata.password}
+                onChange={(e) =>
+                  setFormData({ ...formdata, password: e.target.value })
+                }
+                required
+                className="w-full p-3 pr-12 rounded-lg bg-secondary text-foreground placeholder-muted-foreground border border-border focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                title={showPassword ? "Hide Password" : "Show Password"}
+              >
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            </div>
           )}
 
           {/* Confirm Password */}
           {mode === "reset" && (
-            <input
-              type="password"
-              placeholder="Confirm Password"
-              value={formdata.confirmPassword}
-              onChange={(e) =>
-                setFormData({
-                  ...formdata,
-                  confirmPassword: e.target.value,
-                })
-              }
-              required
-              className="w-full p-3 rounded-lg bg-secondary text-foreground placeholder-muted-foreground border border-border focus:outline-none"
-            />
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                placeholder="Confirm Password"
+                value={formdata.confirmPassword}
+                onChange={(e) =>
+                  setFormData({
+                    ...formdata,
+                    confirmPassword: e.target.value,
+                  })
+                }
+                required
+                className="w-full p-3 pr-12 rounded-lg bg-secondary text-foreground placeholder-muted-foreground border border-border focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+              />
+            </div>
           )}
 
           {/* Forgot Password */}

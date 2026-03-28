@@ -108,7 +108,7 @@ export const login = (data) => async (dispatch) => {
         toast.success(res.data.message);
       } else {
         dispatch(authSlice.actions.loginFailed());
-        toast.error(res.data.message);  
+        toast.error("Access Denied: Admin role required");
       }
     });
   } catch (error) {
