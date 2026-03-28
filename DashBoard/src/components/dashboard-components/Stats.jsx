@@ -31,15 +31,26 @@ const Stats = () => {
   ];
 
   useEffect(() => {
-    if (yesterdayRevenue) {
-      let change =
-        yesterdayRevenue === 0
-          ? 100
-          : ((todayRevenue - yesterdayRevenue) / yesterdayRevenue) * 100;
-      const revenueChangeText = `${change >= 0 ? "+" : "-"}${change.toFixed(2)}% from yesterday`;
-      setRevenueChange(revenueChangeText);
+    let change = 0;
+    let label = "";
+
+    if (yesterdayRevenue === 0) {
+      if (todayRevenue > 0) {
+        change = 100;
+        label = "Profit from yesterday";
+      } else {
+        change = 0;
+        label = "No change from yesterday";
+      }
+    } else {
+      change = ((todayRevenue - yesterdayRevenue) / yesterdayRevenue) * 100;
+      label = change >= 0 ? "Profit from yesterday" : "Loss from yesterday";
     }
-  }, [yesterdayRevenue]);
+
+    const absChange = Math.abs(change).toFixed(2);
+    const revenueChangeText = `${change >= 0 ? "+" : "-"}${absChange}% ${label}`;
+    setRevenueChange(revenueChangeText);
+  }, [todayRevenue, yesterdayRevenue]);
 
   return (
     <>
@@ -60,7 +71,7 @@ const Stats = () => {
                 <div
                   className={`text-sm ${stat.change.startsWith("+") ? "text-green-500" : "text-red-500"}`}
                 >
-                  {stat.change} than last period
+                  {stat.change}
                 </div>
               )}
             </div>
