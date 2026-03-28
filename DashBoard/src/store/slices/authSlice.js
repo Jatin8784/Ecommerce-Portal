@@ -108,7 +108,7 @@ export const login = (data) => async (dispatch) => {
         toast.success(res.data.message);
       } else {
         dispatch(authSlice.actions.loginFailed());
-        toast.error(res.data.message);
+        toast.error(res.data.message);  
       }
     });
   } catch (error) {
