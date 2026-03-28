@@ -82,9 +82,9 @@ export async function getAIRecommendation(req, res, userPrompt, products) {
     }
 
     if (Array.isArray(matchedIds) && matchedIds.length > 0) {
-      // Map the IDs to integers for comparison if they came back as strings
-      const numericIds = matchedIds.map(id => Number(id));
-      const filtered = products.filter((p) => numericIds.includes(Number(p.id)));
+      // Products have UUIDs as strings, ensure comparison is correct
+      const stringifiedMatchedIds = matchedIds.map(id => String(id).toLowerCase());
+      const filtered = products.filter((p) => stringifiedMatchedIds.includes(String(p.id).toLowerCase()));
       return { success: true, products: filtered, aiApplied: true };
     }
 

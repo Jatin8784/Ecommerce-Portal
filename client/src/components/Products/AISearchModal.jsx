@@ -28,6 +28,7 @@ const AISearchModal = () => {
     e.preventDefault();
     if (userPrompt.trim()) {
       dispatch(fetchProductWithAI(userPrompt));
+      setUserPrompt(""); // Clear input immediately on search attempt
     }
   };
 
