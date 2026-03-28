@@ -2,6 +2,7 @@ import ErrorHandler from "../middleware/errorMiddlewares.js";
 import { catchAsyncErrors } from "../middleware/catchAsyncError.js";
 import database from "../database/db.js";
 import { createRazorpayOrder } from "../utils/createRazorpayOrder.js";
+import { triggerAutoStatusUpdate } from "../utils/autoStatusUpdate.js";
 
 export const placeNewOrder = catchAsyncErrors(async (req, res, next) => {
   const {
@@ -152,40 +153,10 @@ export const placeNewOrder = catchAsyncErrors(async (req, res, next) => {
   });
 });
 
-// Helper to automatically advance order status based on time (Simulator/Automation Mode)
-const autoAdvanceStatus = async (order) => {
-  const now = new Date();
-  const createdAt = new Date(order.created_at);
-  const diffInHours = (now - createdAt) / (1000 * 60 * 60);
-
-  let newStatus = order.order_status;
-
-  // Real-World Style Tracking Logic:
-  // < 24 hours: Processing
-  // 24 to 72 hours: Shipped
-  // > 72 hours: Delivered
-  if (
-    order.order_status !== "Cancelled" &&
-    order.order_status !== "Delivered"
-  ) {
-    if (diffInHours >= 72) {
-      newStatus = "Delivered";
-    } else if (diffInHours >= 24) {
-      newStatus = "Shipped";
-    }
-  }
-
-  if (newStatus !== order.order_status) {
-    await database.query(`UPDATE orders SET order_status = $1 WHERE id = $2`, [
-      newStatus,
-      order.id,
-    ]);
-    return { ...order, order_status: newStatus };
-  }
-  return order;
-};
 
 export const fetchSingleOrder = catchAsyncErrors(async (req, res, next) => {
+  await triggerAutoStatusUpdate();
+
   const { orderId } = req.params;
   const result = await database.query(
     `
@@ -228,9 +199,6 @@ export const fetchSingleOrder = catchAsyncErrors(async (req, res, next) => {
 
   let order = result.rows[0];
 
-  // Auto-advance status for tracking demo
-  order = await autoAdvanceStatus(order);
-
   res.status(200).json({
     success: true,
     message: "Order fetched.",
@@ -239,6 +207,8 @@ export const fetchSingleOrder = catchAsyncErrors(async (req, res, next) => {
 });
 
 export const fetchMyOrders = catchAsyncErrors(async (req, res, next) => {
+  await triggerAutoStatusUpdate();
+
   const result = await database.query(
     `
     SELECT o.*, COALESCE(
@@ -273,9 +243,7 @@ export const fetchMyOrders = catchAsyncErrors(async (req, res, next) => {
     [req.user.id],
   );
 
-  const orders = await Promise.all(
-    result.rows.map(async (order) => await autoAdvanceStatus(order)),
-  );
+  const orders = result.rows;
 
   res.status(200).json({
     success: true,
@@ -285,6 +253,8 @@ export const fetchMyOrders = catchAsyncErrors(async (req, res, next) => {
 });
 
 export const fetchAllOrders = catchAsyncErrors(async (req, res, next) => {
+  await triggerAutoStatusUpdate();
+
   const { status } = req.query;
   const page = parseInt(req.query.page) || 1;
   const limit = 10;

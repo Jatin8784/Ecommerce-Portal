@@ -8,6 +8,7 @@ import { generateEmailTemplate } from "../utils/generateForgotPasswordEmailTempl
 import { sendEmail } from "../utils/sendEmail.js";
 import crypto from "crypto";
 import { v2 as cloudinary } from "cloudinary";
+import { triggerAutoStatusUpdate } from "../utils/autoStatusUpdate.js";
 
 export const getAllUsers = catchAsyncErrors(async (req, res, next) => {
   const page = parseInt(req.query.page) || 1;
@@ -59,6 +60,8 @@ export const deleteUser = catchAsyncErrors(async (req, res, next) => {
 });
 
 export const dashboardStats = catchAsyncErrors(async (req, res, next) => {
+  await triggerAutoStatusUpdate();
+
   const today = new Date();
   const todayDate = today.toISOString().split("T")[0];
   const yesterday = new Date(today);
