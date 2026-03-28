@@ -1,28 +1,41 @@
 export async function getAIRecommendation(req, res, userPrompt, products) {
   const API_KEY = process.env.GEMINI_API_KEY;
+  if (!API_KEY) {
+    console.warn("⚠️ GEMINI_API_KEY is missing. Falling back to SQL search results.");
+    return { success: true, products: products, aiApplied: false };
+  }
+
   const URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
 
   try {
-    const limitedProducts = products.slice(0, 40);
+    const limitedProducts = products.slice(0, 45);
 
     const productContext = limitedProducts.map((p) => ({
       id: p.id,
       name: p.name,
       category: p.category,
       price: p.price,
-      description: p.description ? p.description.substring(0, 150) : "",
+      description: p.description ? p.description.substring(0, 180) : "",
       ratings: p.ratings,
     }));
 
     const geminiPrompt = `
-        You are a shopping assistant. Filter these products for this user request: "${userPrompt}"
-        
-        Products: ${JSON.stringify(productContext)}
+        You are an expert e-commerce shopping assistant. Your goal is to find the most relevant products from the provided list based on the user's natural language request.
 
-        Strict Rules:
-        1. Return ONLY a JSON array of matching product IDs. Example: [12, 45, 6]
-        2. If no strong matches, return an empty array [].
-        3. Do NOT include markdown formatting.
+        User Request: "${userPrompt}"
+        
+        Available Products (JSON): ${JSON.stringify(productContext)}
+
+        Instructions:
+        1. Analyze the user's intent, category preferences, price range, and specific features mentioned.
+        2. Match the request against product names, categories, and descriptions.
+        3. Rank the results by relevance.
+        4. Return ONLY a valid JSON array of product IDs that match the criteria.
+        
+        Constraints:
+        - Return ONLY the array of IDs. No text, no markdown block, no explanation.
+        - Example Output: [12, 45, 6]
+        - If no products match, return an empty array: []
     `;
 
     const response = await fetch(URL, {
@@ -32,6 +45,7 @@ export async function getAIRecommendation(req, res, userPrompt, products) {
         contents: [{ parts: [{ text: geminiPrompt }] }],
         generationConfig: {
           response_mime_type: "application/json",
+          temperature: 0.2, // Low temperature for more deterministic results
         },
       }),
     });
@@ -42,31 +56,44 @@ export async function getAIRecommendation(req, res, userPrompt, products) {
     }
 
     if (!response.ok) {
-      throw new Error(`Gemini API Error: ${response.statusText}`);
+      const errorData = await response.json().catch(() => ({}));
+      console.error("Gemini API Error details:", errorData);
+      throw new Error(`Gemini API Error: ${response.status} ${response.statusText}`);
     }
 
     const data = await response.json();
-    const aiResponseText = data?.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
+    let aiResponseText = data?.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
 
     if (!aiResponseText) {
-      return { success: true, products: products };
+      return { success: true, products: products, aiApplied: false };
     }
+
+    // Sanitize response text if Gemini accidentally includes markdown blocks
+    aiResponseText = aiResponseText.replace(/```json\n?|```/g, "").trim();
 
     let matchedIds = [];
     try {
-      matchedIds = JSON.parse(aiResponseText.replace(/```json|```/g, ""));
+      matchedIds = JSON.parse(aiResponseText);
     } catch (e) {
-      return { success: true, products: products };
+      console.error("Failed to parse AI response:", aiResponseText);
+      return { success: true, products: products, aiApplied: false };
     }
 
     if (Array.isArray(matchedIds) && matchedIds.length > 0) {
-      const filtered = products.filter((p) => matchedIds.includes(p.id));
+      // Map the IDs to integers for comparison if they came back as strings
+      const numericIds = matchedIds.map(id => Number(id));
+      const filtered = products.filter((p) => numericIds.includes(Number(p.id)));
       return { success: true, products: filtered, aiApplied: true };
     }
 
-    return { success: true, products: [], aiApplied: true };
+    // If AI explicitly returned an empty array, it means no matches found
+    if (Array.isArray(matchedIds) && matchedIds.length === 0) {
+      return { success: true, products: [], aiApplied: true };
+    }
+
+    return { success: true, products: products, aiApplied: false };
   } catch (error) {
     console.error("AI Recommendation Failed:", error.message);
     return { success: true, products: products, aiApplied: false };
   }
-}
+}
