@@ -10,7 +10,7 @@ import {
   resetPassword,
   googleLogin,
 } from "../../store/slices/authSlice.js";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const LoginModal = () => {
   const dispatch = useDispatch();
