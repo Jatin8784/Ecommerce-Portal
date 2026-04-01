@@ -1,8 +1,5 @@
 {
   "appId": "com.jatin.ekart",
   "appName": "E-Kart",
-  "webDir": "dist",
-  "server": {
-    "androidScheme": "https"
-  }
+  "webDir": "dist"
 }
