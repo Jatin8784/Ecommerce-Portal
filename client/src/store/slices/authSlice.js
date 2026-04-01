@@ -92,6 +92,7 @@ export const getUser = createAsyncThunk("auth/getUser", async (_, thumbAPI) => {
 export const logout = createAsyncThunk("auth/logout", async (_, thumbAPI) => {
   try {
     const res = await axiosInstance.get("/auth/logout");
+    toast.success(res.data.message || "Logged out successfully");
     thumbAPI.dispatch(toggleAuthPopup());
     return null;
   } catch (error) {

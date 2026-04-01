@@ -133,7 +133,7 @@ export const logout = (data) => async (dispatch) => {
   try {
     await axiosInstance.get("/auth/logout").then((res) => {
       dispatch(authSlice.actions.logoutSuccess());
-      toast.success(res.data.message);
+      toast.success(res.data.message || "Logged out successfully");
       dispatch(authSlice.actions.resetAuthSlice());
     });
   } catch (error) {
