@@ -58,6 +58,7 @@ function App() {
 
   return (
     <Router>
+      <Toaster richColors closeButton position="top-center" />
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/password/forgot" element={<ForgotPassword />} />
@@ -78,7 +79,6 @@ function App() {
           }
         />
       </Routes>
-      <Toaster richColors closeButton position="top-right" />
     </Router>
   );
 }

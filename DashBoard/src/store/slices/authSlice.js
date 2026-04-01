@@ -48,6 +48,7 @@ const authSlice = createSlice({
       state.isLoggingOut = false;
       state.user = null;
       state.isAuthenticated = false;
+      localStorage.removeItem("token");
     },
     logoutFailed(state) {
       state.isLoggingOut = false;
@@ -131,14 +132,13 @@ export const getUser = (data) => async (dispatch) => {
 export const logout = (data) => async (dispatch) => {
   dispatch(authSlice.actions.logoutRequest());
   try {
-    await axiosInstance.get("/auth/logout").then((res) => {
-      dispatch(authSlice.actions.logoutSuccess());
-      toast.success(res.data.message || "Logged out successfully");
-      dispatch(authSlice.actions.resetAuthSlice());
-    });
+    const res = await axiosInstance.get("/auth/logout");
+    toast.success(res.data.message || "Logged out successfully");
+    dispatch(authSlice.actions.logoutSuccess());
+    dispatch(authSlice.actions.resetAuthSlice());
   } catch (error) {
     dispatch(authSlice.actions.logoutFailed());
-    toast.error(error.response.data.message || "Logout Failed");
+    toast.error(error.response?.data?.message || "Logout Failed");
     dispatch(authSlice.actions.resetAuthSlice());
   }
 };
