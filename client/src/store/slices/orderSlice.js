@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { axiosInstance } from "../../lib/axios";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 
 export const fetchMyOrders = createAsyncThunk(
   "/order/orders/me",

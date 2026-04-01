@@ -3,7 +3,7 @@ import { CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { CreditCard, Lock } from "lucide-react";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import { toggleOrderStep } from "../store/slices/orderSlice.js";
 import { clearCart } from "../store/slices/cartSlice.js";
 

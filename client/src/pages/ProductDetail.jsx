@@ -14,7 +14,7 @@ import { useDispatch, useSelector } from "react-redux";
 import ReviewsContainer from "../components/Products/ReviewsContainer";
 import { addToCart } from "../store/slices/cartSlice.js";
 import { fetchProductDetails } from "../store/slices/productSlice.js";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import ProductDetailSkeleton from "../components/Products/ProductDetailSkeleton";
 
 const ProductDetail = () => {

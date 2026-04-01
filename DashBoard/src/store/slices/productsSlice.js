@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { axiosInstance } from "../../lib/axios";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import {
   toggleCreateProductModal,
   toggleUpdateProductModal,

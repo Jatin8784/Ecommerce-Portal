@@ -4,7 +4,7 @@ import { ArrowLeft, Check } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { PlaceOrder, VerifyPayment, resetOrderState, deleteOrder } from "../store/slices/orderSlice.js";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import { clearCart } from "../store/slices/cartSlice.js";
 
 const Payment = () => {

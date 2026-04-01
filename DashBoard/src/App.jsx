@@ -8,7 +8,7 @@ import SideBar from "./components/SideBar";
 import Login from "./pages/Login";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
-import { ToastContainer } from "react-toastify";
+import { Toaster } from "sonner";
 import { useDispatch, useSelector } from "react-redux";
 import Dashboard from "./components/Dashboard";
 import Orders from "./components/Orders";
@@ -78,7 +78,7 @@ function App() {
           }
         />
       </Routes>
-      <ToastContainer theme="dark" />
+      <Toaster richColors closeButton position="top-right" />
     </Router>
   );
 }

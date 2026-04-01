@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { fetchMyOrders } from "../store/slices/orderSlice";
 import OrderCardSkeleton from "../components/Orders/OrderCardSkeleton";
 import { addToCart } from "../store/slices/cartSlice";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 
 // Orders page - Updated to remove Invoice button as requested
 const Orders = () => {

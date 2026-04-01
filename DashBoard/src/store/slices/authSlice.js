@@ -3,7 +3,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 import { axiosInstance } from "../../lib/axios.js";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 
 const authSlice = createSlice({
   name: "auth",

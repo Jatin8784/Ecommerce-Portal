@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "./contexts/ThemeContext";
-import { ToastContainer } from "react-toastify";
+import { Toaster } from "sonner";
 
 // Layout Components
 import Navbar from "./components/Layout/Navbar";
@@ -87,7 +87,7 @@ const App = () => {
             </Routes>
             <Footer />
           </div>
-          <ToastContainer />
+          <Toaster richColors closeButton position="top-right" />
         </BrowserRouter>
       </ThemeProvider>
     </>

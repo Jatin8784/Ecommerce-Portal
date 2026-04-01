@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { axiosInstance } from "../../lib/axios";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import { toggleAIModal } from "../slices/popupSlice.js";
 import { useSelector } from "react-redux";
 
