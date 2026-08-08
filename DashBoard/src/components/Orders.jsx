@@ -64,8 +64,8 @@ const Orders = () => {
           <Header />
           <div className="flex justify-between items-center mb-6">
             <div>
-              <h1 className="text-2xl font-bold">All Orders</h1>
-              <p className="text-sm text-gray-600">Manage all your orders.</p>
+              <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100 italic tracking-tight">All Orders</h1>
+              <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">Manage all your orders.</p>
             </div>
             <select
               className="p-2 border rounded shadow-sm bg-white dark:bg-[#1a1c23] dark:border-gray-800 dark:text-gray-200 focus:ring-2 focus:ring-primary/20 outline-none transition-all"

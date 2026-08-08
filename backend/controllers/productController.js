@@ -198,9 +198,53 @@ export const updateProduct = catchAsyncErrors(async (req, res, next) => {
     return next(new ErrorHandler("Product not found", 404));
   }
 
+  let images = product.rows[0].images || [];
+
+  if (req.files && req.files.images) {
+    // Delete old images from Cloudinary if replacing
+    if (images && Array.isArray(images) && images.length > 0) {
+      for (const img of images) {
+        if (img.public_id) {
+          try {
+            await cloudinary.uploader.destroy(img.public_id);
+          } catch (e) {}
+        }
+      }
+    }
+
+    const newImages = Array.isArray(req.files.images)
+      ? req.files.images
+      : [req.files.images];
+
+    let uploadedImages = [];
+    for (const image of newImages) {
+      let result;
+      try {
+        result = await cloudinary.uploader.upload(image.tempFilePath, {
+          folder: "Ecommerce_Product_Images",
+          width: 1000,
+          crop: "scale",
+          background_removal: "cloudinary_ai",
+          format: "png",
+        });
+      } catch (err) {
+        result = await cloudinary.uploader.upload(image.tempFilePath, {
+          folder: "Ecommerce_Product_Images",
+          width: 1000,
+          crop: "scale",
+        });
+      }
+      uploadedImages.push({
+        url: result.secure_url,
+        public_id: result.public_id,
+      });
+    }
+    images = uploadedImages;
+  }
+
   const result = await database.query(
-    "UPDATE products SET name=$1, description=$2, price=$3, category=$4, stock=$5  WHERE id=$6 RETURNING *",
-    [name, description, price, category, stock, productId],
+    "UPDATE products SET name=$1, description=$2, price=$3, category=$4, stock=$5, images=$6 WHERE id=$7 RETURNING *",
+    [name, description, price, category, stock, JSON.stringify(images), productId],
   );
 
   res.status(200).json({
