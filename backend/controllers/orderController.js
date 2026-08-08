@@ -91,11 +91,9 @@ export const placeNewOrder = catchAsyncErrors(async (req, res, next) => {
     );
   });
 
-  const tax_price = 0.18;
-  const shipping_price = total_price >= 50 ? 0 : 2;
-  total_price = Math.round(
-    total_price + total_price * tax_price + shipping_price,
-  );
+  const tax_price = 0; // Prices are inclusive of GST taxes
+  const shipping_price = total_price >= 500 ? 0 : 50;
+  total_price = Math.round(total_price + shipping_price);
 
   const orderResult = await database.query(
     `INSERT INTO orders(buyer_id, total_price, tax_price, shipping_price, payment_method) VALUES($1, $2, $3, $4, $5) RETURNING *`,

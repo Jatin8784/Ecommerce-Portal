@@ -26,6 +26,10 @@ const Payment = () => {
   const [paymentMethod, setPaymentMethod] = useState("Online"); // Renamed from Stripe
   const [paymentCancelled, setPaymentCancelled] = useState(false);
   const [isDetectingLocation, setIsDetectingLocation] = useState(false);
+  const [addressSuggestions, setAddressSuggestions] = useState([]);
+  const [isSearchingAddress, setIsSearchingAddress] = useState(false);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+
   const [shippingDetails, setShippingDetails] = useState({
     fullName: "",
     state: "Gujarat",
@@ -35,6 +39,52 @@ const Payment = () => {
     zipCode: "",
     country: "India",
   });
+
+  const handleAddressInputChange = (e) => {
+    const val = e.target.value;
+    setShippingDetails((prev) => ({ ...prev, address: val }));
+
+    if (val.trim().length > 2) {
+      setIsSearchingAddress(true);
+      setShowSuggestions(true);
+      fetch(
+        `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(val)}&format=json&addressdetails=1&limit=5&countrycodes=in`
+      )
+        .then((res) => res.json())
+        .then((data) => {
+          setAddressSuggestions(data || []);
+          setIsSearchingAddress(false);
+        })
+        .catch(() => {
+          setIsSearchingAddress(false);
+        });
+    } else {
+      setAddressSuggestions([]);
+      setShowSuggestions(false);
+    }
+  };
+
+  const handleSelectSuggestion = (item) => {
+    const addr = item.address || {};
+    const detectedCity = addr.city || addr.town || addr.district || addr.county || "";
+    const detectedState = addr.state || "Gujarat";
+    const detectedAddress = [addr.house_number, addr.road, addr.suburb, addr.neighbourhood]
+      .filter(Boolean)
+      .join(", ") || item.display_name?.split(",").slice(0, 3).join(",");
+    const detectedPincode = addr.postcode || "";
+
+    setShippingDetails((prev) => ({
+      ...prev,
+      address: detectedAddress || item.display_name,
+      city: detectedCity || prev.city,
+      state: detectedState || prev.state,
+      zipCode: detectedPincode || prev.zipCode,
+      country: addr.country || "India",
+    }));
+
+    setShowSuggestions(false);
+    toast.success("Location selected and fields auto-filled!");
+  };
 
   const handleDetectLocation = () => {
     if (!navigator.geolocation) {
@@ -94,11 +144,9 @@ const Payment = () => {
     0
   );
 
-  let totalWithTax = total + total * 0.18;
-
-  if (total < 500) {
-    totalWithTax += 50;
-  }
+  const shippingFee = total >= 500 ? 0 : 50;
+  const totalWithShipping = total + shippingFee;
+  const gstInclusiveAmount = total * (18 / 118);
 
   const handlePlaceOrder = (e) => {
     e.preventDefault();
@@ -318,7 +366,9 @@ const Payment = () => {
                         <label className="block text-sm font-medium text-foreground mb-2">
                           State *
                         </label>
-                        <select
+                        <input
+                          type="text"
+                          placeholder="e.g. Gujarat, Maharashtra, Delhi..."
                           value={shippingDetails.state}
                           onChange={(e) => {
                             setShippingDetails({
@@ -326,17 +376,9 @@ const Payment = () => {
                               state: e.target.value,
                             });
                           }}
-                          className="w-full px-4 py-3 bg-secondary border border-border rounded-lg text-foreground focus:ring-2 focus:ring-primary/20 transition-all outline-none appearance-none"
-                        >
-                          <option value="Gujarat">Gujarat</option>
-                          <option value="Punjab">Punjab</option>
-                          <option value="Karachi">Karachi</option>
-                          <option value="Goa">Goa</option>
-                          <option value="Himachal Pradesh">
-                            Himachal Pradesh
-                          </option>
-                          <option value="Uttar Pradesh">Uttar Pradesh</option>
-                        </select>
+                          className="w-full px-4 py-3 bg-secondary border border-border rounded-lg text-foreground focus:ring-2 focus:ring-primary/20 transition-all outline-none"
+                          required
+                        />
                       </div>
 
                       <div>
@@ -358,23 +400,50 @@ const Payment = () => {
                       </div>
                     </div>
 
-                    <div className="mb-6">
+                    <div className="mb-6 relative">
                       <div>
-                        <label className="block text-sm font-medium text-foreground mb-2">
-                          Address *
+                        <label className="block text-sm font-medium text-foreground mb-2 flex items-center justify-between">
+                          <span>Address (Street / Building / Landmark) *</span>
+                          <span className="text-xs text-primary font-normal">Type for live location suggestions</span>
                         </label>
-                        <input
-                          type="text"
-                          value={shippingDetails.address}
-                          onChange={(e) => {
-                            setShippingDetails({
-                              ...shippingDetails,
-                              address: e.target.value,
-                            });
-                          }}
-                          className="w-full px-4 py-3 bg-secondary border border-border rounded-lg text-foreground focus:ring-2 focus:ring-primary/20 transition-all outline-none"
-                          required
-                        />
+                        <div className="relative">
+                          <input
+                            type="text"
+                            value={shippingDetails.address}
+                            onChange={handleAddressInputChange}
+                            onFocus={() => shippingDetails.address.length > 2 && setShowSuggestions(true)}
+                            placeholder="Start typing your street address or building..."
+                            className="w-full px-4 py-3 bg-secondary border border-border rounded-lg text-foreground focus:ring-2 focus:ring-primary/20 transition-all outline-none pr-10"
+                            required
+                          />
+                          {isSearchingAddress && (
+                            <div className="absolute right-3 top-3.5">
+                              <Loader2 className="w-4 h-4 animate-spin text-primary" />
+                            </div>
+                          )}
+                        </div>
+
+                        {showSuggestions && addressSuggestions.length > 0 && (
+                          <div className="absolute z-50 left-0 right-0 mt-1 bg-card border border-border rounded-xl shadow-2xl overflow-hidden max-h-60 overflow-y-auto">
+                            {addressSuggestions.map((item, idx) => (
+                              <div
+                                key={idx}
+                                onClick={() => handleSelectSuggestion(item)}
+                                className="p-3 hover:bg-primary/10 cursor-pointer flex items-start space-x-3 text-sm border-b border-border/40 last:border-0 transition-colors"
+                              >
+                                <MapPin className="w-4 h-4 text-primary shrink-0 mt-0.5" />
+                                <div className="flex-1 min-w-0">
+                                  <p className="font-semibold text-foreground truncate">
+                                    {item.display_name?.split(",")[0]}
+                                  </p>
+                                  <p className="text-xs text-muted-foreground truncate">
+                                    {item.display_name}
+                                  </p>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        )}
                       </div>
                     </div>
 
@@ -607,13 +676,18 @@ const Payment = () => {
                         {total >= 500 ? "Free" : "₹50.00"}
                       </span>
                     </div>
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Tax (18%)</span>
-                      <span>₹{(total * 0.18).toFixed(2)}</span>
+                    <div className="flex justify-between text-xs text-muted-foreground">
+                      <span>GST (Inclusive 18%)</span>
+                      <span>₹{gstInclusiveAmount.toFixed(2)}</span>
                     </div>
-                    <div className="flex justify-between font-bold text-xl pt-4 border-t border-border text-primary">
-                      <span>Total</span>
-                      <span>₹{totalWithTax.toFixed(2)}</span>
+                    <div className="flex justify-between items-baseline font-bold text-xl pt-4 border-t border-border text-primary">
+                      <div>
+                        <div>Total Payable</div>
+                        <div className="text-[11px] font-normal text-muted-foreground mt-0.5">
+                          Inclusive of all taxes & GST
+                        </div>
+                      </div>
+                      <span>₹{totalWithShipping.toFixed(2)}</span>
                     </div>
                   </div>
                 </div>
