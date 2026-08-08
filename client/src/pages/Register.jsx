@@ -34,11 +34,15 @@ const Register = () => {
     e.preventDefault();
 
     if (!isOtpSent) {
-      dispatch(sendOtp({ email: formData.email, name: formData.name })).then(
-        (res) => {
-          if (!res.error) setIsOtpSent(true);
-        }
-      );
+      dispatch(
+        sendOtp({
+          name: formData.name,
+          email: formData.email,
+          password: formData.password,
+        })
+      ).then((res) => {
+        if (!res.error) setIsOtpSent(true);
+      });
     } else {
       dispatch(
         register({
