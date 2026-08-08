@@ -7,11 +7,10 @@ import {
   ShoppingCart,
   List,
   Phone,
-  LogIn,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { toggleSidebar, toggleAuthPopup } from "../../store/slices/popupSlice.js";
+import { toggleSidebar } from "../../store/slices/popupSlice.js";
 
 const Sidebar = () => {
   const { authUser } = useSelector((state) => state.auth);
@@ -50,7 +49,7 @@ const Sidebar = () => {
           </button>
         </div>
 
-        <nav className="!p-6 space-y-4">
+        <nav className="!p-6">
           <ul className="space-y-2">
             {menuItems.filter(Boolean).map((item) => {
               return (
@@ -67,21 +66,6 @@ const Sidebar = () => {
               );
             })}
           </ul>
-
-          {!authUser && (
-            <div className="pt-4 border-t border-border">
-              <button
-                onClick={() => {
-                  dispatch(toggleSidebar());
-                  dispatch(toggleAuthPopup());
-                }}
-                className="w-full flex items-center justify-center space-x-2 py-3 px-4 rounded-xl gradient-primary text-primary-foreground font-bold shadow-md hover:glow-on-hover transition-all"
-              >
-                <LogIn className="w-4 h-4" />
-                <span>Sign In / Register</span>
-              </button>
-            </div>
-          )}
         </nav>
       </div>
     </>
