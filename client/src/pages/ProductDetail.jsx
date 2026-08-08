@@ -53,7 +53,15 @@ const ProductDetail = () => {
     dispatch(fetchProductDetails(id));
   }, [dispatch, id]);
 
-  if (!product) {
+  useEffect(() => {
+    setSelectedImage(0);
+  }, [product?.id]);
+
+  if (loading || (!product?.id && product?.id !== 0)) {
+    return <ProductDetailSkeleton />;
+  }
+
+  if (!loading && (!product || !product.id)) {
     return (
       <div className="min-h-screen pt-20 flex items-center justify-center">
         <div className="text-center">
@@ -66,10 +74,6 @@ const ProductDetail = () => {
         </div>
       </div>
     );
-  }
-
-  if (loading) {
-    return <ProductDetailSkeleton />;
   }
 
   return (
