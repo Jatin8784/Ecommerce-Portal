@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
-import { ArrowLeft, Check } from "lucide-react";
+import { ArrowLeft, Check, ChevronDown } from "lucide-react";
+import { getAllCountryNames, getStatesForCountry } from "../data/countriesStates.js";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { PlaceOrder, VerifyPayment, resetOrderState, deleteOrder } from "../store/slices/orderSlice.js";
@@ -34,6 +35,8 @@ const Payment = () => {
     zipCode: "",
     country: "India",
   });
+
+
 
   const total = cart.reduce(
     (sum, item) => sum + item.product.price * item.quantity,
@@ -244,21 +247,26 @@ const Payment = () => {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                       <div>
                         <label className="block text-sm font-medium text-foreground mb-2">
-                          State *
+                          State / Province *
                         </label>
-                        <input
-                          type="text"
-                          placeholder="e.g. Gujarat, Maharashtra, Delhi..."
-                          value={shippingDetails.state}
-                          onChange={(e) => {
-                            setShippingDetails({
-                              ...shippingDetails,
-                              state: e.target.value,
-                            });
-                          }}
-                          className="w-full px-4 py-3 bg-secondary border border-border rounded-lg text-foreground focus:ring-2 focus:ring-primary/20 transition-all outline-none"
-                          required
-                        />
+                        <div className="relative">
+                          <select
+                            value={shippingDetails.state}
+                            onChange={(e) => {
+                              setShippingDetails({
+                                ...shippingDetails,
+                                state: e.target.value,
+                              });
+                            }}
+                            className="w-full px-4 py-3 pr-10 bg-secondary border border-border rounded-lg text-foreground focus:ring-2 focus:ring-primary/20 transition-all outline-none appearance-none cursor-pointer"
+                            required
+                          >
+                            {getStatesForCountry(shippingDetails.country).map((s) => (
+                              <option key={s} value={s}>{s}</option>
+                            ))}
+                          </select>
+                          <ChevronDown className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                        </div>
                       </div>
 
                       <div>
@@ -324,18 +332,27 @@ const Payment = () => {
                         <label className="block text-sm font-medium text-foreground mb-2">
                           Country *
                         </label>
-                        <select
-                          value={shippingDetails.country}
-                          onChange={(e) => {
-                            setShippingDetails({
-                              ...shippingDetails,
-                              country: e.target.value,
-                            });
-                          }}
-                          className="w-full px-4 py-3 bg-secondary border border-border rounded-lg text-foreground focus:ring-2 focus:ring-primary/20 transition-all outline-none appearance-none"
-                        >
-                          <option value="India">India</option>
-                        </select>
+                        <div className="relative">
+                          <select
+                            value={shippingDetails.country}
+                            onChange={(e) => {
+                              const newCountry = e.target.value;
+                              const newStates = getStatesForCountry(newCountry);
+                              setShippingDetails({
+                                ...shippingDetails,
+                                country: newCountry,
+                                state: newStates[0] || "",
+                              });
+                            }}
+                            className="w-full px-4 py-3 pr-10 bg-secondary border border-border rounded-lg text-foreground focus:ring-2 focus:ring-primary/20 transition-all outline-none appearance-none cursor-pointer"
+                            required
+                          >
+                            {getAllCountryNames().map((c) => (
+                              <option key={c} value={c}>{c}</option>
+                            ))}
+                          </select>
+                          <ChevronDown className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                        </div>
                       </div>
 
                       <div>
