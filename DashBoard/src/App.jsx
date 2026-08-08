@@ -21,22 +21,24 @@ import { fetchAllProducts } from "./store/slices/productsSlice.js";
 
 function App() {
   const { openedComponent } = useSelector((state) => state.extra);
-  const { user, isAuthenticated } = useSelector((state) => state.auth);
+  const { user, isAuthenticated, isCheckingAuth } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
 
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {
       dispatch(getUser());
+    } else {
+      dispatch({ type: "auth/getUserFailed" });
     }
-  }, []);
+  }, [dispatch]);
 
   useEffect(() => {
     if (isAuthenticated) {
       dispatch(getDashboardStats());
       dispatch(fetchAllProducts());
     }
-  }, [isAuthenticated]);
+  }, [dispatch, isAuthenticated]);
 
   const renderDashboardContent = () => {
     switch (openedComponent) {
@@ -55,10 +57,30 @@ function App() {
     }
   };
 
+  if (isCheckingAuth) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[#f3f3f6] dark:bg-[#0f1115]">
+        <div className="flex flex-col items-center gap-3">
+          <div className="w-10 h-10 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+          <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Loading Dashboard...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <Router>
       <Routes>
-        <Route path="/login" element={<Login />} />
+        <Route
+          path="/login"
+          element={
+            isAuthenticated && user?.role === "Admin" ? (
+              <Navigate to="/" replace />
+            ) : (
+              <Login />
+            )
+          }
+        />
         <Route path="/password/forgot" element={<ForgotPassword />} />
         <Route path="/password/reset/:token" element={<ResetPassword />} />
 

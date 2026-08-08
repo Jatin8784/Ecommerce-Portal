@@ -9,6 +9,7 @@ const authSlice = createSlice({
   name: "auth",
   initialState: {
     loading: false,
+    isCheckingAuth: true,
     user: null,
     isAuthenticated: false,
     isLoggingOut: false,
@@ -19,6 +20,7 @@ const authSlice = createSlice({
     },
     loginSuccess(state, action) {
       state.loading = false;
+      state.isCheckingAuth = false;
       state.user = action.payload;
       state.isAuthenticated = true;
 
@@ -26,18 +28,22 @@ const authSlice = createSlice({
     },
     loginFailed(state) {
       state.loading = false;
+      state.isCheckingAuth = false;
       state.isAuthenticated = false;
     },
     getUserRequest(state) {
       state.loading = true;
+      state.isCheckingAuth = true;
     },
     getUserSuccess(state, action) {
       state.loading = false;
+      state.isCheckingAuth = false;
       state.user = action.payload;
       state.isAuthenticated = true;
     },
     getUserFailed(state) {
       state.loading = false;
+      state.isCheckingAuth = false;
       state.user = null;
       state.isAuthenticated = false;
     },
