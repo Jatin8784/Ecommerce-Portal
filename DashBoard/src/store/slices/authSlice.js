@@ -147,7 +147,10 @@ export const forgotPassword = (email) => async (dispatch) => {
   dispatch(authSlice.actions.forgotPasswordRequest());
   try {
     await axiosInstance
-      .post(`/auth/password/forgot?frontendUrl=http://localhost:5173`, email)
+      .post(
+        `/auth/password/forgot?frontendUrl=${window.location.origin}`,
+        email
+      )
       .then((res) => {
         dispatch(authSlice.actions.forgotPasswordSuccess());
         toast.success(res.data.message);
@@ -155,7 +158,7 @@ export const forgotPassword = (email) => async (dispatch) => {
   } catch (error) {
     dispatch(authSlice.actions.forgotPasswordFailed());
     toast.error(
-      error.response.data.message || "Cannot request for rest password"
+      error.response?.data?.message || "Cannot request for reset password"
     );
   }
 };
