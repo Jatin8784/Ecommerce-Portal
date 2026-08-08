@@ -1,6 +1,7 @@
 import { Menu, User, ShoppingCart, Sun, Moon, Search } from "lucide-react";
 import { useTheme } from "../../contexts/ThemeContext";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import {
   toggleAuthPopup,
   toggleCart,
@@ -10,14 +11,24 @@ import {
 
 const Navbar = () => {
   const { theme, toggleTheme } = useTheme();
-
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
+  const { authUser } = useSelector((state) => state.auth);
   const { cart } = useSelector((state) => state.cart);
+
   let cartItemsCount = 0;
   if (cart) {
     cartItemsCount = cart.reduce((total, item) => total + item.quantity, 0);
   }
+
+  const handleUserClick = () => {
+    if (authUser) {
+      dispatch(toggleAuthPopup());
+    } else {
+      navigate("/login");
+    }
+  };
 
   return (
     <>
@@ -36,7 +47,7 @@ const Navbar = () => {
 
             {/* Center Logo */}
             <div className="flex flex-shrink-0 justify-center">
-              <h1 className="text-2xl font-bold text-primary">E-Kart</h1>
+              <h1 className="text-2xl font-bold text-primary cursor-pointer" onClick={() => navigate("/")}>E-Kart</h1>
             </div>
 
             {/* Right Side Icons */}
@@ -63,7 +74,7 @@ const Navbar = () => {
 
               {/* User Profile */}
               <button
-                onClick={() => dispatch(toggleAuthPopup())}
+                onClick={handleUserClick}
                 className="p-1 sm:p-2 rounded-lg hover:bg-secondary transition-colors"
               >
                 <User className="w-4 h-4 sm:w-5 sm:h-5 text-foreground" />

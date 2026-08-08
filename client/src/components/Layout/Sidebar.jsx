@@ -1,4 +1,3 @@
-// import React from "react";
 import {
   X,
   Home,
@@ -8,6 +7,8 @@ import {
   ShoppingCart,
   List,
   Phone,
+  LogIn,
+  UserPlus,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -25,6 +26,8 @@ const Sidebar = () => {
     { name: "Contact", icon: Phone, path: "/contact" },
     { name: "Cart", icon: ShoppingCart, path: "/cart" },
     authUser && { name: "My Orders", icon: List, path: "/orders" },
+    !authUser && { name: "Sign In", icon: LogIn, path: "/login" },
+    !authUser && { name: "Create Account", icon: UserPlus, path: "/register" },
   ];
 
   const { isSidebarOpen } = useSelector((state) => state.popup);

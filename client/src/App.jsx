@@ -8,11 +8,14 @@ import Sidebar from "./components/Layout/Sidebar";
 import SearchOverlay from "./components/Layout/SearchOverlay";
 import CartSidebar from "./components/Layout/CartSidebar";
 import ProfilePanel from "./components/Layout/ProfilePanel";
-import LoginModal from "./components/Layout/LoginModal";
 import Footer from "./components/Layout/Footer";
 
 // Pages
 import Index from "./pages/Home";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
 import Products from "./pages/Products";
 import ProductDetail from "./pages/ProductDetail";
 import Cart from "./pages/Cart";
@@ -70,10 +73,12 @@ const App = () => {
             <SearchOverlay />
             <CartSidebar />
             <ProfilePanel />
-            <LoginModal />
             <Routes>
               <Route path="/" element={<Index />} />
-              <Route path="/password/reset/:token" element={<Index />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
+              <Route path="/password/forgot" element={<ForgotPassword />} />
+              <Route path="/password/reset/:token" element={<ResetPassword />} />
               <Route path="/products" element={<Products />} />
               <Route path="/product/:id" element={<ProductDetail />} />
               <Route path="/cart" element={<Cart />} />
