@@ -20,11 +20,23 @@ export const createProduct = catchAsyncErrors(async (req, res, next) => {
       : [req.files.images];
 
     for (const image of images) {
-      const result = await cloudinary.uploader.upload(image.tempFilePath, {
-        folder: "Ecommerce_Product_Images",
-        width: 1000,
-        crop: "scale",
-      });
+      let result;
+      try {
+        result = await cloudinary.uploader.upload(image.tempFilePath, {
+          folder: "Ecommerce_Product_Images",
+          width: 1000,
+          crop: "scale",
+          background_removal: "cloudinary_ai",
+          format: "png",
+        });
+      } catch (uploadError) {
+        console.warn("Cloudinary AI BG Removal error, falling back to standard upload:", uploadError?.message);
+        result = await cloudinary.uploader.upload(image.tempFilePath, {
+          folder: "Ecommerce_Product_Images",
+          width: 1000,
+          crop: "scale",
+        });
+      }
 
       uploadedImages.push({
         url: result.secure_url,
