@@ -58,7 +58,7 @@ const Register = () => {
   const loading = isSigningUp || isOtpSending;
 
   return (
-    <div className="h-[calc(100vh-4rem)] flex items-center justify-center px-4 bg-background overflow-hidden">
+    <div className="min-h-[calc(100vh-4rem)] pt-20 pb-12 flex flex-col items-center justify-center px-4 bg-background">
       <div className="w-full max-w-md">
         {/* Back Link */}
         <Link
