@@ -18,6 +18,8 @@ const Products = () => {
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [maxPage, setMaxPage] = useState(null);
   const [page, setPage] = useState(1);
+  const [deleteConfirm, setDeleteConfirm] = useState({ open: false, product: null });
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const dispatch = useDispatch();
   const {
@@ -29,6 +31,14 @@ const Products = () => {
   const { loading, products, totalProducts, fetchingProducts } = useSelector(
     (state) => state.product,
   );
+
+  const confirmDelete = async () => {
+    if (!deleteConfirm.product) return;
+    setIsDeleting(true);
+    await dispatch(deleteProduct(deleteConfirm.product.id, page));
+    setIsDeleting(false);
+    setDeleteConfirm({ open: false, product: null });
+  };
 
   useEffect(() => {
     // Fetch All Products
@@ -144,18 +154,10 @@ const Products = () => {
                                 className="text-white rounded-md cursor-pointer px-3 py-1.5 text-sm font-semibold bg-red-gradient flex gap-2 items-center hover:opacity-90 transition-opacity"
                                 onClick={(e) => {
                                   e.stopPropagation();
-                                  setSelectedProduct(product);
-                                  dispatch(deleteProduct(product.id, page));
+                                  setDeleteConfirm({ open: true, product });
                                 }}
                               >
-                                {selectedProduct?.id === product.id && loading ? (
-                                  <>
-                                    <LoaderCircle className="w-4 h-4 animate-spin" />
-                                    <span>Deleting...</span>
-                                  </>
-                                ) : (
-                                  "Delete"
-                                )}
+                                Delete
                               </button>
                             </div>
                           </td>
@@ -195,6 +197,46 @@ const Products = () => {
       )}
       {isViewProductModalOpened && (
         <ViewProductModal selectedProduct={selectedProduct} />
+      )}
+
+      {/* Delete Product Confirmation Modal */}
+      {deleteConfirm.open && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex justify-center items-center z-[100] p-4">
+          <div className="bg-white dark:bg-[#1a1c23] p-8 rounded-2xl shadow-2xl text-center max-w-sm w-full animate-in fade-in zoom-in-95 duration-200 border border-gray-100 dark:border-gray-800">
+            <div className="w-16 h-16 bg-red-100 dark:bg-red-900/20 text-red-600 dark:text-red-400 rounded-full flex items-center justify-center mx-auto mb-4">
+              <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+              </svg>
+            </div>
+            <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2">Delete Product?</h3>
+            <p className="text-gray-500 dark:text-gray-400 mb-6 text-sm">
+              Are you sure you want to delete <span className="font-semibold text-gray-800 dark:text-gray-200">"{deleteConfirm.product?.name}"</span>? This action cannot be undone.
+            </p>
+            <div className="flex flex-col gap-3">
+              <button
+                onClick={confirmDelete}
+                disabled={isDeleting}
+                className="w-full bg-red-600 text-white py-3 rounded-xl font-bold hover:bg-red-700 transition-colors shadow-lg flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isDeleting ? (
+                  <>
+                    <LoaderCircle className="w-4 h-4 animate-spin text-white" />
+                    <span>Deleting Product...</span>
+                  </>
+                ) : (
+                  "Delete Product"
+                )}
+              </button>
+              <button
+                disabled={isDeleting}
+                onClick={() => setDeleteConfirm({ open: false, product: null })}
+                className="w-full bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 py-3 rounded-xl font-bold hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors disabled:opacity-50"
+              >
+                Keep Product
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </>
   );

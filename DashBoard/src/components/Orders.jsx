@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Header from "./Header";
+import { LoaderCircle } from "lucide-react";
 import {
   deleteOrder,
   fetchAllOrders,
@@ -25,6 +26,7 @@ const Orders = () => {
   const [filterByStatus, setFilterByStatus] = useState("All");
   const [previewImage, setPreviewImage] = useState(null);
   const [deleteConfirm, setDeleteConfirm] = useState({ open: false, id: null });
+  const [isDeleting, setIsDeleting] = useState(false);
   const [page, setPage] = useState(1);
   const [maxPage, setMaxPage] = useState(1);
 
@@ -51,8 +53,10 @@ const Orders = () => {
   const filteredOrders = orders || [];
 
   const confirmDelete = async () => {
+    setIsDeleting(true);
     await dispatch(deleteOrder(deleteConfirm.id));
     dispatch(fetchAllOrders({ page, status: filterByStatus }));
+    setIsDeleting(false);
     setDeleteConfirm({ open: false, id: null });
   };
 
@@ -240,13 +244,22 @@ const Orders = () => {
                   <div className="flex flex-col gap-3">
                     <button
                       onClick={confirmDelete}
-                      className="w-full bg-red-600 text-white py-3 rounded-xl font-bold hover:bg-red-700 transition-colors shadow-lg shadow-red-200"
+                      disabled={isDeleting}
+                      className="w-full bg-red-600 text-white py-3 rounded-xl font-bold hover:bg-red-700 transition-colors shadow-lg flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      Delete Order
+                      {isDeleting ? (
+                        <>
+                          <LoaderCircle className="w-4 h-4 animate-spin text-white" />
+                          <span>Deleting Order...</span>
+                        </>
+                      ) : (
+                        "Delete Order"
+                      )}
                     </button>
                     <button
+                      disabled={isDeleting}
                       onClick={() => setDeleteConfirm({ open: false, id: null })}
-                      className="w-full bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 py-3 rounded-xl font-bold hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+                      className="w-full bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 py-3 rounded-xl font-bold hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors disabled:opacity-50"
                     >
                       Keep it
                     </button>
