@@ -121,15 +121,24 @@ const LoginModal = () => {
       <div className="relative z-10 glass-panel w-full max-w-md p-6 rounded-2xl max-h-[min(95vh,640px)] overflow-y-auto border border-border shadow-2xl">
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-bold">
-            {mode === "reset"
-              ? "Reset Password"
-              : mode === "signup"
-              ? "Create Account"
-              : mode === "forgot"
-              ? "Forgot Password"
-              : "Welcome Back"}
-          </h2>
+          <div>
+            <h2 className="text-2xl font-bold">
+              {mode === "reset"
+                ? "Reset Password"
+                : mode === "signup"
+                ? isOtpSent
+                  ? "Verify Email OTP"
+                  : "Create Account"
+                : mode === "forgot"
+                ? "Forgot Password"
+                : "Welcome Back"}
+            </h2>
+            {mode === "signup" && isOtpSent && (
+              <p className="text-xs text-muted-foreground mt-1">
+                Enter 6-digit OTP sent to <span className="font-semibold text-foreground">{formdata.email}</span>
+              </p>
+            )}
+          </div>
 
           <button
             onClick={() => dispatch(toggleAuthPopup())}
@@ -251,15 +260,27 @@ const LoginModal = () => {
               : mode === "reset"
               ? "Reset Password"
               : mode === "signup"
-              ? "Register"
+              ? isOtpSent
+                ? "Verify OTP & Create Account"
+                : "Send OTP & Register"
               : mode === "forgot"
               ? "Send Reset Email"
               : "Sign In"}
           </button>
+
+          {mode === "signup" && isOtpSent && (
+            <button
+              type="button"
+              onClick={() => setIsOtpSent(false)}
+              className="w-full py-2 text-xs font-semibold text-muted-foreground hover:text-foreground transition-colors"
+            >
+              ← Change Email / Back
+            </button>
+          )}
         </form>
 
         {/* Google Login */}
-        {["signin", "signup"].includes(mode) && (
+        {["signin", "signup"].includes(mode) && !isOtpSent && (
           <div className="mt-6">
             <div className="relative flex items-center gap-4 mb-6">
               <div className="flex-grow border-t border-border"></div>
@@ -299,7 +320,7 @@ const LoginModal = () => {
         )}
 
         {/* Toggle */}
-        {["signin", "signup"].includes(mode) && (
+        {["signin", "signup"].includes(mode) && !isOtpSent && (
           <div className="mt-5 text-center text-sm">
             <button
               type="button"
