@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { createNewProduct } from "../store/slices/productsSlice";
 import { toggleCreateProductModal } from "../store/slices/extraSlice";
 import { LoaderCircle, Image as ImageIcon, X } from "lucide-react";
+import { toast } from "sonner";
 
 const CreateProductModal = () => {
   const { loading } = useSelector((state) => state.product);
@@ -30,10 +31,35 @@ const CreateProductModal = () => {
     "Kids & Baby",
   ];
 
+  const ALLOWED_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp", "image/gif", "image/avif"];
+  const MAX_SIZE_MB = 5;
+
   const handleImageChange = (e) => {
     const files = Array.from(e.target.files);
-    setFormData((prev) => ({ ...prev, images: [...prev.images, ...files] }));
-    setPreviews((prev) => [...prev, ...files.map((file) => URL.createObjectURL(file))]);
+    const validFiles = [];
+    const invalidFiles = [];
+
+    files.forEach((file) => {
+      if (!ALLOWED_TYPES.includes(file.type)) {
+        invalidFiles.push(`"${file.name}" — unsupported format (only JPG, PNG, WebP, GIF, AVIF allowed)`);
+      } else if (file.size > MAX_SIZE_MB * 1024 * 1024) {
+        invalidFiles.push(`"${file.name}" — too large (max ${MAX_SIZE_MB}MB)`);
+      } else {
+        validFiles.push(file);
+      }
+    });
+
+    if (invalidFiles.length > 0) {
+      invalidFiles.forEach((msg) => toast.error(msg));
+    }
+
+    if (validFiles.length > 0) {
+      setFormData((prev) => ({ ...prev, images: [...prev.images, ...validFiles] }));
+      setPreviews((prev) => [...prev, ...validFiles.map((file) => URL.createObjectURL(file))]);
+    }
+
+    // Reset input so same file can be re-selected after fix
+    e.target.value = "";
   };
 
   const removeImage = (index) => {
@@ -135,12 +161,13 @@ const CreateProductModal = () => {
             {/* Product Images Selector */}
             <div className="col-span-1 md:col-span-2 space-y-2">
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                Product Images (Supports PNG, JPG, WebP)
+                Product Images
+                <span className="ml-1 text-xs text-gray-400 dark:text-gray-500 font-normal">(JPG, PNG, WebP, GIF, AVIF · max 5MB each)</span>
               </label>
               <input
                 type="file"
                 multiple
-                accept="image/*"
+                accept="image/jpeg,image/jpg,image/png,image/webp,image/gif,image/avif"
                 onChange={handleImageChange}
                 className="border px-4 py-2 rounded-lg w-full text-gray-900 bg-white dark:bg-gray-800 dark:text-white dark:border-gray-700 cursor-pointer"
               />
