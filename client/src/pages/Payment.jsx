@@ -1,11 +1,10 @@
 import { useState, useEffect, useCallback } from "react";
-import { ArrowLeft, Check, MapPin, Loader2, Navigation } from "lucide-react";
+import { ArrowLeft, Check } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { PlaceOrder, VerifyPayment, resetOrderState, deleteOrder } from "../store/slices/orderSlice.js";
 import { toast } from "sonner";
 import { clearCart } from "../store/slices/cartSlice.js";
-import LocationPickerModal from "../components/Products/LocationPickerModal";
 
 const Payment = () => {
   const { authUser } = useSelector((state) => state.auth);
@@ -23,13 +22,8 @@ const Payment = () => {
     placingOrder 
   } = useSelector((state) => state.order);
   
-  const [paymentMethod, setPaymentMethod] = useState("Online"); // Renamed from Stripe
+  const [paymentMethod, setPaymentMethod] = useState("Online");
   const [paymentCancelled, setPaymentCancelled] = useState(false);
-  const [isDetectingLocation, setIsDetectingLocation] = useState(false);
-  const [isMapModalOpen, setIsMapModalOpen] = useState(false);
-  const [addressSuggestions, setAddressSuggestions] = useState([]);
-  const [isSearchingAddress, setIsSearchingAddress] = useState(false);
-  const [showSuggestions, setShowSuggestions] = useState(false);
 
   const [shippingDetails, setShippingDetails] = useState({
     fullName: "",
@@ -40,116 +34,6 @@ const Payment = () => {
     zipCode: "",
     country: "India",
   });
-
-  const handleSelectLocationFromMap = (loc) => {
-    setShippingDetails((prev) => ({
-      ...prev,
-      address: loc.address || loc.fullDisplay,
-      city: loc.city || prev.city,
-      state: loc.state || prev.state,
-      zipCode: loc.pincode || prev.zipCode,
-      country: loc.country || "India",
-    }));
-  };
-
-  const handleAddressInputChange = (e) => {
-    const val = e.target.value;
-    setShippingDetails((prev) => ({ ...prev, address: val }));
-
-    if (val.trim().length > 2) {
-      setIsSearchingAddress(true);
-      setShowSuggestions(true);
-      fetch(
-        `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(val)}&format=json&addressdetails=1&limit=5&countrycodes=in`
-      )
-        .then((res) => res.json())
-        .then((data) => {
-          setAddressSuggestions(data || []);
-          setIsSearchingAddress(false);
-        })
-        .catch(() => {
-          setIsSearchingAddress(false);
-        });
-    } else {
-      setAddressSuggestions([]);
-      setShowSuggestions(false);
-    }
-  };
-
-  const handleSelectSuggestion = (item) => {
-    const addr = item.address || {};
-    const detectedCity = addr.city || addr.town || addr.district || addr.county || "";
-    const detectedState = addr.state || "Gujarat";
-    const detectedAddress = [addr.house_number, addr.road, addr.suburb, addr.neighbourhood]
-      .filter(Boolean)
-      .join(", ") || item.display_name?.split(",").slice(0, 3).join(",");
-    const detectedPincode = addr.postcode || "";
-
-    setShippingDetails((prev) => ({
-      ...prev,
-      address: detectedAddress || item.display_name,
-      city: detectedCity || prev.city,
-      state: detectedState || prev.state,
-      zipCode: detectedPincode || prev.zipCode,
-      country: addr.country || "India",
-    }));
-
-    setShowSuggestions(false);
-    toast.success("Location selected and fields auto-filled!");
-  };
-
-  const handleDetectLocation = () => {
-    if (!navigator.geolocation) {
-      toast.error("Geolocation is not supported by your browser");
-      return;
-    }
-
-    setIsDetectingLocation(true);
-    toast.info("Detecting your exact GPS location...");
-
-    navigator.geolocation.getCurrentPosition(
-      async (position) => {
-        try {
-          const { latitude, longitude } = position.coords;
-          const res = await fetch(
-            `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`
-          );
-          const data = await res.json();
-
-          if (data && data.address) {
-            const addr = data.address;
-            const detectedCity = addr.city || addr.town || addr.district || addr.county || "";
-            const detectedState = addr.state || "Gujarat";
-            const detectedAddress = [addr.house_number, addr.road, addr.suburb, addr.neighbourhood]
-              .filter(Boolean)
-              .join(", ") || data.display_name?.split(",").slice(0, 3).join(",");
-            const detectedPincode = addr.postcode || "";
-
-            setShippingDetails((prev) => ({
-              ...prev,
-              address: detectedAddress || prev.address,
-              city: detectedCity || prev.city,
-              state: detectedState || prev.state,
-              zipCode: detectedPincode || prev.zipCode,
-              country: addr.country || "India",
-            }));
-
-            toast.success("Exact location detected!");
-          }
-        } catch (err) {
-          console.error("Location lookup error:", err);
-          toast.error("Failed to fetch address details from GPS coordinates");
-        } finally {
-          setIsDetectingLocation(false);
-        }
-      },
-      () => {
-        setIsDetectingLocation(false);
-        toast.error("Unable to retrieve GPS location. Please enter manually.");
-      },
-      { enableHighAccuracy: true, timeout: 10000 }
-    );
-  };
 
   const total = cart.reduce(
     (sum, item) => sum + item.product.price * item.quantity,
@@ -246,7 +130,6 @@ const Payment = () => {
   }, [dispatch]);
 
   if (cart.length === 0 && orderStep !== 3) {
-    // ... same as before
     return (
       <div className="min-h-screen pt-20 flex items-center justify-center">
         <div className="text-center glass-panel max-w-md">
@@ -335,35 +218,9 @@ const Payment = () => {
                 {orderStep === 1 ? (
                   // Step 1: User Details
                   <form onSubmit={handlePlaceOrder} className="glass-panel">
-                    <div className="flex items-center justify-between mb-6 flex-wrap gap-2">
-                      <h2 className="text-xl font-semibold text-foreground">
-                        Shipping Information
-                      </h2>
-                      <div className="flex items-center space-x-2">
-                        <button
-                          type="button"
-                          onClick={() => setIsMapModalOpen(true)}
-                          className="inline-flex items-center space-x-2 px-3 py-2 text-xs font-semibold rounded-lg gradient-primary text-primary-foreground hover:glow-on-hover transition-all shadow-sm"
-                        >
-                          <MapPin className="w-3.5 h-3.5" />
-                          <span>Pick on Live Map</span>
-                        </button>
-
-                        <button
-                          type="button"
-                          onClick={handleDetectLocation}
-                          disabled={isDetectingLocation}
-                          className="inline-flex items-center space-x-2 px-3 py-2 text-xs font-semibold rounded-lg bg-secondary text-foreground hover:bg-secondary/80 transition-all border border-border disabled:opacity-50"
-                        >
-                          {isDetectingLocation ? (
-                            <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                          ) : (
-                            <Navigation className="w-3.5 h-3.5 text-primary fill-primary/20" />
-                          )}
-                          <span>{isDetectingLocation ? "Locating..." : "Use Current Location"}</span>
-                        </button>
-                      </div>
-                    </div>
+                    <h2 className="text-xl font-semibold text-foreground mb-6">
+                      Shipping Information
+                    </h2>
                     <div className="mb-6">
                       <div>
                         <label className="block text-sm font-medium text-foreground mb-2">
@@ -423,50 +280,24 @@ const Payment = () => {
                       </div>
                     </div>
 
-                    <div className="mb-6 relative">
+                    <div className="mb-6">
                       <div>
-                        <label className="block text-sm font-medium text-foreground mb-2 flex items-center justify-between">
-                          <span>Address (Street / Building / Landmark) *</span>
-                          <span className="text-xs text-primary font-normal">Type for live location suggestions</span>
+                        <label className="block text-sm font-medium text-foreground mb-2">
+                          Address *
                         </label>
-                        <div className="relative">
-                          <input
-                            type="text"
-                            value={shippingDetails.address}
-                            onChange={handleAddressInputChange}
-                            onFocus={() => shippingDetails.address.length > 2 && setShowSuggestions(true)}
-                            placeholder="Start typing your street address or building..."
-                            className="w-full px-4 py-3 bg-secondary border border-border rounded-lg text-foreground focus:ring-2 focus:ring-primary/20 transition-all outline-none pr-10"
-                            required
-                          />
-                          {isSearchingAddress && (
-                            <div className="absolute right-3 top-3.5">
-                              <Loader2 className="w-4 h-4 animate-spin text-primary" />
-                            </div>
-                          )}
-                        </div>
-
-                        {showSuggestions && addressSuggestions.length > 0 && (
-                          <div className="absolute z-50 left-0 right-0 mt-1 bg-card border border-border rounded-xl shadow-2xl overflow-hidden max-h-60 overflow-y-auto">
-                            {addressSuggestions.map((item, idx) => (
-                              <div
-                                key={idx}
-                                onClick={() => handleSelectSuggestion(item)}
-                                className="p-3 hover:bg-primary/10 cursor-pointer flex items-start space-x-3 text-sm border-b border-border/40 last:border-0 transition-colors"
-                              >
-                                <MapPin className="w-4 h-4 text-primary shrink-0 mt-0.5" />
-                                <div className="flex-1 min-w-0">
-                                  <p className="font-semibold text-foreground truncate">
-                                    {item.display_name?.split(",")[0]}
-                                  </p>
-                                  <p className="text-xs text-muted-foreground truncate">
-                                    {item.display_name}
-                                  </p>
-                                </div>
-                              </div>
-                            ))}
-                          </div>
-                        )}
+                        <input
+                          type="text"
+                          value={shippingDetails.address}
+                          onChange={(e) => {
+                            setShippingDetails({
+                              ...shippingDetails,
+                              address: e.target.value,
+                            });
+                          }}
+                          placeholder="Enter house, street or area..."
+                          className="w-full px-4 py-3 bg-secondary border border-border rounded-lg text-foreground focus:ring-2 focus:ring-primary/20 transition-all outline-none"
+                          required
+                        />
                       </div>
                     </div>
 
@@ -719,11 +550,6 @@ const Payment = () => {
           </div>
         </div>
       </div>
-      <LocationPickerModal
-        isOpen={isMapModalOpen}
-        onClose={() => setIsMapModalOpen(false)}
-        onSelectLocation={handleSelectLocationFromMap}
-      />
     </>
   );
 };
