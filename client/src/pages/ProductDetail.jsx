@@ -8,7 +8,7 @@ import {
   Plus,
   Minus,
   Loader,
-  CircleDollarSign,
+  CreditCard,
 } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import ReviewsContainer from "../components/Products/ReviewsContainer";
