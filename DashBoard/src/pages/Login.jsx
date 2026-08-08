@@ -15,10 +15,12 @@ const Login = () => {
   const dispatch = useDispatch();
   const handleLogin = (e) => {
     e.preventDefault();
-    const data = new FormData();
-    data.append("email", formData.email);
-    data.append("password", formData.password);
-    dispatch(login(data));
+    dispatch(
+      login({
+        email: formData.email.trim(),
+        password: formData.password,
+      })
+    );
   };
 
   const { user, isAuthenticated, loading } = useSelector((state) => state.auth);

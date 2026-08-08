@@ -105,8 +105,9 @@ export const login = catchAsyncErrors(async (req, res, next) => {
   if (!email || !password) {
     return next(new ErrorHandler("Please enter all fields", 400));
   }
-  const user = await database.query("SELECT * FROM users WHERE email=$1", [
-    email,
+  const cleanEmail = email.trim().toLowerCase();
+  const user = await database.query("SELECT * FROM users WHERE LOWER(email)=$1", [
+    cleanEmail,
   ]);
   if (user.rows.length === 0) {
     return next(new ErrorHandler("Invalid email or password", 401));
