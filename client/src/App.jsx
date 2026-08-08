@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { Toaster } from "sonner";
 
@@ -31,6 +31,44 @@ import { useEffect } from "react";
 import { getUser } from "./store/slices/authSlice.js";
 import { Loader } from "lucide-react";
 import { fetchAllProducts } from "./store/slices/productSlice.js";
+
+const AppContent = () => {
+  const location = useLocation();
+
+  const isAuthRoute =
+    ["/login", "/register", "/password/forgot"].includes(location.pathname) ||
+    location.pathname.startsWith("/password/reset");
+
+  return (
+    <div className="min-h-screen bg-background flex flex-col justify-between">
+      <div>
+        <Navbar />
+        <Sidebar />
+        <SearchOverlay />
+        <CartSidebar />
+        <ProfilePanel />
+        <Routes>
+          <Route path="/" element={<Index />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/password/forgot" element={<ForgotPassword />} />
+          <Route path="/password/reset/:token" element={<ResetPassword />} />
+          <Route path="/products" element={<Products />} />
+          <Route path="/product/:id" element={<ProductDetail />} />
+          <Route path="/cart" element={<Cart />} />
+          <Route path="/orders" element={<Orders />} />
+          <Route path="/order/:id" element={<OrderDetail />} />
+          <Route path="/payment" element={<Payment />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/faq" element={<FAQ />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </div>
+      {!isAuthRoute && <Footer />}
+    </div>
+  );
+};
 
 const App = () => {
   const { authUser, isCheckingAuth } = useSelector((state) => state.auth);
@@ -67,31 +105,7 @@ const App = () => {
     <>
       <ThemeProvider>
         <BrowserRouter>
-          <div className="min-h-screen bg-background">
-            <Navbar />
-            <Sidebar />
-            <SearchOverlay />
-            <CartSidebar />
-            <ProfilePanel />
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
-              <Route path="/password/forgot" element={<ForgotPassword />} />
-              <Route path="/password/reset/:token" element={<ResetPassword />} />
-              <Route path="/products" element={<Products />} />
-              <Route path="/product/:id" element={<ProductDetail />} />
-              <Route path="/cart" element={<Cart />} />
-              <Route path="/orders" element={<Orders />} />
-              <Route path="/order/:id" element={<OrderDetail />} />
-              <Route path="/payment" element={<Payment />} />
-              <Route path="/about" element={<About />} />
-              <Route path="/faq" element={<FAQ />} />
-              <Route path="/contact" element={<Contact />} />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-            <Footer />
-          </div>
+          <AppContent />
           <Toaster richColors closeButton position="top-right" />
         </BrowserRouter>
       </ThemeProvider>

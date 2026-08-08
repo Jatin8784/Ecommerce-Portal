@@ -31,7 +31,7 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-[calc(100vh-4rem)] pt-16 pb-6 flex items-center justify-center px-4 bg-background overflow-hidden">
+    <div className="h-[calc(100vh-4rem)] flex items-center justify-center px-4 bg-background overflow-hidden">
       <div className="w-full max-w-md">
         {/* Back Link */}
         <Link
