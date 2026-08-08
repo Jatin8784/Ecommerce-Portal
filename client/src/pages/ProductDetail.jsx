@@ -78,12 +78,12 @@ const ProductDetail = () => {
         <div className="container mx-auto px-4 py-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
             <div>
-              <div className="glass-card p-4 mb-4">
+              <div className="bg-gradient-to-b from-gray-50 to-gray-100/60 dark:from-zinc-900/80 dark:to-zinc-900/40 border border-gray-200/80 dark:border-zinc-800/80 rounded-2xl shadow-sm p-4 mb-4 flex items-center justify-center min-h-[350px] sm:min-h-[420px]">
                 {product.images ? (
                   <img
                     src={product.images[selectedImage]?.url}
                     alt={product.name}
-                    className="w-full h-80 sm:h-96 object-contain rounded-lg"
+                    className="w-full h-80 sm:h-96 object-contain rounded-lg drop-shadow-md hover:scale-105 transition-transform duration-300"
                   />
                 ) : (
                   <div className="glass-card min-h-[320px] sm:min-h-[418px] p-4 mb-4 animate-pulse" />
@@ -97,7 +97,7 @@ const ProductDetail = () => {
                         key={index}
                         onClick={() => setSelectedImage(index)}
                         className={`w-20 h-20 rounded-lg overflow-hidden border-2 transition-all ${
-                          selectedImage === image
+                          selectedImage === index
                             ? "border-primary"
                             : "border-transparent"
                         }`}
@@ -213,7 +213,7 @@ const ProductDetail = () => {
                       className="flex items-center justify-center space-x-2 py-3 gradient-primary text-primary-foreground rounded-lg hover:glow-on-hover animate-smooth font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
                       onClick={handleBuyNow}
                     >
-                      <CircleDollarSign className="w-5 h-5" />
+                      <CreditCard className="w-5 h-5" />
                       <span>Buy Now</span>
                     </button>
                   </div>
