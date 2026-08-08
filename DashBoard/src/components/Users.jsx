@@ -46,10 +46,10 @@ const Users = () => {
           <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">
             Manage Your website's all users.
           </p>
-          <div className="p-4 sm:p-8 bg-gray-50 dark:bg-[#0f1115] rounded-xl transition-colors border border-gray-200 dark:border-gray-800">
+          <div className="space-y-6">
             {loading ? (
-              <div className="overflow-x-auto rounded-lg shadow-none">
-                <table className="min-w-[800px] w-full bg-white dark:bg-[#1a1c23] border border-gray-200 dark:border-gray-800">
+              <div className="overflow-x-auto rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm bg-white dark:bg-[#1a1c23]">
+                <table className="min-w-[800px] w-full">
                   <thead className="bg-blue-100/50 dark:bg-blue-900/30 text-gray-700 dark:text-gray-300">
                     <tr>
                       <th className="py-3 px-4 text-left w-20">Avatar</th>
@@ -67,8 +67,8 @@ const Users = () => {
                 </table>
               </div>
             ) : users && users?.length > 0 ? (
-              <div className="overflow-x-auto rounded-lg shadow-lg">
-                <table className="min-w-[800px] w-full bg-white dark:bg-[#1a1c23] border border-gray-200 dark:border-gray-800">
+              <div className="overflow-x-auto rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm bg-white dark:bg-[#1a1c23]">
+                <table className="min-w-[800px] w-full">
                   <thead className="bg-blue-100/50 dark:bg-blue-900/40 text-gray-700 dark:text-gray-300">
                     <tr>
                       <th className="py-3 px-4 text-left w-20">Avatar</th>
@@ -92,7 +92,7 @@ const Users = () => {
                                 "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150"
                               }
                               alt={user.name}
-                              className="w-10 h-10 rounded-full object-cover border border-gray-200"
+                              className="w-10 h-10 rounded-full object-cover border border-gray-200 dark:border-gray-800"
                             />
                           </td>
                           <td className="px-3 py-4 font-medium text-gray-900 dark:text-gray-200">
@@ -119,8 +119,8 @@ const Users = () => {
                 </table>
               </div>
             ) : (
-              <div className="text-center py-12 px-4 bg-white dark:bg-[#1a1c23] rounded-lg border border-gray-200 dark:border-gray-800">
-                <h3 className="text-xl font-bold text-gray-700 dark:text-gray-200">No users found.</h3>
+              <div className="text-center py-16 px-4 bg-white dark:bg-[#1a1c23] rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm">
+                <h3 className="text-xl font-bold text-gray-800 dark:text-gray-200">No users found.</h3>
               </div>
             )}
 
