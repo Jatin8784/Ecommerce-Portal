@@ -12,8 +12,6 @@ export async function createRazorpayOrder(orderId, totalPrice) {
     };
   }
 
-  const dollor_inr = 94;
-
   const razorpay = new Razorpay({
     key_id: process.env.RAZORPAY_KEY_ID.trim(),
     key_secret: process.env.RAZORPAY_KEY_SECRET.trim(),
@@ -21,7 +19,7 @@ export async function createRazorpayOrder(orderId, totalPrice) {
 
   try {
     const options = {
-      amount: totalPrice * dollor_inr * 100, // Amount in paise
+      amount: Math.round(totalPrice * 100), // Amount in paise (totalPrice is already in INR)
       currency: "INR",
       receipt: `${orderId}`,
     };

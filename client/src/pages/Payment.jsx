@@ -42,8 +42,8 @@ const Payment = () => {
 
   let totalWithTax = total + total * 0.18;
 
-  if (total < 50) {
-    totalWithTax += 2;
+  if (total < 500) {
+    totalWithTax += 50;
   }
 
   const handlePlaceOrder = (e) => {
@@ -515,7 +515,7 @@ const Payment = () => {
                           </p>
                         </div>
                         <p className="text-sm font-semibold">
-                          ${(Number(item.product.price) * item.quantity).toFixed(2)}
+                          ₹{(Number(item.product.price) * item.quantity).toFixed(2)}
                         </p>
                       </div>
                     ))}
@@ -524,21 +524,21 @@ const Payment = () => {
                   <div className="mt-6 space-y-3 pt-6 border-t border-border">
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Subtotal</span>
-                      <span>${total.toFixed(2)}</span>
+                      <span>₹{total.toFixed(2)}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Shipping</span>
-                      <span className={totalWithTax >= 50 ? "text-green-500" : ""}>
-                        {totalWithTax >= 50 ? "Free" : "$2.00"}
+                      <span className={total >= 500 ? "text-green-500" : ""}>
+                        {total >= 500 ? "Free" : "₹50.00"}
                       </span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Tax (18%)</span>
-                      <span>{(total * 0.18).toFixed(2)}</span>
+                      <span>₹{(total * 0.18).toFixed(2)}</span>
                     </div>
                     <div className="flex justify-between font-bold text-xl pt-4 border-t border-border text-primary">
                       <span>Total</span>
-                      <span>${totalWithTax.toFixed(2)}</span>
+                      <span>₹{totalWithTax.toFixed(2)}</span>
                     </div>
                   </div>
                 </div>
