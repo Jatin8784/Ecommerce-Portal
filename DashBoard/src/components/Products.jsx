@@ -57,17 +57,9 @@ const Products = () => {
           <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100 italic tracking-tight">All Products</h1>
           <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">Manage Your products.</p>
 
-          <div className="p-4 sm:p-8 bg-gray-50 dark:bg-[#0f1115] min-h-screen transition-colors">
-            <div
-              className={`overflow-x-auto rounded-lg ${
-                fetchingProducts
-                  ? "p-10 shadow-none"
-                  : products && products.length > 0
-                    ? "shadow-lg"
-                    : ""
-              }`}
-            >
-              {fetchingProducts ? (
+          <div className="p-4 sm:p-8 bg-gray-50 dark:bg-[#0f1115] rounded-xl transition-colors border border-gray-200 dark:border-gray-800">
+            {fetchingProducts ? (
+              <div className="overflow-x-auto rounded-lg shadow-none">
                 <table className="min-w-[800px] w-full bg-white dark:bg-[#1a1c23] border border-gray-200 dark:border-gray-800">
                   <thead className="bg-blue-100/50 dark:bg-blue-900/30 text-gray-700 dark:text-gray-300">
                     <tr>
@@ -86,7 +78,9 @@ const Products = () => {
                     ))}
                   </tbody>
                 </table>
-              ) : products && products?.length > 0 ? (
+              </div>
+            ) : products && products?.length > 0 ? (
+              <div className="overflow-x-auto rounded-lg shadow-lg">
                 <table className="min-w-[800px] w-full bg-white dark:bg-[#1a1c23] border border-gray-200 dark:border-gray-800">
                   <thead className="bg-blue-100/50 dark:bg-blue-900/40 text-gray-700 dark:text-gray-300">
                     <tr>
@@ -170,10 +164,13 @@ const Products = () => {
                     })}
                   </tbody>
                 </table>
-              ) : (
-                <h3 className="text-2xl font-bold p-6">No products found.</h3>
-              )}
-            </div>
+              </div>
+            ) : (
+              <div className="text-center py-12 px-4 bg-white dark:bg-[#1a1c23] rounded-lg border border-gray-200 dark:border-gray-800">
+                <h3 className="text-xl font-bold text-gray-700 dark:text-gray-200">No products found.</h3>
+                <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Click the '+' button at the bottom right to add your first product.</p>
+              </div>
+            )}
 
             {/* Pagination */}
             <DashboardPagination 

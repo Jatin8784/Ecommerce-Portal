@@ -46,24 +46,16 @@ const Users = () => {
           <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">
             Manage Your website's all users.
           </p>
-          <div className="p-4 sm:p-8 bg-gray-50 dark:bg-[#0f1115] min-h-screen">
-            <div
-              className={`overflow-x-auto rounded-lg ${
-                loading
-                  ? "p-10 shadow-none"
-                  : users && users.length > 0
-                    ? "shadow-lg"
-                    : ""
-              }`}
-            >
-              {loading ? (
+          <div className="p-4 sm:p-8 bg-gray-50 dark:bg-[#0f1115] rounded-xl transition-colors border border-gray-200 dark:border-gray-800">
+            {loading ? (
+              <div className="overflow-x-auto rounded-lg shadow-none">
                 <table className="min-w-[800px] w-full bg-white dark:bg-[#1a1c23] border border-gray-200 dark:border-gray-800">
                   <thead className="bg-blue-100/50 dark:bg-blue-900/30 text-gray-700 dark:text-gray-300">
                     <tr>
                       <th className="py-3 px-4 text-left w-20">Avatar</th>
                       <th className="py-3 px-4 text-left">Name</th>
                       <th className="py-3 px-4 text-left">Email</th>
-                      <th className="py-3 px-4 text-left">Registered On</th>
+                      <th className="py-3 px-4 text-left">Joined</th>
                       <th className="py-3 px-4 text-left">Action</th>
                     </tr>
                   </thead>
@@ -73,40 +65,44 @@ const Users = () => {
                     ))}
                   </tbody>
                 </table>
-              ) : users && users.length > 0 ? (
+              </div>
+            ) : users && users?.length > 0 ? (
+              <div className="overflow-x-auto rounded-lg shadow-lg">
                 <table className="min-w-[800px] w-full bg-white dark:bg-[#1a1c23] border border-gray-200 dark:border-gray-800">
-                  <thead className="bg-blue-100/50 dark:bg-blue-900/30 text-gray-700 dark:text-gray-300">
+                  <thead className="bg-blue-100/50 dark:bg-blue-900/40 text-gray-700 dark:text-gray-300">
                     <tr>
                       <th className="py-3 px-4 text-left w-20">Avatar</th>
                       <th className="py-3 px-4 text-left">Name</th>
                       <th className="py-3 px-4 text-left">Email</th>
-                      <th className="py-3 px-4 text-left">Registered On</th>
+                      <th className="py-3 px-4 text-left">Joined</th>
                       <th className="py-3 px-4 text-left">Action</th>
                     </tr>
                   </thead>
                   <tbody>
                     {users.map((user, index) => {
                       return (
-                        <tr key={index} className="border-t dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
+                        <tr
+                          key={index}
+                          className="border-t dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
+                        >
                           <td className="py-3 px-4">
                             <img
-                              src={user?.avatar?.url || avatar}
-                              alt="avatar"
-                              className="w-10 h-10 rounded-full object-cover flex-shrink-0 border border-gray-100 dark:border-gray-800"
+                              src={
+                                user?.avatar?.url ||
+                                "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150"
+                              }
+                              alt={user.name}
+                              className="w-10 h-10 rounded-full object-cover border border-gray-200"
                             />
                           </td>
-                          <td className="px-3 py-4 font-medium text-gray-900 dark:text-gray-100">{user.name}</td>
-                          <td className="px-3 py-4 max-w-[200px] sm:max-w-none">
-                            <p className="truncate text-gray-600 dark:text-gray-400" title={user.email}>
-                              {user.email}
-                            </p>
+                          <td className="px-3 py-4 font-medium text-gray-900 dark:text-gray-200">
+                            {user.name}
                           </td>
-                          <td className="px-3 py-4 text-gray-500 dark:text-gray-500 text-sm">
-                            {new Date(user.created_at).toLocaleDateString(undefined, {
-                              year: 'numeric',
-                              month: 'short',
-                              day: 'numeric'
-                            })}
+                          <td className="px-3 py-4 text-gray-600 dark:text-gray-400">
+                            {user.email}
+                          </td>
+                          <td className="px-3 py-4 text-gray-500 text-sm">
+                            {new Date(user.created_at).toLocaleDateString()}
                           </td>
                           <td className="px-3 py-4">
                             <button
@@ -121,10 +117,12 @@ const Users = () => {
                     })}
                   </tbody>
                 </table>
-              ) : (
-                <h3 className="text-2xl font-bold p-6">No users found.</h3>
-              )}
-            </div>
+              </div>
+            ) : (
+              <div className="text-center py-12 px-4 bg-white dark:bg-[#1a1c23] rounded-lg border border-gray-200 dark:border-gray-800">
+                <h3 className="text-xl font-bold text-gray-700 dark:text-gray-200">No users found.</h3>
+              </div>
+            )}
 
             {/* Pagination */}
             <DashboardPagination 
