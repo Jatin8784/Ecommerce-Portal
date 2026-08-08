@@ -109,17 +109,28 @@ const Products = () => {
                         <tr
                           key={index}
                           className="border-t dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
-                          onClick={() => {
-                            setSelectedProduct(product);
-                            dispatch(toggleViewProductModal());
-                          }}
                         >
                           <td className="py-3 px-4">
-                            <img
-                              src={product?.images[0]?.url}
-                              alt={product.name}
-                              className="w-12 h-12 rounded-md object-cover border border-gray-100 dark:border-gray-800"
-                            />
+                            <div
+                              className="relative group w-12 h-12 cursor-pointer"
+                              title="Click to view product details"
+                              onClick={() => {
+                                setSelectedProduct(product);
+                                dispatch(toggleViewProductModal());
+                              }}
+                            >
+                              <img
+                                src={product?.images[0]?.url}
+                                alt={product.name}
+                                className="w-12 h-12 rounded-md object-cover border border-gray-100 dark:border-gray-800 group-hover:opacity-70 transition-opacity"
+                              />
+                              <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 text-white drop-shadow" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                  <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                  <path strokeLinecap="round" strokeLinejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                </svg>
+                              </div>
+                            </div>
                           </td>
                           <td className="px-3 py-4 max-w-[200px] sm:max-w-[400px]">
                             <p className="truncate font-medium text-gray-900 dark:text-gray-200" title={product.name}>
@@ -142,8 +153,7 @@ const Products = () => {
                             <div className="flex flex-col sm:flex-row gap-2">
                               <button
                                 className="text-white rounded-md cursor-pointer px-3 py-1.5 text-sm font-semibold bg-blue-gradient hover:opacity-90 transition-opacity"
-                                onClick={(e) => {
-                                  e.stopPropagation();
+                                onClick={() => {
                                   setSelectedProduct(product);
                                   dispatch(toggleUpdateProductModal());
                                 }}
@@ -152,8 +162,7 @@ const Products = () => {
                               </button>
                               <button
                                 className="text-white rounded-md cursor-pointer px-3 py-1.5 text-sm font-semibold bg-red-gradient flex gap-2 items-center hover:opacity-90 transition-opacity"
-                                onClick={(e) => {
-                                  e.stopPropagation();
+                                onClick={() => {
                                   setDeleteConfirm({ open: true, product });
                                 }}
                               >
