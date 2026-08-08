@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { createNewProduct } from "../store/slices/productsSlice";
 import { toggleCreateProductModal } from "../store/slices/extraSlice";
 import { LoaderCircle, Sparkles, Check, Image as ImageIcon } from "lucide-react";
-import removeBackground from "@imgly/background-removal";
+import { removeBackground } from "@imgly/background-removal";
 import { toast } from "sonner";
 
 const CreateProductModal = () => {
