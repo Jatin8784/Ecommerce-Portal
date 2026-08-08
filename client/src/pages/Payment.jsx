@@ -1,11 +1,11 @@
-/* eslint-disable react-hooks/rules-of-hooks */
 import { useState, useEffect, useCallback } from "react";
-import { ArrowLeft, Check, MapPin, Loader2 } from "lucide-react";
+import { ArrowLeft, Check, MapPin, Loader2, Navigation } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { PlaceOrder, VerifyPayment, resetOrderState, deleteOrder } from "../store/slices/orderSlice.js";
 import { toast } from "sonner";
 import { clearCart } from "../store/slices/cartSlice.js";
+import LocationPickerModal from "../components/Products/LocationPickerModal";
 
 const Payment = () => {
   const { authUser } = useSelector((state) => state.auth);
@@ -26,6 +26,7 @@ const Payment = () => {
   const [paymentMethod, setPaymentMethod] = useState("Online"); // Renamed from Stripe
   const [paymentCancelled, setPaymentCancelled] = useState(false);
   const [isDetectingLocation, setIsDetectingLocation] = useState(false);
+  const [isMapModalOpen, setIsMapModalOpen] = useState(false);
   const [addressSuggestions, setAddressSuggestions] = useState([]);
   const [isSearchingAddress, setIsSearchingAddress] = useState(false);
   const [showSuggestions, setShowSuggestions] = useState(false);
@@ -39,6 +40,17 @@ const Payment = () => {
     zipCode: "",
     country: "India",
   });
+
+  const handleSelectLocationFromMap = (loc) => {
+    setShippingDetails((prev) => ({
+      ...prev,
+      address: loc.address || loc.fullDisplay,
+      city: loc.city || prev.city,
+      state: loc.state || prev.state,
+      zipCode: loc.pincode || prev.zipCode,
+      country: loc.country || "India",
+    }));
+  };
 
   const handleAddressInputChange = (e) => {
     const val = e.target.value;
@@ -327,19 +339,30 @@ const Payment = () => {
                       <h2 className="text-xl font-semibold text-foreground">
                         Shipping Information
                       </h2>
-                      <button
-                        type="button"
-                        onClick={handleDetectLocation}
-                        disabled={isDetectingLocation}
-                        className="inline-flex items-center space-x-2 px-3.5 py-2 text-xs font-semibold rounded-lg bg-primary/10 text-primary hover:bg-primary/20 transition-all border border-primary/20 disabled:opacity-50"
-                      >
-                        {isDetectingLocation ? (
-                          <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                        ) : (
+                      <div className="flex items-center space-x-2">
+                        <button
+                          type="button"
+                          onClick={() => setIsMapModalOpen(true)}
+                          className="inline-flex items-center space-x-2 px-3 py-2 text-xs font-semibold rounded-lg gradient-primary text-primary-foreground hover:glow-on-hover transition-all shadow-sm"
+                        >
                           <MapPin className="w-3.5 h-3.5" />
-                        )}
-                        <span>{isDetectingLocation ? "Detecting Location..." : "Auto-Detect My Location"}</span>
-                      </button>
+                          <span>Pick on Live Map</span>
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={handleDetectLocation}
+                          disabled={isDetectingLocation}
+                          className="inline-flex items-center space-x-2 px-3 py-2 text-xs font-semibold rounded-lg bg-secondary text-foreground hover:bg-secondary/80 transition-all border border-border disabled:opacity-50"
+                        >
+                          {isDetectingLocation ? (
+                            <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                          ) : (
+                            <Navigation className="w-3.5 h-3.5 text-primary fill-primary/20" />
+                          )}
+                          <span>{isDetectingLocation ? "Locating..." : "Use Current Location"}</span>
+                        </button>
+                      </div>
                     </div>
                     <div className="mb-6">
                       <div>
@@ -696,6 +719,11 @@ const Payment = () => {
           </div>
         </div>
       </div>
+      <LocationPickerModal
+        isOpen={isMapModalOpen}
+        onClose={() => setIsMapModalOpen(false)}
+        onSelectLocation={handleSelectLocationFromMap}
+      />
     </>
   );
 };
