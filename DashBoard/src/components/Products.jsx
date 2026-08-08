@@ -124,7 +124,7 @@ const Products = () => {
                           </td>
                           <td className="px-3 py-4 text-gray-600 dark:text-gray-400">{product.category}</td>
                           <td className="px-3 py-4 font-semibold text-primary">
-                            ${product.price}
+                            ₹{product.price}
                           </td>
                           <td className="px-3 py-4">
                             <span className={`px-2 py-1 rounded-full text-xs font-semibold ${product.stock > 0 ? 'bg-green-100/10 text-green-500' : 'bg-red-100/10 text-red-500'}`}>

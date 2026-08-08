@@ -98,7 +98,7 @@ const CartSidebar = () => {
                           </h3>
                         </div>
                         <p className="text-primary font-black text-xl">
-                          ${item.product.price}
+                          ₹{item.product.price}
                         </p>
                       </div>
 
@@ -153,7 +153,7 @@ const CartSidebar = () => {
                 Subtotal
               </span>
               <span className="text-2xl font-bold text-primary">
-                ${total.toFixed(2)}
+                ₹{total.toFixed(2)}
               </span>
             </div>
 

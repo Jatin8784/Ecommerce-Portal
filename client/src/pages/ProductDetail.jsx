@@ -155,7 +155,7 @@ const ProductDetail = () => {
                 </div>
                 <div className="flex items-center space-x-4 mb-6">
                   <span className="text-2xl font-bold text-primary">
-                    ${product.price}
+                    ₹{product.price}
                   </span>
                 </div>
                 <div className="flex items-center space-x-4 mb-6">

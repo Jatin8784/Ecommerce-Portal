@@ -5,7 +5,7 @@ const FeatureSection = () => {
     {
       icon: Truck,
       title: 'Free Shipping',
-      description: 'Free shipping on orders over $50 worldwide'
+      description: 'Free shipping on orders over ₹500 worldwide'
     },
     {
       icon: Shield,

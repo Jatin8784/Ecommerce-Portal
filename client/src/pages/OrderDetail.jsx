@@ -215,13 +215,13 @@ const OrderDetail = () => {
                           {item.title}
                         </h4>
                         <p className="text-sm text-muted-foreground">
-                          Price: ${item.price} × {item.quantity}
+                          Price: ₹{item.price} × {item.quantity}
                         </p>
                       </div>
                     </div>
                     <div className="mt-4 sm:mt-0 text-right">
                       <p className="text-lg font-bold text-primary">
-                        ${item.price * item.quantity}
+                        ₹{item.price * item.quantity}
                       </p>
                     </div>
                   </div>
@@ -231,15 +231,15 @@ const OrderDetail = () => {
               <div className="mt-8 space-y-2 border-t border-[hsla(var(--glass-border))] pt-6">
                 <div className="flex justify-between text-muted-foreground">
                   <span>Subtotal</span>
-                  <span>${orderDetails.total_price - (orderDetails.shipping_price || 0)}</span>
+                  <span>₹{orderDetails.total_price - (orderDetails.shipping_price || 0)}</span>
                 </div>
                 <div className="flex justify-between text-muted-foreground">
                   <span>Shipping</span>
-                  <span>${orderDetails.shipping_price || 0}</span>
+                  <span>₹{orderDetails.shipping_price || 0}</span>
                 </div>
                 <div className="flex justify-between text-xl font-bold text-foreground pt-2">
                   <span>Grand Total</span>
-                  <span className="text-primary">${orderDetails.total_price}</span>
+                  <span className="text-primary">₹{orderDetails.total_price}</span>
                 </div>
               </div>
             </div>

@@ -120,7 +120,7 @@ const Orders = () => {
                           {new Date(order.created_at).toLocaleString()}
                         </p>
                         <p className="text-lg font-bold text-primary">
-                          Total: <span className="text-primary-foreground dark:text-primary">${order.total_price}</span>
+                          Total: <span className="text-primary-foreground dark:text-primary">₹{order.total_price}</span>
                         </p>
                       </div>
 
@@ -188,7 +188,7 @@ const Orders = () => {
                                 <div className="flex-1 min-w-0">
                                   <p className="font-medium text-gray-800 dark:text-gray-200 truncate text-sm">{item.title}</p>
                                   <p className="text-xs text-gray-500 dark:text-gray-400">
-                                    {item.quantity} x ${item.price} = <span className="text-gray-900 dark:text-gray-100 font-bold">${item.quantity * item.price}</span>
+                                    {item.quantity} x ₹{item.price} = <span className="text-gray-900 dark:text-gray-100 font-bold">₹{item.quantity * item.price}</span>
                                   </p>
                                 </div>
                               </div>
