@@ -31,33 +31,33 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen pt-20 pb-12 flex items-center justify-center px-4 bg-background">
+    <div className="min-h-[calc(100vh-4rem)] pt-16 pb-6 flex items-center justify-center px-4 bg-background overflow-hidden">
       <div className="w-full max-w-md">
         {/* Back Link */}
         <Link
           to="/"
-          className="inline-flex items-center space-x-2 text-sm text-muted-foreground hover:text-foreground mb-6 transition-colors"
+          className="inline-flex items-center space-x-2 text-xs text-muted-foreground hover:text-foreground mb-3 transition-colors"
         >
-          <ArrowLeft className="w-4 h-4" />
+          <ArrowLeft className="w-3.5 h-3.5" />
           <span>Back to Home</span>
         </Link>
 
         {/* Login Card */}
-        <div className="glass-panel p-8 rounded-2xl shadow-xl border border-border">
-          <div className="text-center mb-8">
-            <div className="w-12 h-12 gradient-primary rounded-xl flex items-center justify-center mx-auto mb-4 text-primary-foreground shadow-md">
-              <LogIn className="w-6 h-6" />
+        <div className="glass-panel p-6 sm:p-7 rounded-2xl shadow-xl border border-border">
+          <div className="text-center mb-6">
+            <div className="w-10 h-10 gradient-primary rounded-xl flex items-center justify-center mx-auto mb-2 text-primary-foreground shadow-md">
+              <LogIn className="w-5 h-5" />
             </div>
-            <h1 className="text-2xl font-bold text-foreground">Welcome Back</h1>
-            <p className="text-sm text-muted-foreground mt-1">
+            <h1 className="text-xl font-bold text-foreground">Welcome Back</h1>
+            <p className="text-xs text-muted-foreground mt-0.5">
               Sign in to your account to continue shopping
             </p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-5">
+          <form onSubmit={handleSubmit} className="space-y-4">
             {/* Email Field */}
             <div>
-              <label className="block text-sm font-medium text-foreground mb-2">
+              <label className="block text-xs font-medium text-foreground mb-1">
                 Email Address
               </label>
               <input
@@ -68,14 +68,14 @@ const Login = () => {
                   setFormData({ ...formData, email: e.target.value })
                 }
                 required
-                className="w-full px-4 py-3 bg-secondary border border-border rounded-xl text-foreground placeholder:text-muted-foreground focus:ring-2 focus:ring-primary/20 transition-all outline-none"
+                className="w-full px-3.5 py-2.5 bg-secondary border border-border rounded-xl text-foreground text-sm placeholder:text-muted-foreground focus:ring-2 focus:ring-primary/20 transition-all outline-none"
               />
             </div>
 
             {/* Password Field */}
             <div>
-              <div className="flex items-center justify-between mb-2">
-                <label className="text-sm font-medium text-foreground">
+              <div className="flex items-center justify-between mb-1">
+                <label className="text-xs font-medium text-foreground">
                   Password
                 </label>
                 <Link
@@ -94,14 +94,14 @@ const Login = () => {
                     setFormData({ ...formData, password: e.target.value })
                   }
                   required
-                  className="w-full px-4 py-3 pr-12 bg-secondary border border-border rounded-xl text-foreground placeholder:text-muted-foreground focus:ring-2 focus:ring-primary/20 transition-all outline-none"
+                  className="w-full px-3.5 py-2.5 pr-10 bg-secondary border border-border rounded-xl text-foreground text-sm placeholder:text-muted-foreground focus:ring-2 focus:ring-primary/20 transition-all outline-none"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
                 >
-                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                  {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                 </button>
               </div>
             </div>
@@ -110,11 +110,11 @@ const Login = () => {
             <button
               type="submit"
               disabled={isLoggingIn}
-              className="w-full py-3.5 gradient-primary text-primary-foreground font-bold rounded-xl hover:glow-on-hover animate-smooth flex items-center justify-center space-x-2 disabled:opacity-50 shadow-md"
+              className="w-full py-3 gradient-primary text-primary-foreground font-bold text-sm rounded-xl hover:glow-on-hover animate-smooth flex items-center justify-center space-x-2 disabled:opacity-50 shadow-md"
             >
               {isLoggingIn ? (
                 <>
-                  <Loader2 className="w-5 h-5 animate-spin" />
+                  <Loader2 className="w-4 h-4 animate-spin" />
                   <span>Signing In...</span>
                 </>
               ) : (
@@ -124,8 +124,8 @@ const Login = () => {
           </form>
 
           {/* Google OAuth Option */}
-          <div className="mt-6">
-            <div className="relative flex items-center gap-4 mb-6">
+          <div className="mt-5">
+            <div className="relative flex items-center gap-4 mb-4">
               <div className="flex-grow border-t border-border"></div>
               <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
                 Or continue with
@@ -137,9 +137,9 @@ const Login = () => {
               type="button"
               onClick={() => dispatch(googleLogin())}
               disabled={isLoggingIn}
-              className="w-full py-3 flex items-center justify-center gap-3 bg-secondary hover:bg-secondary/80 border border-border text-foreground rounded-xl font-medium transition-all active:scale-[0.98] disabled:opacity-50"
+              className="w-full py-2.5 flex items-center justify-center gap-3 bg-secondary hover:bg-secondary/80 border border-border text-foreground rounded-xl font-medium transition-all active:scale-[0.98] disabled:opacity-50"
             >
-              <svg className="w-5 h-5" viewBox="0 0 24 24">
+              <svg className="w-4 h-4" viewBox="0 0 24 24">
                 <path
                   fill="#4285F4"
                   d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -157,12 +157,12 @@ const Login = () => {
                   d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
                 />
               </svg>
-              <span className="text-sm font-semibold">Google</span>
+              <span className="text-xs font-semibold">Google</span>
             </button>
           </div>
 
           {/* Toggle to Register */}
-          <div className="mt-8 text-center text-sm text-muted-foreground">
+          <div className="mt-5 text-center text-xs text-muted-foreground">
             Don't have an account?{" "}
             <Link
               to="/register"
