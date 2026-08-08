@@ -25,7 +25,7 @@ import ProductCardSkeleton from "../components/Products/ProductCardSkeleton";
     const [selectedCategory, setSelectedCategory] = useState(
       searchedCategory || ""
     );
-    const [priceRange, setPriceRange] = useState([0, 10000]);
+    const [priceRange, setPriceRange] = useState([0, 100000]);
     const [selectedRating, setSelectedRating] = useState(0);
     const [availability, setAvailability] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
@@ -34,10 +34,12 @@ import ProductCardSkeleton from "../components/Products/ProductCardSkeleton";
     const dispatch = useDispatch();
 
     useEffect(() => {
+      // Only send price filter if user changed it from default max
+      const priceFilter = priceRange[1] < 100000 ? `${priceRange[0]}-${priceRange[1]}` : "";
       dispatch(
         fetchAllProducts({
           category: selectedCategory,
-          price: `${priceRange[0]}-${priceRange[1]}`,
+          price: priceFilter,
           search: searchQuery,
           ratings: selectedRating,
           availability: availability,
@@ -98,7 +100,7 @@ import ProductCardSkeleton from "../components/Products/ProductCardSkeleton";
                       <input
                         type="range"
                         min={0}
-                        max={10000}
+                        max={100000}
                         value={priceRange[1]}
                         onChange={(e) =>
                           setPriceRange([priceRange[0], parseInt(e.target.value)])
@@ -106,8 +108,8 @@ import ProductCardSkeleton from "../components/Products/ProductCardSkeleton";
                         className="w-full"
                       />
                       <div className="flex justify-between text-sm text-muted-foreground">
-                        <span>${priceRange[0]}</span>
-                        <span>${priceRange[1]}</span>
+                        <span>₹{priceRange[0].toLocaleString("en-IN")}</span>
+                        <span>₹{priceRange[1] >= 100000 ? "1,00,000+" : priceRange[1].toLocaleString("en-IN")}</span>
                       </div>
                     </div>
                   </div>

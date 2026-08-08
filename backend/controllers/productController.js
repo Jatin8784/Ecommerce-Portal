@@ -91,10 +91,12 @@ export const fetchAllProducts = catchAsyncErrors(async (req, res, next) => {
 
   // Filter products by price
   if (price) {
-    const [minPrice, maxPrice] = price.split("-");
-    if (minPrice && maxPrice) {
+    const parts = price.split("-");
+    const minPrice = parts[0]?.trim();
+    const maxPrice = parts[parts.length - 1]?.trim();
+    if (minPrice && maxPrice && !isNaN(minPrice) && !isNaN(maxPrice)) {
       conditions.push(`price BETWEEN $${index} AND $${index + 1}`);
-      values.push(minPrice, maxPrice);
+      values.push(Number(minPrice), Number(maxPrice));
       index += 2;
     }
   }
