@@ -530,15 +530,11 @@ const Payment = () => {
                         {total >= 500 ? "Free" : "₹50.00"}
                       </span>
                     </div>
-                    <div className="flex justify-between text-xs text-muted-foreground">
-                      <span>GST (Inclusive 18%)</span>
-                      <span>₹{gstInclusiveAmount.toFixed(2)}</span>
-                    </div>
                     <div className="flex justify-between items-baseline font-bold text-xl pt-4 border-t border-border text-primary">
                       <div>
                         <div>Total Payable</div>
                         <div className="text-[11px] font-normal text-muted-foreground mt-0.5">
-                          Inclusive of all taxes & GST
+                          Inclusive of all taxes
                         </div>
                       </div>
                       <span>₹{totalWithShipping.toFixed(2)}</span>
