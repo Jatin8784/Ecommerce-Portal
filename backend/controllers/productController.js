@@ -522,41 +522,57 @@ export const fetchAIFilteredProducts = catchAsyncErrors(
         .map((word) => `%${word}%`);
     };
 
-    const keywords = filterKeywords(userPrompt);
-    // STEP 1: Basic SQL Filtering
-    const result = await database.query(
-      `
-        SELECT * FROM products
-        WHERE name ILIKE ANY($1)
-        OR description ILIKE ANY($1)
-        OR category ILIKE ANY($1)
-        LIMIT 50;     
-        `,
-      [keywords],
+    // Step 1: Fetch candidate products from database (up to 100 products)
+    const { rows: allCandidates } = await database.query(
+      `SELECT * FROM products ORDER BY created_at DESC LIMIT 100`
     );
 
-    const filteredProducts = result.rows;
-
-    if (filteredProducts.length === 0) {
+    if (allCandidates.length === 0) {
       return res.status(200).json({
         success: true,
-        message: "No products found matching your prompt.",
+        message: "No products available.",
         products: [],
       });
     }
 
-    // STEP 2: AI FILTERING
-    const { success, products } = await getAIRecommendation(
+    // Step 2: Try 100% Real Gemini AI Recommendation
+    const aiResult = await getAIRecommendation(
       req,
       res,
       userPrompt,
-      filteredProducts,
+      allCandidates
     );
 
+    if (aiResult.aiApplied) {
+      return res.status(200).json({
+        success: true,
+        message: "AI recommendations generated successfully.",
+        products: aiResult.products,
+      });
+    }
+
+    // Fallback: If AI API key missing or rate limited, perform SQL keyword search
+    const keywords = filterKeywords(userPrompt);
+    if (keywords.length > 0) {
+      const sqlResult = await database.query(
+        `SELECT * FROM products
+         WHERE name ILIKE ANY($1)
+         OR description ILIKE ANY($1)
+         OR category ILIKE ANY($1)
+         LIMIT 50`,
+        [keywords]
+      );
+      return res.status(200).json({
+        success: true,
+        message: "Products filtered by search keywords.",
+        products: sqlResult.rows,
+      });
+    }
+
     res.status(200).json({
-      success: success,
-      message: "AI filtered products.",
-      products,
+      success: true,
+      message: "Products fetched.",
+      products: allCandidates,
     });
-  },
+  }
 );

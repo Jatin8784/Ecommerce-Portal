@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import { useState, useEffect, useCallback } from "react";
-import { ArrowLeft, Check } from "lucide-react";
+import { ArrowLeft, Check, MapPin, Loader2 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { PlaceOrder, VerifyPayment, resetOrderState, deleteOrder } from "../store/slices/orderSlice.js";
@@ -25,6 +25,7 @@ const Payment = () => {
   
   const [paymentMethod, setPaymentMethod] = useState("Online"); // Renamed from Stripe
   const [paymentCancelled, setPaymentCancelled] = useState(false);
+  const [isDetectingLocation, setIsDetectingLocation] = useState(false);
   const [shippingDetails, setShippingDetails] = useState({
     fullName: "",
     state: "Gujarat",
@@ -34,6 +35,59 @@ const Payment = () => {
     zipCode: "",
     country: "India",
   });
+
+  const handleDetectLocation = () => {
+    if (!navigator.geolocation) {
+      toast.error("Geolocation is not supported by your browser");
+      return;
+    }
+
+    setIsDetectingLocation(true);
+    toast.info("Detecting your exact GPS location...");
+
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        try {
+          const { latitude, longitude } = position.coords;
+          const res = await fetch(
+            `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`
+          );
+          const data = await res.json();
+
+          if (data && data.address) {
+            const addr = data.address;
+            const detectedCity = addr.city || addr.town || addr.district || addr.county || "";
+            const detectedState = addr.state || "Gujarat";
+            const detectedAddress = [addr.house_number, addr.road, addr.suburb, addr.neighbourhood]
+              .filter(Boolean)
+              .join(", ") || data.display_name?.split(",").slice(0, 3).join(",");
+            const detectedPincode = addr.postcode || "";
+
+            setShippingDetails((prev) => ({
+              ...prev,
+              address: detectedAddress || prev.address,
+              city: detectedCity || prev.city,
+              state: detectedState || prev.state,
+              zipCode: detectedPincode || prev.zipCode,
+              country: addr.country || "India",
+            }));
+
+            toast.success("Exact location detected!");
+          }
+        } catch (err) {
+          console.error("Location lookup error:", err);
+          toast.error("Failed to fetch address details from GPS coordinates");
+        } finally {
+          setIsDetectingLocation(false);
+        }
+      },
+      () => {
+        setIsDetectingLocation(false);
+        toast.error("Unable to retrieve GPS location. Please enter manually.");
+      },
+      { enableHighAccuracy: true, timeout: 10000 }
+    );
+  };
 
   const total = cart.reduce(
     (sum, item) => sum + item.product.price * item.quantity,
@@ -122,9 +176,14 @@ const Payment = () => {
     if (orderStep === 3) {
       toast.success("Order Placed Successfully!");
       dispatch(clearCart());
-      // reset state after some time or on unmount
     }
   }, [orderStep, paymentMethod, handleRazorpayPayment, dispatch, paymentCancelled]);
+
+  useEffect(() => {
+    return () => {
+      dispatch(resetOrderState());
+    };
+  }, [dispatch]);
 
   if (cart.length === 0 && orderStep !== 3) {
     // ... same as before
@@ -216,9 +275,24 @@ const Payment = () => {
                 {orderStep === 1 ? (
                   // Step 1: User Details
                   <form onSubmit={handlePlaceOrder} className="glass-panel">
-                    <h2 className="text-xl font-semibold text-foreground mb-6">
-                      Shipping Information
-                    </h2>
+                    <div className="flex items-center justify-between mb-6 flex-wrap gap-2">
+                      <h2 className="text-xl font-semibold text-foreground">
+                        Shipping Information
+                      </h2>
+                      <button
+                        type="button"
+                        onClick={handleDetectLocation}
+                        disabled={isDetectingLocation}
+                        className="inline-flex items-center space-x-2 px-3.5 py-2 text-xs font-semibold rounded-lg bg-primary/10 text-primary hover:bg-primary/20 transition-all border border-primary/20 disabled:opacity-50"
+                      >
+                        {isDetectingLocation ? (
+                          <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                        ) : (
+                          <MapPin className="w-3.5 h-3.5" />
+                        )}
+                        <span>{isDetectingLocation ? "Detecting Location..." : "Auto-Detect My Location"}</span>
+                      </button>
+                    </div>
                     <div className="mb-6">
                       <div>
                         <label className="block text-sm font-medium text-foreground mb-2">
@@ -446,6 +520,7 @@ const Payment = () => {
                         </p>
                         <Link
                           to={"/orders"}
+                          onClick={() => dispatch(resetOrderState())}
                           className="inline-flex items-center space-x-2 px-8 py-3 rounded-lg text-primary-foreground gradient-primary animate-smooth hover:glow-on-hover font-semibold"
                         >
                           View My Orders

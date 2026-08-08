@@ -35,8 +35,8 @@ export async function getAIRecommendation(req, res, userPrompt, products) {
         4. Return ONLY a valid JSON array of product IDs that match the criteria.
         
         Constraints:
-        - Return ONLY the array of IDs. No text, no markdown block, no explanation.
-        - Example Output: [12, 45, 6]
+        - Return ONLY the array of string product IDs. No text, no markdown block, no explanation.
+        - Example Output: ["6325dd13-1dad-4bc6-94da-7aa56dd2fcd2"]
         - If no products match, return an empty array: []
     `;
 
