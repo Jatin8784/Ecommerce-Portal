@@ -50,7 +50,7 @@ const ResetPassword = () => {
                 value={formData.password}
                 onChange={handleChange}
                 placeholder="Enter Your New Password"
-                className="w-full px-4 py-4 border border-gray-300 rounded-md"
+                className="w-full px-4 py-3 border border-gray-300 rounded-md text-gray-900 bg-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
             <div className="p-2">
@@ -58,7 +58,7 @@ const ResetPassword = () => {
                 htmlFor="password"
                 className="block text-sm font-medium text-gray-700 mb-1"
               >
-                confirm Password
+                Confirm Password
               </label>
               <input
                 type="password"
@@ -66,7 +66,7 @@ const ResetPassword = () => {
                 value={formData.confirmPassword}
                 onChange={handleChange}
                 placeholder="Enter Your Confirm Password"
-                className="w-full px-4 py-4 border border-gray-300 rounded-md"
+                className="w-full px-4 py-3 border border-gray-300 rounded-md text-gray-900 bg-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
             <div className="px-2">
