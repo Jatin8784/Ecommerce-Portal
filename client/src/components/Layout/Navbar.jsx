@@ -14,21 +14,12 @@ const Navbar = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const { authUser } = useSelector((state) => state.auth);
   const { cart } = useSelector((state) => state.cart);
 
   let cartItemsCount = 0;
   if (cart) {
     cartItemsCount = cart.reduce((total, item) => total + item.quantity, 0);
   }
-
-  const handleUserClick = () => {
-    if (authUser) {
-      dispatch(toggleAuthPopup());
-    } else {
-      navigate("/login");
-    }
-  };
 
   return (
     <>
@@ -72,9 +63,9 @@ const Navbar = () => {
                 <Search className="w-4 h-4 sm:w-5 sm:h-5 text-foreground" />
               </button>
 
-              {/* User Profile */}
+              {/* User Profile / Auth Popup */}
               <button
-                onClick={handleUserClick}
+                onClick={() => dispatch(toggleAuthPopup())}
                 className="p-1 sm:p-2 rounded-lg hover:bg-secondary transition-colors"
               >
                 <User className="w-4 h-4 sm:w-5 sm:h-5 text-foreground" />

@@ -1,4 +1,4 @@
-import { X, User, Eye, EyeOff } from "lucide-react";
+import { X, Eye, EyeOff } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
 import { toggleAuthPopup } from "../../store/slices/popupSlice.js";
@@ -73,7 +73,7 @@ const LoginModal = () => {
           token,
           password: formdata.password,
           confirmPassword: formdata.confirmPassword,
-        }),
+        })
       );
       return;
     }
@@ -87,7 +87,13 @@ const LoginModal = () => {
     if (mode === "signup") {
       data.name = formdata.name;
       if (!isOtpSent) {
-        dispatch(sendOtp(data)).then((res) => {
+        dispatch(
+          sendOtp({
+            name: formdata.name,
+            email: formdata.email,
+            password: formdata.password,
+          })
+        ).then((res) => {
           if (!res.error) setIsOtpSent(true);
         });
       } else {
@@ -107,23 +113,29 @@ const LoginModal = () => {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       {/* Overlay */}
-      <div className="absolute inset-0 backdrop-blur-md bg-black/40" />
+      <div
+        className="absolute inset-0 backdrop-blur-md bg-black/40"
+        onClick={() => dispatch(toggleAuthPopup())}
+      />
 
-      <div className="relative z-10 glass-panel w-full max-w-md p-6 rounded-xl max-h-[min(95vh,640px)] overflow-y-auto">
+      <div className="relative z-10 glass-panel w-full max-w-md p-6 rounded-2xl max-h-[min(95vh,640px)] overflow-y-auto border border-border shadow-2xl">
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-2xl font-bold">
             {mode === "reset"
               ? "Reset Password"
               : mode === "signup"
-                ? "Create Account"
-                : mode === "forgot"
-                  ? "Forgot Password"
-                  : "Welcome Back"}
+              ? "Create Account"
+              : mode === "forgot"
+              ? "Forgot Password"
+              : "Welcome Back"}
           </h2>
 
-          <button onClick={() => dispatch(toggleAuthPopup())}>
-            <X />
+          <button
+            onClick={() => dispatch(toggleAuthPopup())}
+            className="p-1.5 rounded-lg hover:bg-secondary transition-colors"
+          >
+            <X className="w-5 h-5" />
           </button>
         </div>
 
@@ -140,7 +152,7 @@ const LoginModal = () => {
               }
               required
               maxLength={6}
-              className="w-full p-3 rounded-lg bg-secondary text-foreground placeholder-muted-foreground border border-border focus:outline-none"
+              className="w-full p-3 rounded-xl bg-secondary text-foreground placeholder-muted-foreground border border-border focus:outline-none text-center font-mono text-lg tracking-widest"
             />
           )}
 
@@ -154,7 +166,7 @@ const LoginModal = () => {
                 setFormData({ ...formdata, name: e.target.value })
               }
               required
-              className="w-full p-3 rounded-lg bg-secondary text-foreground placeholder-muted-foreground border border-border focus:outline-none"
+              className="w-full p-3 rounded-xl bg-secondary text-foreground placeholder-muted-foreground border border-border focus:outline-none"
             />
           )}
 
@@ -168,7 +180,7 @@ const LoginModal = () => {
                 setFormData({ ...formdata, email: e.target.value })
               }
               required
-              className="w-full p-3 rounded-lg bg-secondary text-foreground placeholder-muted-foreground border border-border focus:outline-none"
+              className="w-full p-3 rounded-xl bg-secondary text-foreground placeholder-muted-foreground border border-border focus:outline-none"
             />
           )}
 
@@ -183,12 +195,12 @@ const LoginModal = () => {
                   setFormData({ ...formdata, password: e.target.value })
                 }
                 required
-                className="w-full p-3 pr-12 rounded-lg bg-secondary text-foreground placeholder-muted-foreground border border-border focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                className="w-full p-3 pr-12 rounded-xl bg-secondary text-foreground placeholder-muted-foreground border border-border focus:outline-none focus:ring-2 focus:ring-primary/20"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
                 title={showPassword ? "Hide Password" : "Show Password"}
               >
                 {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
@@ -210,7 +222,7 @@ const LoginModal = () => {
                   })
                 }
                 required
-                className="w-full p-3 pr-12 rounded-lg bg-secondary text-foreground placeholder-muted-foreground border border-border focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                className="w-full p-3 pr-12 rounded-xl bg-secondary text-foreground placeholder-muted-foreground border border-border focus:outline-none focus:ring-2 focus:ring-primary/20"
               />
             </div>
           )}
@@ -221,7 +233,7 @@ const LoginModal = () => {
               <button
                 type="button"
                 onClick={() => setMode("forgot")}
-                className="text-blue-500"
+                className="text-primary hover:underline font-medium"
               >
                 Forgot Password?
               </button>
@@ -232,19 +244,17 @@ const LoginModal = () => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3 bg-blue-600 text-white rounded-lg font-semibold transition-all duration-300 hover:bg-blue-700 hover:shadow-lg active:scale-95 disabled:opacity-50 disabled:scale-100"
+            className="w-full py-3.5 gradient-primary text-primary-foreground font-bold rounded-xl hover:glow-on-hover transition-all duration-300 shadow-md active:scale-95 disabled:opacity-50 disabled:scale-100"
           >
             {loading
               ? "Please wait..."
               : mode === "reset"
-                ? "Reset Password"
-                : mode === "signup"
-                  ? isOtpSent
-                    ? "Verify & Create Account"
-                    : "Sign Up"
-                  : mode === "forgot"
-                    ? "Send Reset Email"
-                    : "Sign In"}
+              ? "Reset Password"
+              : mode === "signup"
+              ? "Register"
+              : mode === "forgot"
+              ? "Send Reset Email"
+              : "Sign In"}
           </button>
         </form>
 
@@ -252,23 +262,20 @@ const LoginModal = () => {
         {["signin", "signup"].includes(mode) && (
           <div className="mt-6">
             <div className="relative flex items-center gap-4 mb-6">
-              <div className="flex-grow border-t border-white/10"></div>
-              <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/60">
+              <div className="flex-grow border-t border-border"></div>
+              <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
                 Or continue with
               </span>
-              <div className="flex-grow border-t border-white/10"></div>
+              <div className="flex-grow border-t border-border"></div>
             </div>
 
             <button
               type="button"
               onClick={() => dispatch(googleLogin())}
               disabled={loading}
-              className="group relative w-full py-3 flex items-center justify-center gap-3 bg-white/5 backdrop-blur-xl border border-white/10 text-foreground rounded-xl font-medium transition-all duration-500 hover:bg-white/10 hover:border-white/20 hover:shadow-[0_0_30px_rgba(255,255,255,0.05)] active:scale-[0.98] disabled:opacity-50"
+              className="w-full py-3 flex items-center justify-center gap-3 bg-secondary hover:bg-secondary/80 border border-border text-foreground rounded-xl font-medium transition-all active:scale-[0.98] disabled:opacity-50"
             >
-              {/* Subtle Highlight Effect */}
-              <div className="absolute inset-0 rounded-xl bg-gradient-to-tr from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-
-              <svg className="w-5 h-5 relative z-10" viewBox="0 0 24 24">
+              <svg className="w-5 h-5" viewBox="0 0 24 24">
                 <path
                   fill="#4285F4"
                   d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -286,22 +293,20 @@ const LoginModal = () => {
                   d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
                 />
               </svg>
-              <span className="relative z-10 text-sm font-semibold tracking-wide">
-                Google
-              </span>
+              <span className="text-sm font-semibold">Google</span>
             </button>
           </div>
         )}
 
         {/* Toggle */}
         {["signin", "signup"].includes(mode) && (
-          <div className="mt-4 text-center">
+          <div className="mt-5 text-center text-sm">
             <button
               type="button"
               onClick={() =>
                 setMode((prev) => (prev === "signin" ? "signup" : "signin"))
               }
-              className="text-blue-500"
+              className="text-primary font-bold hover:underline"
             >
               {mode === "signin"
                 ? "Don't have an account? Sign up"

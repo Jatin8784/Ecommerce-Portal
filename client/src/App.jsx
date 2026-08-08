@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { Toaster } from "sonner";
 
@@ -8,14 +8,11 @@ import Sidebar from "./components/Layout/Sidebar";
 import SearchOverlay from "./components/Layout/SearchOverlay";
 import CartSidebar from "./components/Layout/CartSidebar";
 import ProfilePanel from "./components/Layout/ProfilePanel";
+import LoginModal from "./components/Layout/LoginModal";
 import Footer from "./components/Layout/Footer";
 
 // Pages
 import Index from "./pages/Home";
-import Login from "./pages/Login";
-import Register from "./pages/Register";
-import ForgotPassword from "./pages/ForgotPassword";
-import ResetPassword from "./pages/ResetPassword";
 import Products from "./pages/Products";
 import ProductDetail from "./pages/ProductDetail";
 import Cart from "./pages/Cart";
@@ -33,12 +30,6 @@ import { Loader } from "lucide-react";
 import { fetchAllProducts } from "./store/slices/productSlice.js";
 
 const AppContent = () => {
-  const location = useLocation();
-
-  const isAuthRoute =
-    ["/login", "/register", "/password/forgot"].includes(location.pathname) ||
-    location.pathname.startsWith("/password/reset");
-
   return (
     <div className="min-h-screen bg-background flex flex-col justify-between">
       <div>
@@ -47,12 +38,10 @@ const AppContent = () => {
         <SearchOverlay />
         <CartSidebar />
         <ProfilePanel />
+        <LoginModal />
         <Routes>
           <Route path="/" element={<Index />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/password/forgot" element={<ForgotPassword />} />
-          <Route path="/password/reset/:token" element={<ResetPassword />} />
+          <Route path="/password/reset/:token" element={<Index />} />
           <Route path="/products" element={<Products />} />
           <Route path="/product/:id" element={<ProductDetail />} />
           <Route path="/cart" element={<Cart />} />
@@ -65,7 +54,7 @@ const AppContent = () => {
           <Route path="*" element={<NotFound />} />
         </Routes>
       </div>
-      {!isAuthRoute && <Footer />}
+      <Footer />
     </div>
   );
 };
